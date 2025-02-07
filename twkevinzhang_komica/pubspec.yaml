@@ -10,6 +10,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  serious_python: ^0.8.7
 
 dev_dependencies:
   flutter_test:
