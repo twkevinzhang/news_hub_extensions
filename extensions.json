@@ -1,0 +1,13 @@
+[
+  {
+    "repo_base_url": "https://raw.githubusercontent.com/twkevinzhang/news_hub_extensions/master",
+    "pkg_name": "twkevinzhang_komica",
+    "display_name": "Komica Ex",
+    "zip_name": "twkevinzhang_komica.zip",
+    "address": "https://127.0.0.1:55001",
+    "version": 1,
+    "python_version": 38,
+    "lang": "zh_tw",
+    "is_nsfw": false
+  }
+]

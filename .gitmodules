@@ -1,0 +1,3 @@
+[submodule "twkevinzhang_komica/app/news_hub_protos"]
+	path = twkevinzhang_komica/app/news_hub_protos
+	url = git@github.com:twkevinzhang/news_hub_protos
