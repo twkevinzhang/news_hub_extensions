@@ -1,6 +1,6 @@
 [
   {
-    "repo_base_url": "https://raw.githubusercontent.com/twkevinzhang/news_hub_extensions/master",
+    "repo_base_url": "twkevinzhang/news_hub_extensions",
     "pkg_name": "twkevinzhang_komica",
     "display_name": "Komica Ex",
     "zip_name": "twkevinzhang_komica.zip",
