@@ -75,6 +75,14 @@ class Site(_message.Message):
     url: str
     def __init__(self, id: _Optional[str] = ..., icon: _Optional[str] = ..., name: _Optional[str] = ..., description: _Optional[str] = ..., url: _Optional[str] = ...) -> None: ...
 
+class GetBoardsReq(_message.Message):
+    __slots__ = ("site_id", "page")
+    SITE_ID_FIELD_NUMBER: _ClassVar[int]
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    site_id: str
+    page: PaginationReq
+    def __init__(self, site_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
+
 class GetBoardsRes(_message.Message):
     __slots__ = ("boards", "page")
     BOARDS_FIELD_NUMBER: _ClassVar[int]
@@ -100,6 +108,20 @@ class Board(_message.Message):
     url: str
     supported_threads_sorting: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., name: _Optional[str] = ..., icon: _Optional[str] = ..., large_welcome_image: _Optional[str] = ..., url: _Optional[str] = ..., supported_threads_sorting: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class GetThreadInfosReq(_message.Message):
+    __slots__ = ("site_id", "board_id", "page", "sort_by", "keywords")
+    SITE_ID_FIELD_NUMBER: _ClassVar[int]
+    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    SORT_BY_FIELD_NUMBER: _ClassVar[int]
+    KEYWORDS_FIELD_NUMBER: _ClassVar[int]
+    site_id: str
+    board_id: str
+    page: PaginationReq
+    sort_by: str
+    keywords: str
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ..., sort_by: _Optional[str] = ..., keywords: _Optional[str] = ...) -> None: ...
 
 class GetThreadInfosRes(_message.Message):
     __slots__ = ("threadInfos", "page")
@@ -135,6 +157,16 @@ class ThreadInfo(_message.Message):
     tags: _containers.RepeatedScalarFieldContainer[str]
     def __init__(self, id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., url: _Optional[str] = ..., title: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_post_count: _Optional[int] = ..., preview_content: _Optional[str] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
 
+class GetThreadReq(_message.Message):
+    __slots__ = ("id", "site_id", "board_id")
+    ID_FIELD_NUMBER: _ClassVar[int]
+    SITE_ID_FIELD_NUMBER: _ClassVar[int]
+    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    id: str
+    site_id: str
+    board_id: str
+    def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ...) -> None: ...
+
 class GetThreadRes(_message.Message):
     __slots__ = ("thread",)
     THREAD_FIELD_NUMBER: _ClassVar[int]
@@ -161,6 +193,20 @@ class Thread(_message.Message):
     original_post: Post
     def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., url: _Optional[str] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_post_count: _Optional[int] = ..., tags: _Optional[_Iterable[str]] = ..., original_post: _Optional[_Union[Post, _Mapping]] = ...) -> None: ...
 
+class GetRegardingPostsReq(_message.Message):
+    __slots__ = ("site_id", "board_id", "thread_id", "original_post_id", "page")
+    SITE_ID_FIELD_NUMBER: _ClassVar[int]
+    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    THREAD_ID_FIELD_NUMBER: _ClassVar[int]
+    ORIGINAL_POST_ID_FIELD_NUMBER: _ClassVar[int]
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    site_id: str
+    board_id: str
+    thread_id: str
+    original_post_id: str
+    page: PaginationReq
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., original_post_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
+
 class GetRegardingPostsRes(_message.Message):
     __slots__ = ("regarding_posts", "page")
     REGARDING_POSTS_FIELD_NUMBER: _ClassVar[int]
@@ -168,6 +214,18 @@ class GetRegardingPostsRes(_message.Message):
     regarding_posts: _containers.RepeatedCompositeFieldContainer[Post]
     page: PaginationRes
     def __init__(self, regarding_posts: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
+
+class GetPostReq(_message.Message):
+    __slots__ = ("site_id", "board_id", "thread_id", "id")
+    SITE_ID_FIELD_NUMBER: _ClassVar[int]
+    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    THREAD_ID_FIELD_NUMBER: _ClassVar[int]
+    ID_FIELD_NUMBER: _ClassVar[int]
+    site_id: str
+    board_id: str
+    thread_id: str
+    id: str
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., id: _Optional[str] = ...) -> None: ...
 
 class GetPostRes(_message.Message):
     __slots__ = ("post",)
@@ -264,6 +322,20 @@ class Post(_message.Message):
     comments: int
     contents: _containers.RepeatedCompositeFieldContainer[Paragraph]
     def __init__(self, id: _Optional[str] = ..., origin_post_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., authorId: _Optional[str] = ..., author_name: _Optional[str] = ..., content: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., like: _Optional[int] = ..., dislike: _Optional[int] = ..., comments: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ...) -> None: ...
+
+class GetCommentsReq(_message.Message):
+    __slots__ = ("site_id", "board_id", "thread_id", "post_id", "page")
+    SITE_ID_FIELD_NUMBER: _ClassVar[int]
+    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    THREAD_ID_FIELD_NUMBER: _ClassVar[int]
+    POST_ID_FIELD_NUMBER: _ClassVar[int]
+    PAGE_FIELD_NUMBER: _ClassVar[int]
+    site_id: str
+    board_id: str
+    thread_id: str
+    post_id: str
+    page: PaginationReq
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., post_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
 
 class GetCommentsRes(_message.Message):
     __slots__ = ("comments", "page")
