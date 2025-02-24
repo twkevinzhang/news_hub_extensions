@@ -1,4 +1,8 @@
-export PYTHONUNBUFFERED := 1 # for python to print to stdout immediately
+# for python to print to stdout immediately
+export PYTHONUNBUFFERED := 1
+
+# for unittest
+export PYTHONPATH := src
 
 .PHONY: install
 install:
@@ -12,3 +16,7 @@ clean:
 .PHONY: proto
 proto:
 	python -m grpc_tools.protoc -Inews_hub_protos --python_out=src --pyi_out=src --grpc_python_out=src news_hub_protos/*.proto
+
+.PHONY: test
+test:
+	python -m unittest discover test

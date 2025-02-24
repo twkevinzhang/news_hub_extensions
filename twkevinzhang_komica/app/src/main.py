@@ -3,8 +3,6 @@ from logging.config import dictConfig
 import os
 from concurrent import futures
 import grpc
-from api_server_impl import ApiServerImpl
-import extension_api_pb2_grpc as pb2_grpc
 
 # configure
 port = 55001
@@ -36,6 +34,7 @@ dictConfig({
     }
 })
 logging.debug(f'__name__ "{__name__}"')
+logging.debug(f'third-party lib imported')
 
 # serious_python unsupported multiprocessing
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
@@ -45,6 +44,10 @@ os.environ['MKL_NUM_THREADS'] = '1'
 # When called by serious_python, __name__ is "main"
 if __name__ == "__main__" or __name__ == "main":
     try:
+        from api_server_impl import ApiServerImpl
+        import extension_api_pb2_grpc as pb2_grpc
+        logging.debug(f'komica modules imported')
+
         server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
         pb2_grpc.add_ExtensionApiServicer_to_server(ApiServerImpl(), server)
         server.add_insecure_port(f'[::]:{port}')

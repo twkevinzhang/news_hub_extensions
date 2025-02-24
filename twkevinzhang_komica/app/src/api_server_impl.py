@@ -1,16 +1,21 @@
+import aiohttp
 import extension_api_pb2 as pb2
 import extension_api_pb2_grpc as pb2_grpc
-from get_boards import get_boards
+import parse_boards
+from parse_thread_infos import parse_thread_infos_html
 
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
+}
 
 class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
     def __init__(self):
         pass
 
-    def GetSite(self, request, context):
+    async def GetSite(self, req, context):
         return pb2.GetSiteRes(
             site=pb2.Site(
-                id="1",
+                id="komica",
                 icon="https://komica1.org/favicon.ico",
                 name="komica1.org",
                 description="A description of komica1.org",
@@ -18,6 +23,25 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
             )
         )
 
-    def GetBoards(self, request, context):
-        boards = get_boards()
-        return pb2.GetBoardsRes(boards=boards)
+    async def GetBoards(self, req, context):
+        l = parse_boards.list()
+        return pb2.GetBoardsRes(boards=l)
+
+    async def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context):
+        b = parse_boards.get(req.board_id)
+        async with aiohttp.ClientSession() as session:
+            async with session.get(f"{b.url}", headers=HEADERS) as response:
+                response.raise_for_status()
+                return parse_thread_infos_html(await response.text())
+
+    async def GetThread(self, req, context):
+        pass
+
+    async def GetRegardingPosts(self, req, context):
+        pass
+
+    async def GetPost(self, req, context):
+        pass
+
+    async def GetComments(self, req, context):
+        pass
