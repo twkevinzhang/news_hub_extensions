@@ -124,12 +124,12 @@ class GetThreadInfosReq(_message.Message):
     def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ..., sort_by: _Optional[str] = ..., keywords: _Optional[str] = ...) -> None: ...
 
 class GetThreadInfosRes(_message.Message):
-    __slots__ = ("threadInfos", "page")
-    THREADINFOS_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("thread_infos", "page")
+    THREAD_INFOS_FIELD_NUMBER: _ClassVar[int]
     PAGE_FIELD_NUMBER: _ClassVar[int]
-    threadInfos: _containers.RepeatedCompositeFieldContainer[ThreadInfo]
+    thread_infos: _containers.RepeatedCompositeFieldContainer[ThreadInfo]
     page: PaginationRes
-    def __init__(self, threadInfos: _Optional[_Iterable[_Union[ThreadInfo, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
+    def __init__(self, thread_infos: _Optional[_Iterable[_Union[ThreadInfo, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
 
 class ThreadInfo(_message.Message):
     __slots__ = ("id", "board_id", "site_id", "url", "title", "author_name", "created_at", "latest_regarding_post_created_at", "regarding_post_count", "preview_content", "tags")

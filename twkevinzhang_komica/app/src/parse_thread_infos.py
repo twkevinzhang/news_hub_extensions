@@ -10,7 +10,7 @@ def parse_thread_infos_html(html_content) -> list[pb2.ThreadInfo]:
     tree = html.fromstring(html_content)
     threads = []
 
-    for thread_div in tree.xpath('//div[contains(@class, "thread")]'):
+    for thread_div in tree.xpath('//div[@class="thread"]'):
         thread_id = thread_div.get("data-no")
         thread_url = f"pixmicat.php?res={thread_id}"
         title = thread_div.xpath('.//span[@class="title"]/text()')

@@ -12,7 +12,7 @@ class TestParseThreadInfos(TestCase):
         with open(get_html_filename("thread_infos.fragment.html"), "r") as f:
             html = f.read()
             threads = parse_thread_infos_html(html)
-            self.assertEqual(len(threads), 30)
+            self.assertEqual(len(threads), 3)
 
 
 def get_html_filename(filename: str):
