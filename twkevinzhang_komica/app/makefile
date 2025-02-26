@@ -20,3 +20,7 @@ proto:
 .PHONY: test
 test:
 	python -m unittest discover test
+
+.PHONY: run
+run:
+	python src/main.py

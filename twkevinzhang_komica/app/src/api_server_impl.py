@@ -12,18 +12,18 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
     def __init__(self):
         pass
 
-    async def GetSite(self, req, context):
+    def GetSite(self, req: pb2.Empty, context):
         return pb2.GetSiteRes(
             site=pb2.Site(
                 id="komica",
                 icon="https://komica1.org/favicon.ico",
                 name="komica1.org",
                 description="A description of komica1.org",
-                url="https://komica1.org"
+                url="https://komica1.org",
             )
         )
 
-    async def GetBoards(self, req, context):
+    def GetBoards(self, req: pb2.GetBoardsReq, context):
         l = parse_boards.list()
         return pb2.GetBoardsRes(boards=l)
 
@@ -34,14 +34,14 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
                 response.raise_for_status()
                 return parse_thread_infos_html(await response.text())
 
-    async def GetThread(self, req, context):
+    async def GetThread(self, req: pb2.GetThreadReq, context):
         pass
 
-    async def GetRegardingPosts(self, req, context):
+    async def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context):
         pass
 
-    async def GetPost(self, req, context):
+    async def GetPost(self, req: pb2.GetPostReq, context):
         pass
 
-    async def GetComments(self, req, context):
+    async def GetComments(self, req: pb2.GetCommentsReq, context):
         pass

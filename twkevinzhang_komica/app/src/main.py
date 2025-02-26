@@ -8,6 +8,7 @@ import grpc
 port = 55001
 
 # logging configuration
+# print() will not be logged
 dictConfig({
     'version': 1,
     'formatters': {
@@ -16,25 +17,33 @@ dictConfig({
         },
     },
     'handlers': {
-        'wsgi': {
+        'console': {
             'class': 'logging.StreamHandler',
-            'stream': 'ext://flask.logging.wsgi_errors_stream',
+            'level': logging.DEBUG,
             'formatter': 'default'
         },
         'file': {
             'class': 'logging.FileHandler',
             'filename': 'komica.log',
-            'level': 'DEBUG',
+            'level': logging.DEBUG,
             'formatter': 'default'
         },
     },
-    'root': {
-        'level': 'DEBUG',
-        'handlers': ['wsgi', 'file'],
+    'loggers': {
+        # root logger
+        '': {
+            'level': logging.DEBUG,
+            'handlers': ['file', 'console'],
+        },
+        # grpc default logger
+        'grpc': {
+            'level': logging.DEBUG,
+            'handlers': ['file', 'console'],
+            'propagate': False,  # 防止日志消息被传递到根日志器
+        },
     }
 })
 logging.debug(f'__name__ "{__name__}"')
-logging.debug(f'third-party lib imported')
 
 # serious_python unsupported multiprocessing
 os.environ['OPENBLAS_NUM_THREADS'] = '1'
@@ -46,13 +55,18 @@ if __name__ == "__main__" or __name__ == "main":
     try:
         from api_server_impl import ApiServerImpl
         import extension_api_pb2_grpc as pb2_grpc
-        logging.debug(f'komica modules imported')
+        logging.debug(f'komica and grpc modules imported')
 
-        server = grpc.server(futures.ThreadPoolExecutor(max_workers=1))
+        server = grpc.server(
+            futures.ThreadPoolExecutor(max_workers=1),
+            options=[
+                ('grpc.logging_verbosity', 'DEBUG'),
+            ]
+        )
         pb2_grpc.add_ExtensionApiServicer_to_server(ApiServerImpl(), server)
         server.add_insecure_port(f'[::]:{port}')
         server.start()
         logging.info("gRPC server running...")
         server.wait_for_termination()
     except Exception as e:
-        logging.exception("crashed. Error: %s", e)
+        logging.exception(e)
