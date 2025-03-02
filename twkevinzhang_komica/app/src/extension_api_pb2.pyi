@@ -194,18 +194,16 @@ class Thread(_message.Message):
     def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., url: _Optional[str] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_post_count: _Optional[int] = ..., tags: _Optional[_Iterable[str]] = ..., original_post: _Optional[_Union[Post, _Mapping]] = ...) -> None: ...
 
 class GetRegardingPostsReq(_message.Message):
-    __slots__ = ("site_id", "board_id", "thread_id", "original_post_id", "page")
+    __slots__ = ("site_id", "board_id", "thread_id", "page")
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
-    ORIGINAL_POST_ID_FIELD_NUMBER: _ClassVar[int]
     PAGE_FIELD_NUMBER: _ClassVar[int]
     site_id: str
     board_id: str
     thread_id: str
-    original_post_id: str
     page: PaginationReq
-    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., original_post_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
 
 class GetRegardingPostsRes(_message.Message):
     __slots__ = ("regarding_posts", "page")
@@ -292,15 +290,14 @@ class LinkParagraph(_message.Message):
     def __init__(self, content: _Optional[str] = ...) -> None: ...
 
 class Post(_message.Message):
-    __slots__ = ("id", "origin_post_id", "thread_id", "board_id", "site_id", "authorId", "author_name", "content", "created_at", "title", "like", "dislike", "comments", "contents")
+    __slots__ = ("id", "origin_post_id", "thread_id", "board_id", "site_id", "author_id", "author_name", "created_at", "title", "like", "dislike", "comments", "contents")
     ID_FIELD_NUMBER: _ClassVar[int]
     ORIGIN_POST_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
-    AUTHORID_FIELD_NUMBER: _ClassVar[int]
+    AUTHOR_ID_FIELD_NUMBER: _ClassVar[int]
     AUTHOR_NAME_FIELD_NUMBER: _ClassVar[int]
-    CONTENT_FIELD_NUMBER: _ClassVar[int]
     CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     TITLE_FIELD_NUMBER: _ClassVar[int]
     LIKE_FIELD_NUMBER: _ClassVar[int]
@@ -312,16 +309,15 @@ class Post(_message.Message):
     thread_id: str
     board_id: str
     site_id: str
-    authorId: str
+    author_id: str
     author_name: str
-    content: str
     created_at: int
     title: str
     like: int
     dislike: int
     comments: int
     contents: _containers.RepeatedCompositeFieldContainer[Paragraph]
-    def __init__(self, id: _Optional[str] = ..., origin_post_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., authorId: _Optional[str] = ..., author_name: _Optional[str] = ..., content: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., like: _Optional[int] = ..., dislike: _Optional[int] = ..., comments: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., origin_post_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., like: _Optional[int] = ..., dislike: _Optional[int] = ..., comments: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ...) -> None: ...
 
 class GetCommentsReq(_message.Message):
     __slots__ = ("site_id", "board_id", "thread_id", "post_id", "page")

@@ -3,11 +3,24 @@ import requests
 import extension_api_pb2 as pb2
 import extension_api_pb2_grpc as pb2_grpc
 import parse_boards
-from parse_thread_infos import parse_thread_infos_html
+from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
 }
+
+def get(url: str):
+    response = requests.get(url, headers=HEADERS)
+    response.raise_for_status()
+    content_type = response.headers.get('Content-Type')
+    if content_type and 'charset=' in content_type:
+        encoding = content_type.split('charset=')[-1].strip()
+    else:
+        encoding = response.apparent_encoding
+        if encoding is None:
+            encoding = 'utf-8'
+    html_content = response.content.decode(encoding, errors='ignore')
+    return html_content
 
 class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
     def __init__(self):
@@ -30,10 +43,8 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
 
     def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
         b = parse_boards.get(req.board_id)
-        response = requests.get(f"{b.url}", headers=HEADERS)
-        response.encoding = 'utf-8'
-        response.raise_for_status()
-        thread_infos = parse_thread_infos_html(response.text)
+        response = get(f"{b.url}")
+        thread_infos = parse_thread_infos_html(response, req.site_id, req.board_id)
         return pb2.GetThreadInfosRes(
             thread_infos=thread_infos,
             page=pb2.PaginationRes(
@@ -42,14 +53,26 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
             )
         )
 
-    async def GetThread(self, req: pb2.GetThreadReq, context) -> pb2.GetThreadRes:
+    def GetThread(self, req: pb2.GetThreadReq, context) -> pb2.GetThreadRes:
+        b = parse_boards.get(req.board_id)
+        prefix = b.url.removesuffix("/index.htm")
+        response = get(f"{prefix}/pixmicat.php?res={req.id}")
+        thread = parse_thread_html(response, req.site_id, req.board_id)
+        return pb2.GetThreadRes(
+            thread=thread,
+        )
+
+    def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
+        b = parse_boards.get(req.board_id)
+        prefix = b.url.removesuffix("/index.htm")
+        response = get(f"{prefix}/pixmicat.php?res={req.thread_id}")
+        posts = parse_regarding_posts_html(response, req.site_id, req.board_id, req.thread_id)
+        return pb2.GetRegardingPostsRes(
+            regarding_posts=posts
+        )
+
+    def GetPost(self, req: pb2.GetPostReq, context) -> pb2.GetPostRes:
         pass
 
-    async def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
-        pass
-
-    async def GetPost(self, req: pb2.GetPostReq, context) -> pb2.GetPostRes:
-        pass
-
-    async def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadInfosRes:
+    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadInfosRes:
         pass
