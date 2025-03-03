@@ -14,41 +14,44 @@ class TestParseThreadInfos(TestCase):
         with open(get_html_filename("thread_infos.fragment.html"), "r") as f:
             html = f.read()
             thread_infos = parse_thread_infos_html(html, 'mock', 'mock')
-            thread_info1 = pb2.ThreadInfo(
+            thread_info1 = pb2.Post(
                 id="26765435",
                 board_id="mock",
                 site_id="mock",
-                url="pixmicat.php?res=26765435",
                 title="無題",
                 author_name="無名",
                 created_at=1740432283,  # 2025/02/25(二) 05:24:44.001 GMT+8
                 latest_regarding_post_created_at=1740432283,  # 2025/02/25(二) 05:24:44.001 GMT+8
-                regarding_post_count=1,
-                preview_content="美國正式加入中俄勢力 島民現在在想什麼?",
+                regarding_posts=1,
+                contents=[
+                    paragraph.text("美國正式加入中俄勢力 島民現在在想什麼?"),
+                ],
             )
-            thread_info2 = pb2.ThreadInfo(
+            thread_info2 = pb2.Post(
                 id="26765468",
                 board_id="mock",
                 site_id="mock",
-                url="pixmicat.php?res=26765468",
                 title="無題",
                 author_name="無名",
                 created_at=1740434415,  # 2025/02/25(二) 06:00:15.732 GMT+8
                 latest_regarding_post_created_at=1740434415,  # 2025/02/25(二) 06:00:15.732 GMT+8
-                regarding_post_count=0,
-                preview_content="清晨清姬清雞雞",
+                regarding_posts=0,
+                contents=[
+                    paragraph.text("清晨清姬清雞雞"),
+                ],
             )
-            thread_info3 = pb2.ThreadInfo(
+            thread_info3 = pb2.Post(
                 id="26765356",
                 board_id="mock",
                 site_id="mock",
-                url="pixmicat.php?res=26765356",
                 title="無題",
                 author_name="無名",
                 created_at=1740426590,  # 2025/02/25(二) 03:49:50.664 GMT+8
                 latest_regarding_post_created_at=1740426590,  # 2025/02/25(二) 03:49:50.664 GMT+8
-                regarding_post_count=3,
-                preview_content="有洗貓的影片嗎",
+                regarding_posts=3,
+                contents=[
+                    paragraph.text("有洗貓的影片嗎"),
+                ],
             )
             self.assertEqual(thread_infos[0], thread_info1)
             self.assertEqual(thread_infos[1], thread_info2)
@@ -73,8 +76,8 @@ class TestParseThreadInfos(TestCase):
                 ],
                 created_at=1740886260,  # 2025/03/02(日) 11:31:00.943 GMT+8
                 title="無題",
-                like=0,
-                dislike=0,
+                liked=0,
+                disliked=0,
                 comments=0,
             )
             post2 = pb2.Post(
@@ -91,8 +94,8 @@ class TestParseThreadInfos(TestCase):
                 ],
                 created_at=1740886457,  # 2025/03/02(日) 11:34:17.391 GMT+8
                 title="無題",
-                like=0,
-                dislike=0,
+                liked=0,
+                disliked=0,
                 comments=0,
             )
             post3 = pb2.Post(
@@ -109,8 +112,8 @@ class TestParseThreadInfos(TestCase):
                 ],
                 created_at=1740886613,  # 2025/03/02(日) 11:36:53.647 GMT+8
                 title="無題",
-                like=0,
-                dislike=0,
+                liked=0,
+                disliked=0,
                 comments=0,
             )
             post4 = pb2.Post(
@@ -127,8 +130,8 @@ class TestParseThreadInfos(TestCase):
                 ],
                 created_at=1740886843,  # 2025/03/02(日) 11:40:43.161 GMT+8
                 title="無題",
-                like=0,
-                dislike=0,
+                liked=0,
+                disliked=0,
                 comments=0,
             )
             post5 = pb2.Post(
@@ -145,8 +148,8 @@ class TestParseThreadInfos(TestCase):
                 ],
                 created_at=1740896539,  # 2025/03/02(日) 11:42:19.134 GMT+8
                 title="無題",
-                like=0,
-                dislike=0,
+                liked=0,
+                disliked=0,
                 comments=0,
             )
             post6 = pb2.Post(
@@ -163,8 +166,8 @@ class TestParseThreadInfos(TestCase):
                 ],
                 created_at=1740896561,  # 2025/03/02(日) 11:42:41.772 GMT+8
                 title="無題",
-                like=0,
-                dislike=0,
+                liked=0,
+                disliked=0,
                 comments=0,
             )
             self.assertEqual(posts[0], post1)

@@ -7,62 +7,41 @@ import extension_api_pb2 as pb2
 import paragraph
 
 
-def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[pb2.ThreadInfo]:
+def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[pb2.Post]:
     tree = html.fromstring(html_content)
     thread_infos = []
 
     for thread_div in tree.xpath('//div[@class="thread"]'):
         # print(html.tostring(thread_div, encoding="unicode", pretty_print=True))
-        base = _parse_thread(thread_div)
-        base.site_id = site_id
-        base.board_id = board_id
-        base.original_post.site_id = site_id
-        base.original_post.board_id = board_id
-        base.original_post.thread_id = base.id
-
-        # 解析 preview_content
-        preview_content = [x.text.content.strip() for x in base.original_post.contents if x.text]
-        preview_content = " ".join(preview_content).strip()
-
-        thread_info = pb2.ThreadInfo(
-            id=base.id,
-            board_id=base.board_id,
-            site_id=base.site_id,
-            url=base.url,
-            title=base.original_post.title,
-            author_name=base.original_post.author_name,
-            created_at=base.original_post.created_at,
-            latest_regarding_post_created_at=base.latest_regarding_post_created_at,
-            regarding_post_count=base.regarding_post_count,
-            preview_content=preview_content,
-        )
+        thread_info = _parse_thread(thread_div)
+        thread_info.site_id = site_id
+        thread_info.board_id = board_id
+        thread_info.thread_id = thread_info.id
         thread_infos.append(thread_info)
     return thread_infos
 
 
 def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str) -> list[pb2.Post]:
     tree = html.fromstring(html_content)
-    posts = []
+    regarding_posts = []
 
     for post_div in tree.xpath('//div[@class="post reply"]'):
         post = _parse_post(post_div)
+        post.thread_id = thread_id
         if post.id != thread_id:
             post.origin_post_id = thread_id
         post.site_id = site_id
         post.board_id = board_id
-        posts.append(post)
+        regarding_posts.append(post)
+    return regarding_posts
 
-    return posts
 
-
-def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Thread:
+def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Post:
     tree = html.fromstring(html_content)
     thread = _parse_thread(tree)
     thread.site_id = site_id
     thread.board_id = board_id
-    thread.original_post.site_id = site_id
-    thread.original_post.board_id = board_id
-    thread.original_post.thread_id = thread.id
+    thread.thread_id = thread.id
     return thread
 
 
@@ -120,48 +99,39 @@ def _parse_post(post_div: _Element) -> pb2.Post:
         author_name=author_name,
         created_at=created_at,
         title="無題",
-        like=0,
-        dislike=0,
+        liked=0,
+        disliked=0,
         comments=regarding_post_count,
         contents=contents,
     )
 
 
-def _parse_thread(tree) -> pb2.Thread:
+def _parse_thread(tree) -> pb2.Post:
     threadpost_div = tree.xpath('.//div[@class="post threadpost"]')[0]
     thread_id = threadpost_div.get("data-no")
-    thread_url = f"pixmicat.php?res={thread_id}"
 
-    original_post = _parse_post(threadpost_div)
+    post = _parse_post(threadpost_div)
 
     # 解析 title
     title = threadpost_div.xpath('.//span[@class="title"]/text()')
     title = title[0] if title else "無題"
-    original_post.title = title
+    post.title = title
 
     # 解析帖子
-    posts = []
+    regarding_posts = []
     for post_div in tree.xpath('//div[@class="post reply"]'):
-        post = _parse_post(post_div)
-        if post.id != thread_id:
-            post.origin_post_id = thread_id
-        posts.append(post)
+        regarding_post = _parse_post(post_div)
+        if regarding_post.id != thread_id:
+            regarding_post.origin_post_id = thread_id
+        regarding_posts.append(regarding_post)
 
     # 取得回覆數
-    regarding_post_count = len(posts)
+    post.regarding_posts = len(regarding_posts)
 
     # 取得最新回覆時間
-    latest_regarding_post_created_at = max((post.created_at for post in posts), default=original_post.created_at)
+    post.latest_regarding_post_created_at = max((post.created_at for post in regarding_posts), default=post.created_at)
 
-    return pb2.Thread(
-        id=thread_id,
-        board_id=None,
-        site_id=None,
-        url=thread_url,
-        original_post=original_post,
-        latest_regarding_post_created_at=latest_regarding_post_created_at,
-        regarding_post_count=regarding_post_count,
-    )
+    return post
 
 def _parse_post_content(post_div: _Element) -> list[pb2.Paragraph]:
     """解析貼文內容，返回 Paragraph 列表"""
