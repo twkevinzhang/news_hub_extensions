@@ -1,3 +1,4 @@
+from collections.abc import Callable
 from datetime import datetime
 
 from lxml import html
@@ -21,21 +22,6 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[p
     return thread_infos
 
 
-def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str) -> list[pb2.Post]:
-    tree = html.fromstring(html_content)
-    regarding_posts = []
-
-    for post_div in tree.xpath('//div[@class="post reply"]'):
-        post = _parse_post(post_div)
-        post.thread_id = thread_id
-        if post.id != thread_id:
-            post.origin_post_id = thread_id
-        post.site_id = site_id
-        post.board_id = board_id
-        regarding_posts.append(post)
-    return regarding_posts
-
-
 def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Post:
     tree = html.fromstring(html_content)
     thread = _parse_thread(tree)
@@ -43,6 +29,49 @@ def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Post:
     thread.board_id = board_id
     thread.thread_id = thread.id
     return thread
+
+
+def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str) -> list[pb2.Post]:
+    tree = html.fromstring(html_content)
+
+    # 計算每個回覆的回覆數
+    regarding_posts_count_map: dict[str, int] = {}
+    latest_regarding_post_created_at_map: dict[str, int] = {}
+    for post_div in tree.xpath('//div[@class="post reply"]'):
+        post = _parse_post(post_div, lambda x: "")
+        for c in post.contents:
+            if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO:
+                no = c.reply_to.id
+                regarding_posts_count_map[no] = regarding_posts_count_map.get(no, 0) + 1
+                latest_regarding_post_created_at_map[no] = max(latest_regarding_post_created_at_map.get(no, 0), post.created_at)
+
+    regarding_posts = []
+    def get_preview(no: str):
+        contents: list[pb2.Paragraph] = next(iter([x.contents for x in regarding_posts if x.id == no]), None)
+        if contents is None:
+            return ""
+        preview = ""
+        for c in contents:
+            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_TEXT:
+                preview += c.text.content
+            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE:
+                preview += "[圖片]"
+            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_LINK:
+                preview += "[連結]"
+            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO:
+                preview += f"[影片]"
+        return preview
+    for post_div in tree.xpath('//div[@class="post reply"]'):
+        post = _parse_post(post_div, get_preview)
+        post.thread_id = thread_id
+        if post.id != thread_id:
+            post.origin_post_id = thread_id
+        post.site_id = site_id
+        post.board_id = board_id
+        post.regarding_posts_count = regarding_posts_count_map.get(post.id, 0)
+        post.latest_regarding_post_created_at = latest_regarding_post_created_at_map.get(post.id, 0)
+        regarding_posts.append(post)
+    return regarding_posts
 
 
 def _parse_datetime(date_str, time_str):
@@ -62,16 +91,12 @@ def _parse_datetime(date_str, time_str):
         dt_str = f"{date_str} {time_str}"
         dt_obj = datetime.strptime(dt_str, "%Y/%m/%d(%a) %H:%M:%S.%f")
         return int(dt_obj.timestamp())
-    except ValueError as e:
+    except ValueError:
         return 0
 
 
-def _parse_post(post_div: _Element) -> pb2.Post:
+def _parse_post(post_div: _Element, get_preview: Callable[[str], str]) -> pb2.Post:
     post_id = post_div.get("data-no")
-
-    # 解析回覆數
-    replies = post_div.xpath('.//div[@class="backquote"]/a/@data-no')
-    regarding_post_count = len(replies)
 
     # 解析發文時間
     datetime_element = post_div.find('.//span[@class="now"]')
@@ -85,7 +110,7 @@ def _parse_post(post_div: _Element) -> pb2.Post:
     author_name = author_name[0] if author_name else "無名"
 
     # 解析內容
-    contents = _parse_post_content(post_div)
+    contents = _parse_post_content(post_div, get_preview)
 
     return pb2.Post(
         id=post_id,
@@ -99,9 +124,12 @@ def _parse_post(post_div: _Element) -> pb2.Post:
         title="無題",
         liked=0,
         disliked=0,
-        regarding_posts=regarding_post_count,
         comments=0,
         contents=contents,
+        tags=[],
+        latest_regarding_post_created_at = 0,
+        regarding_posts_count=0,
+        url=None,
     )
 
 
@@ -109,7 +137,7 @@ def _parse_thread(tree) -> pb2.Post:
     threadpost_div = tree.xpath('.//div[@class="post threadpost"]')[0]
     thread_id = threadpost_div.get("data-no")
 
-    post = _parse_post(threadpost_div)
+    post = _parse_post(threadpost_div, lambda x: "")
 
     # 解析 title
     title = threadpost_div.xpath('.//span[@class="title"]/text()')
@@ -118,21 +146,21 @@ def _parse_thread(tree) -> pb2.Post:
 
     # 解析帖子
     regarding_posts = []
-    for post_div in tree.xpath('//div[@class="post reply"]'):
-        regarding_post = _parse_post(post_div)
+    for post_div in tree.xpath('.//div[@class="post reply"]'):
+        regarding_post = _parse_post(post_div, lambda x: "")
         if regarding_post.id != thread_id:
             regarding_post.origin_post_id = thread_id
         regarding_posts.append(regarding_post)
 
     # 取得回覆數
-    post.regarding_posts = len(regarding_posts)
+    post.regarding_posts_count = len(regarding_posts)
 
     # 取得最新回覆時間
     post.latest_regarding_post_created_at = max((post.created_at for post in regarding_posts), default=post.created_at)
 
     return post
 
-def _parse_post_content(post_div: _Element) -> list[pb2.Paragraph]:
+def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -> list[pb2.Paragraph]:
     """解析貼文內容，返回 Paragraph 列表"""
 
     # Extract the quote content
@@ -143,8 +171,8 @@ def _parse_post_content(post_div: _Element) -> list[pb2.Paragraph]:
              if element.tag == "span" and element.get("class") == "resquote":
                  qlink_a = element.find(".//a[@class='qlink']")
                  if qlink_a is not None:
-                     no = qlink_a.get("data-no")
-                     contents.append(paragraph.reply_to(s=no))
+                     no = qlink_a.get("href")[2:]
+                     contents.append(paragraph.reply_to(s=no, preview=get_preview(no)))
              elif element.tag == "a":
                  link_url = element.get("href")
                  contents.append(paragraph.link(link_url))

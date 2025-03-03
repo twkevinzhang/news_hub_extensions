@@ -232,10 +232,12 @@ class QuoteParagraph(_message.Message):
     def __init__(self, content: _Optional[str] = ...) -> None: ...
 
 class ReplyToParagraph(_message.Message):
-    __slots__ = ("id",)
+    __slots__ = ("id", "preview")
     ID_FIELD_NUMBER: _ClassVar[int]
+    PREVIEW_FIELD_NUMBER: _ClassVar[int]
     id: str
-    def __init__(self, id: _Optional[str] = ...) -> None: ...
+    preview: str
+    def __init__(self, id: _Optional[str] = ..., preview: _Optional[str] = ...) -> None: ...
 
 class LinkParagraph(_message.Message):
     __slots__ = ("content",)
@@ -244,7 +246,7 @@ class LinkParagraph(_message.Message):
     def __init__(self, content: _Optional[str] = ...) -> None: ...
 
 class Post(_message.Message):
-    __slots__ = ("id", "origin_post_id", "thread_id", "board_id", "site_id", "author_id", "author_name", "created_at", "title", "liked", "disliked", "comments", "latest_regarding_post_created_at", "regarding_posts", "contents", "tags")
+    __slots__ = ("id", "origin_post_id", "thread_id", "board_id", "site_id", "author_id", "author_name", "created_at", "title", "liked", "disliked", "comments", "contents", "tags", "latest_regarding_post_created_at", "regarding_posts_count", "url")
     ID_FIELD_NUMBER: _ClassVar[int]
     ORIGIN_POST_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
@@ -257,10 +259,11 @@ class Post(_message.Message):
     LIKED_FIELD_NUMBER: _ClassVar[int]
     DISLIKED_FIELD_NUMBER: _ClassVar[int]
     COMMENTS_FIELD_NUMBER: _ClassVar[int]
-    LATEST_REGARDING_POST_CREATED_AT_FIELD_NUMBER: _ClassVar[int]
-    REGARDING_POSTS_FIELD_NUMBER: _ClassVar[int]
     CONTENTS_FIELD_NUMBER: _ClassVar[int]
     TAGS_FIELD_NUMBER: _ClassVar[int]
+    LATEST_REGARDING_POST_CREATED_AT_FIELD_NUMBER: _ClassVar[int]
+    REGARDING_POSTS_COUNT_FIELD_NUMBER: _ClassVar[int]
+    URL_FIELD_NUMBER: _ClassVar[int]
     id: str
     origin_post_id: str
     thread_id: str
@@ -273,11 +276,12 @@ class Post(_message.Message):
     liked: int
     disliked: int
     comments: int
-    latest_regarding_post_created_at: int
-    regarding_posts: int
     contents: _containers.RepeatedCompositeFieldContainer[Paragraph]
     tags: _containers.RepeatedScalarFieldContainer[str]
-    def __init__(self, id: _Optional[str] = ..., origin_post_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., comments: _Optional[int] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_posts: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ...) -> None: ...
+    latest_regarding_post_created_at: int
+    regarding_posts_count: int
+    url: str
+    def __init__(self, id: _Optional[str] = ..., origin_post_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., comments: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_posts_count: _Optional[int] = ..., url: _Optional[str] = ...) -> None: ...
 
 class GetCommentsReq(_message.Message):
     __slots__ = ("site_id", "board_id", "thread_id", "post_id", "page")
