@@ -1,3 +1,5 @@
+import logging
+
 import requests
 
 import extension_api_pb2 as pb2
@@ -19,6 +21,7 @@ def get(url: str):
         encoding = response.apparent_encoding
         if encoding is None:
             encoding = 'utf-8'
+    logging.debug(f"{url} Encoding: {encoding}")
     html_content = response.content.decode(encoding, errors='ignore')
     return html_content
 

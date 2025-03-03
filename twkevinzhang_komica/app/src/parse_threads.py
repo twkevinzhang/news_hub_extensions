@@ -68,21 +68,19 @@ def _parse_datetime(date_str, time_str):
 
 def _parse_post(post_div: _Element) -> pb2.Post:
     post_id = post_div.get("data-no")
-    author_id = post_div.xpath('.//span[@class="id"]/@data-id')
-    author_id = author_id[0] if author_id else ""
 
     # 解析回覆數
     replies = post_div.xpath('.//div[@class="backquote"]/a/@data-no')
     regarding_post_count = len(replies)
 
     # 解析發文時間
-    date_element = post_div.find('.//span[@class="now"]')
-    time_element = post_div.find('.//span[@class="now"]/following-sibling::span[1]')
-    date_text = date_element.text if date_element is not None else "2025/02/25(二)"
-    time_text = time_element.text if time_element is not None else "00:00:00.000"
-    created_at = _parse_datetime(date_text, time_text)
+    datetime_element = post_div.find('.//span[@class="now"]')
+    datetime_str = ''.join(datetime_element.itertext())
+    datetime_arr = datetime_str.split(' ')
+    created_at = _parse_datetime(datetime_arr[0], datetime_arr[1])
 
     # 解析作者名稱
+    author_id = datetime_arr[2]
     author_name = post_div.xpath('.//span[@class="name"]/text()')
     author_name = author_name[0] if author_name else "無名"
 
@@ -101,7 +99,8 @@ def _parse_post(post_div: _Element) -> pb2.Post:
         title="無題",
         liked=0,
         disliked=0,
-        comments=regarding_post_count,
+        regarding_posts=regarding_post_count,
+        comments=0,
         contents=contents,
     )
 

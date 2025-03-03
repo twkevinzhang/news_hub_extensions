@@ -16,40 +16,59 @@ class TestParseThreadInfos(TestCase):
             thread_infos = parse_thread_infos_html(html, 'mock', 'mock')
             thread_info1 = pb2.Post(
                 id="26765435",
+                thread_id="26765435",
                 board_id="mock",
                 site_id="mock",
                 title="無題",
+                author_id="ID:Ho37W5Jk(1/4)",
                 author_name="無名",
-                created_at=1740432283,  # 2025/02/25(二) 05:24:44.001 GMT+8
-                latest_regarding_post_created_at=1740432283,  # 2025/02/25(二) 05:24:44.001 GMT+8
-                regarding_posts=1,
+                created_at=1740432284,  # 2025/02/25(二) 05:24:44.001 GMT+8
+                latest_regarding_post_created_at=1740434260,  # 2025/02/25(二) 05:24:44.001 GMT+8
+                regarding_posts=4,
                 contents=[
-                    paragraph.text("美國正式加入中俄勢力 島民現在在想什麼?"),
+                    paragraph.image(
+                        s="https://gita.komica1.org/00b/src/1740432283914.jpg",
+                        thumb="https://gita.komica1.org/00b/thumb/1740432283914s.jpg",
+                    ),
+                    paragraph.text("美國正式加入中俄勢力"),
+                    paragraph.text("島民現在在想什麼?"),
                 ],
             )
             thread_info2 = pb2.Post(
                 id="26765468",
+                thread_id="26765468",
                 board_id="mock",
                 site_id="mock",
                 title="無題",
+                author_id="ID:tMp8iWdc",
                 author_name="無名",
                 created_at=1740434415,  # 2025/02/25(二) 06:00:15.732 GMT+8
-                latest_regarding_post_created_at=1740434415,  # 2025/02/25(二) 06:00:15.732 GMT+8
-                regarding_posts=0,
+                latest_regarding_post_created_at=1740434260,  # 2025/02/25(二) 06:00:15.732 GMT+8
+                regarding_posts=4,
                 contents=[
+                    paragraph.image(
+                        s="https://gita.komica1.org/00b/src/1740434415657.jpg",
+                        thumb="https://gita.komica1.org/00b/thumb/1740434415657s.jpg",
+                    ),
                     paragraph.text("清晨清姬清雞雞"),
                 ],
             )
             thread_info3 = pb2.Post(
                 id="26765356",
+                thread_id="26765356",
                 board_id="mock",
                 site_id="mock",
                 title="無題",
+                author_id="ID:lkoVmHUo",
                 author_name="無名",
                 created_at=1740426590,  # 2025/02/25(二) 03:49:50.664 GMT+8
-                latest_regarding_post_created_at=1740426590,  # 2025/02/25(二) 03:49:50.664 GMT+8
-                regarding_posts=3,
+                latest_regarding_post_created_at=1740434260,  # 2025/02/25(二) 03:49:50.664 GMT+8
+                regarding_posts=4,
                 contents=[
+                    paragraph.image(
+                        s="https://gita.komica1.org/00b/src/1740426590497.webm",
+                        thumb="https://gita.komica1.org/00b/thumb/1740426590497s.jpg",
+                    ),
                     paragraph.text("有洗貓的影片嗎"),
                 ],
             )
@@ -68,7 +87,7 @@ class TestParseThreadInfos(TestCase):
                 thread_id="mock",
                 board_id="mock",
                 site_id="mock",
-                author_id=None,
+                author_id="ID:r76NdmK.(2/4)",
                 author_name="無名",
                 contents=[
                     paragraph.image(s="https://gita.komica1.org/00b/src/1740886260520.jpg", thumb="https://gita.komica1.org/00b/thumb/1740886260520s.jpg"),
@@ -86,7 +105,7 @@ class TestParseThreadInfos(TestCase):
                 thread_id="mock",
                 board_id="mock",
                 site_id="mock",
-                author_id=None,
+                author_id="ID:Vzxlijiw",
                 author_name="無名",
                 contents=[
                     paragraph.reply_to(s="26812758"),
@@ -104,7 +123,7 @@ class TestParseThreadInfos(TestCase):
                 thread_id="mock",
                 board_id="mock",
                 site_id="mock",
-                author_id=None,
+                author_id="ID:r76NdmK.(3/4)",
                 author_name="無名",
                 contents=[
                     paragraph.image(s="https://gita.komica1.org/00b/src/1740886613383.jpg", thumb="https://gita.komica1.org/00b/thumb/1740886613383s.jpg"),
@@ -122,7 +141,7 @@ class TestParseThreadInfos(TestCase):
                 thread_id="mock",
                 board_id="mock",
                 site_id="mock",
-                author_id=None,
+                author_id="ID:r76NdmK.(4/4)",
                 author_name="無名",
                 contents=[
                     paragraph.image(s="https://gita.komica1.org/00b/src/1740886843049.jpg", thumb="https://gita.komica1.org/00b/thumb/1740886843049s.jpg"),
@@ -133,6 +152,7 @@ class TestParseThreadInfos(TestCase):
                 liked=0,
                 disliked=0,
                 comments=0,
+                regarding_posts=1,
             )
             post5 = pb2.Post(
                 id="26812836",
@@ -140,13 +160,13 @@ class TestParseThreadInfos(TestCase):
                 thread_id="mock",
                 board_id="mock",
                 site_id="mock",
-                author_id=None,
+                author_id="ID:Tx/LDMKs",
                 author_name="無名",
                 contents=[
                     paragraph.reply_to(s="26812758"),
                     paragraph.text("感覺女角越穿越少..?"),
                 ],
-                created_at=1740896539,  # 2025/03/02(日) 11:42:19.134 GMT+8
+                created_at=1740886939,  # 2025/03/02(日) 11:42:19.134 GMT+8
                 title="無題",
                 liked=0,
                 disliked=0,
@@ -158,13 +178,13 @@ class TestParseThreadInfos(TestCase):
                 thread_id="mock",
                 board_id="mock",
                 site_id="mock",
-                author_id=None,
+                author_id="ID:dvKAH0Qw",
                 author_name="無名",
                 contents=[
                     paragraph.reply_to(s="26812830"),
                     paragraph.text("誰"),
                 ],
-                created_at=1740896561,  # 2025/03/02(日) 11:42:41.772 GMT+8
+                created_at=1740886961,  # 2025/03/02(日) 11:42:41.772 GMT+8
                 title="無題",
                 liked=0,
                 disliked=0,
