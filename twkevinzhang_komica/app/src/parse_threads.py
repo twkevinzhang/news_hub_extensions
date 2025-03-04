@@ -8,7 +8,7 @@ import extension_api_pb2 as pb2
 import paragraph
 
 
-def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[pb2.Post]:
+def parse_thread_infos_html(html_content, site_id: str, board: pb2.Board) -> list[pb2.Post]:
     tree = html.fromstring(html_content)
     thread_infos = []
 
@@ -16,18 +16,22 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[p
         # print(html.tostring(thread_div, encoding="unicode", pretty_print=True))
         thread_info = _parse_thread(thread_div)
         thread_info.site_id = site_id
-        thread_info.board_id = board_id
+        thread_info.board_id = board.id
         thread_info.thread_id = thread_info.id
+        prefix = board.url.removesuffix("/index.htm")
+        thread_info.url = f'{prefix}/pixmicat.php?res={thread_info.id}'
         thread_infos.append(thread_info)
     return thread_infos
 
 
-def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Post:
+def parse_thread_html(html_content, site_id: str, board: pb2.Board) -> pb2.Post:
     tree = html.fromstring(html_content)
     thread = _parse_thread(tree)
     thread.site_id = site_id
-    thread.board_id = board_id
+    thread.board_id = board.id
     thread.thread_id = thread.id
+    prefix = board.url.removesuffix("/index.htm")
+    thread.url = f'{prefix}/pixmicat.php?res={thread.id}'
     return thread
 
 

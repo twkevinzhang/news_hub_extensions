@@ -47,7 +47,7 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
     def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
         b = parse_boards.get(req.board_id)
         response = get(f"{b.url}")
-        thread_infos = parse_thread_infos_html(response, req.site_id, req.board_id)
+        thread_infos = parse_thread_infos_html(response, req.site_id, b)
         return pb2.GetThreadInfosRes(
             thread_infos=thread_infos,
             page=pb2.PaginationRes(
@@ -60,7 +60,7 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         b = parse_boards.get(req.board_id)
         prefix = b.url.removesuffix("/index.htm")
         response = get(f"{prefix}/pixmicat.php?res={req.id}")
-        thread = parse_thread_html(response, req.site_id, req.board_id)
+        thread = parse_thread_html(response, req.site_id, b)
         return pb2.GetThreadRes(
             thread=thread,
         )
