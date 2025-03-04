@@ -132,14 +132,16 @@ class GetThreadInfosRes(_message.Message):
     def __init__(self, thread_infos: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
 
 class GetThreadPostReq(_message.Message):
-    __slots__ = ("id", "site_id", "board_id")
+    __slots__ = ("id", "site_id", "board_id", "post_id")
     ID_FIELD_NUMBER: _ClassVar[int]
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    POST_ID_FIELD_NUMBER: _ClassVar[int]
     id: str
     site_id: str
     board_id: str
-    def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ...) -> None: ...
+    post_id: str
+    def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., post_id: _Optional[str] = ...) -> None: ...
 
 class GetThreadPostRes(_message.Message):
     __slots__ = ("thread_post",)
@@ -230,9 +232,8 @@ class LinkParagraph(_message.Message):
     def __init__(self, content: _Optional[str] = ...) -> None: ...
 
 class Post(_message.Message):
-    __slots__ = ("id", "origin_post_id", "thread_id", "board_id", "site_id", "author_id", "author_name", "created_at", "title", "liked", "disliked", "comments", "contents", "tags", "latest_regarding_post_created_at", "regarding_posts_count", "url")
+    __slots__ = ("id", "thread_id", "board_id", "site_id", "author_id", "author_name", "created_at", "title", "liked", "disliked", "comments", "contents", "tags", "latest_regarding_post_created_at", "regarding_posts_count", "url")
     ID_FIELD_NUMBER: _ClassVar[int]
-    ORIGIN_POST_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
@@ -249,7 +250,6 @@ class Post(_message.Message):
     REGARDING_POSTS_COUNT_FIELD_NUMBER: _ClassVar[int]
     URL_FIELD_NUMBER: _ClassVar[int]
     id: str
-    origin_post_id: str
     thread_id: str
     board_id: str
     site_id: str
@@ -265,7 +265,7 @@ class Post(_message.Message):
     latest_regarding_post_created_at: int
     regarding_posts_count: int
     url: str
-    def __init__(self, id: _Optional[str] = ..., origin_post_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., comments: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_posts_count: _Optional[int] = ..., url: _Optional[str] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., site_id: _Optional[str] = ..., author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., comments: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_regarding_post_created_at: _Optional[int] = ..., regarding_posts_count: _Optional[int] = ..., url: _Optional[str] = ...) -> None: ...
 
 class GetCommentsReq(_message.Message):
     __slots__ = ("site_id", "board_id", "thread_id", "post_id", "page")

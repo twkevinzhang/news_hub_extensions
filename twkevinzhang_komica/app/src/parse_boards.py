@@ -5,7 +5,7 @@ def list():
     # 目前先實作 Top50 的版面
     return [
         pb2.Board(
-            id="komica_1",
+            id="gita/00b",
             site_id="1",
             name="綜合",
             icon="https://komica1.org/favicon.ico",
@@ -14,7 +14,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_2",
+            id="gaia/79",
             site_id="1",
             name="新番捏他",
             icon="https://komica1.org/favicon.ico",
@@ -23,7 +23,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_3",
+            id="gaia/42",
             site_id="1",
             name="四格",
             icon="https://komica1.org/favicon.ico",
@@ -32,7 +32,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_4",
+            id="gaia/19",
             site_id="1",
             name="女性角色",
             icon="https://komica1.org/favicon.ico",
@@ -41,7 +41,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_5",
+            id="gaia/38",
             site_id="1",
             name="男性角色",
             icon="https://komica1.org/favicon.ico",
@@ -50,7 +50,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_6",
+            id="gaia/78",
             site_id="1",
             name="新番實況",
             icon="https://komica1.org/favicon.ico",
@@ -59,7 +59,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_7",
+            id="atri/12",
             site_id="1",
             name="歡樂惡搞",
             icon="https://komica1.org/favicon.ico",
@@ -68,7 +68,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_8",
+            id="atri/23",
             site_id="1",
             name="GIF/WebM",
             icon="https://komica1.org/favicon.ico",
@@ -77,7 +77,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_9",
+            id="atri/67",
             site_id="1",
             name="政治",
             icon="https://komica1.org/favicon.ico",
@@ -86,7 +86,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_10",
+            id="gaia/09",
             site_id="1",
             name="模型",
             icon="https://komica1.org/favicon.ico",
@@ -95,7 +95,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_11",
+            id="gaia/15",
             site_id="1",
             name="蘿蔔",
             icon="https://komica1.org/favicon.ico",
@@ -113,7 +113,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_13",
+            id="atri/61",
             site_id="1",
             name="鋼普拉",
             icon="https://komica1.org/favicon.ico",
@@ -122,7 +122,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_14",
+            id="iris/72",
             site_id="1",
             name="Figure/GK",
             icon="https://komica1.org/favicon.ico",
@@ -131,7 +131,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_15",
+            id="gaia/17",
             site_id="1",
             name="軍武",
             icon="https://komica1.org/favicon.ico",
@@ -140,7 +140,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_16",
+            id="gaia/13",
             site_id="1",
             name="特攝",
             icon="https://komica1.org/favicon.ico",
@@ -149,7 +149,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_17",
+            id="sora/69",
             site_id="1",
             name="短片2",
             icon="https://komica1.org/favicon.ico",
@@ -167,7 +167,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_19",
+            id="gaia/74",
             site_id="1",
             name="Vtuber",
             icon="https://komica1.org/favicon.ico",
@@ -176,7 +176,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_20",
+            id="grea/73",
             site_id="1",
             name="遊戲王",
             icon="https://komica1.org/favicon.ico",
@@ -185,7 +185,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_21",
+            id="gaia/60",
             site_id="1",
             name="奇幻/科幻",
             icon="https://komica1.org/favicon.ico",
@@ -194,7 +194,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_22",
+            id="sora/81",
             site_id="1",
             name="漫畫",
             icon="https://komica1.org/favicon.ico",
@@ -203,7 +203,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_23",
+            id="sora/16",
             site_id="1",
             name="寫真",
             icon="https://komica1.org/favicon.ico",
@@ -211,17 +211,17 @@ def list():
             url="https://sora.komica1.org/16/index.htm",
             supported_threads_sorting=["latest_replied"]
         ),
+        # pb2.Board(
+        #     id="58",
+        #     site_id="1",
+        #     name="飲食",
+        #     icon="https://komica1.org/favicon.ico",
+        #     large_welcome_image="",
+        #     url="https://grea.komica1.org/58/index.htm?",
+        #     supported_threads_sorting=["latest_replied"]
+        # ),
         pb2.Board(
-            id="komica_24",
-            site_id="1",
-            name="飲食",
-            icon="https://komica1.org/favicon.ico",
-            large_welcome_image="",
-            url="https://grea.komica1.org/58/index.htm?",
-            supported_threads_sorting=["latest_replied"]
-        ),
-        pb2.Board(
-            id="komica_25",
+            id="iris/64",
             site_id="1",
             name="掛圖",
             icon="https://komica1.org/favicon.ico",
@@ -230,7 +230,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_26",
+            id="grea/57",
             site_id="1",
             name="中性角色",
             icon="https://komica1.org/favicon.ico",
@@ -239,7 +239,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_27",
+            id="sora/80",
             site_id="1",
             name="動畫",
             icon="https://komica1.org/favicon.ico",
@@ -257,7 +257,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_29",
+            id="grea/25",
             site_id="1",
             name="新聞",
             icon="https://komica1.org/favicon.ico",
@@ -266,7 +266,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_30",
+            id="grea/27",
             site_id="1",
             name="遊戲速報",
             icon="https://komica1.org/favicon.ico",
@@ -275,7 +275,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_31",
+            id="iris/35",
             site_id="1",
             name="小說",
             icon="https://komica1.org/favicon.ico",
@@ -311,7 +311,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_35",
+            id="grea/52",
             site_id="1",
             name="網路遊戲",
             icon="https://komica1.org/favicon.ico",
@@ -320,7 +320,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_36",
+            id="grea/46",
             site_id="1",
             name="布袋戲",
             icon="https://komica1.org/favicon.ico",
@@ -329,7 +329,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_37",
+            id="grea/37",
             site_id="1",
             name="電腦/消費電子",
             icon="https://komica1.org/favicon.ico",
@@ -337,15 +337,15 @@ def list():
             url="https://grea.komica1.org/37/index.htm",
             supported_threads_sorting=["latest_replied"]
         ),
-        pb2.Board(
-            id="komica_38",
-            site_id="1",
-            name="萌",
-            icon="https://komica1.org/favicon.ico",
-            large_welcome_image="",
-            url="https://2cat.komica1.org/~kirur/img2/index.htm",
-            supported_threads_sorting=["latest_replied"]
-        ),
+        # pb2.Board(
+        #     id="komica_38",
+        #     site_id="1",
+        #     name="萌",
+        #     icon="https://komica1.org/favicon.ico",
+        #     large_welcome_image="",
+        #     url="https://2cat.komica1.org/~kirur/img2/index.htm",
+        #     supported_threads_sorting=["latest_replied"]
+        # ),
         # pb2.Board(
         #     id="komica_39",
         #     site_id="1",
@@ -383,7 +383,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_43",
+            id="grea/30",
             site_id="1",
             name="塗鴉王國",
             icon="https://komica1.org/favicon.ico",
@@ -401,7 +401,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_45",
+            id="grea/36",
             site_id="1",
             name="擬人化",
             icon="https://komica1.org/favicon.ico",
@@ -410,7 +410,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_46",
+            id="grea/49",
             site_id="1",
             name="體育",
             icon="https://komica1.org/favicon.ico",
@@ -419,7 +419,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_47",
+            id="grea/33",
             site_id="1",
             name="高解析度",
             icon="https://komica1.org/favicon.ico",
@@ -428,7 +428,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
-            id="komica_48",
+            id="grea/10",
             site_id="1",
             name="紙牌",
             icon="https://komica1.org/favicon.ico",
@@ -446,7 +446,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
-            id="komica_50",
+            id="grea/62",
             site_id="1",
             name="氣象",
             icon="https://komica1.org/favicon.ico",

@@ -30,8 +30,8 @@ def link(s: str) -> pb2.Paragraph:
         link=pb2.LinkParagraph(content=s)
     )
 
-def reply_to(s: str, preview: str) -> pb2.Paragraph:
+def reply_to(id: str, preview: str) -> pb2.Paragraph:
     return pb2.Paragraph(
         type=pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
-        reply_to=pb2.ReplyToParagraph(id=s, preview=preview)
+        reply_to=pb2.ReplyToParagraph(id=id, preview=preview)
     )

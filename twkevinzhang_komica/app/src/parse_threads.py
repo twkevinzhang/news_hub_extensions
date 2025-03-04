@@ -6,9 +6,10 @@ from lxml.etree import _Element
 
 import extension_api_pb2 as pb2
 import paragraph
+import domain
 
 
-def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[pb2.Post]:
+def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[domain.Post]:
     tree = html.fromstring(html_content)
     thread_infos = []
 
@@ -22,16 +23,20 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[p
     return thread_infos
 
 
-def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Post:
+def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
     tree = html.fromstring(html_content)
-    thread = _parse_thread(tree)
-    thread.site_id = site_id
-    thread.board_id = board_id
-    thread.thread_id = thread.id
-    return thread
+    if len(post_id) == 0:
+        thread = _parse_thread(tree)
+        thread.site_id = site_id
+        thread.board_id = board_id
+        thread.thread_id = thread_id
+        return thread
+    else:
+        all_posts = parse_regarding_posts_html(tree, site_id, board_id, thread_id, None)
+        return next(iter([x for x in all_posts if x.id == post_id]), None)
 
 
-def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> list[pb2.Post]:
+def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> list[domain.Post]:
     tree = html.fromstring(html_content)
 
     # 計算回覆數
@@ -65,7 +70,6 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
     for post_div in tree.xpath('//div[@class="post reply"]'):
         post = _parse_post(post_div, get_preview)
         post.thread_id = thread_id
-        post.origin_post_id = post_id
         post.site_id = site_id
         post.board_id = board_id
         post.regarding_posts_count = regarding_posts_count_map.get(post.id, 0)
@@ -73,7 +77,7 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
         regarding_posts.append(post)
 
     # 根據 post_id 篩選回覆
-    if post_id is not None:
+    if len(post_id) > 0:
         filtered_posts = []
         for post in regarding_posts:
             for c in post.contents:
@@ -105,7 +109,7 @@ def _parse_datetime(date_str, time_str):
         return 0
 
 
-def _parse_post(post_div: _Element, get_preview: Callable[[str], str]) -> pb2.Post:
+def _parse_post(post_div: _Element, get_preview: Callable[[str], str]) -> domain.Post:
     post_id = post_div.get("data-no")
 
     # 解析發文時間
@@ -122,9 +126,8 @@ def _parse_post(post_div: _Element, get_preview: Callable[[str], str]) -> pb2.Po
     # 解析內容
     contents = _parse_post_content(post_div, get_preview)
 
-    return pb2.Post(
+    return domain.Post(
         id=post_id,
-        origin_post_id=None,
         thread_id=None,
         board_id=None,
         site_id=None,
@@ -143,7 +146,7 @@ def _parse_post(post_div: _Element, get_preview: Callable[[str], str]) -> pb2.Po
     )
 
 
-def _parse_thread(tree) -> pb2.Post:
+def _parse_thread(tree) -> domain.Post:
     threadpost_div = tree.xpath('.//div[@class="post threadpost"]')[0]
     thread_id = threadpost_div.get("data-no")
 
@@ -157,16 +160,13 @@ def _parse_thread(tree) -> pb2.Post:
     # 解析帖子
     regarding_posts = []
     for post_div in tree.xpath('.//div[@class="post reply"]'):
-        regarding_post = _parse_post(post_div, lambda x: "")
-        if regarding_post.id != thread_id:
-            regarding_post.origin_post_id = thread_id
-        regarding_posts.append(regarding_post)
+        regarding_posts.append(_parse_post(post_div, lambda x: ""))
 
     # 取得回覆數
     post.regarding_posts_count = len(regarding_posts)
 
     # 取得最新回覆時間
-    post.latest_regarding_post_created_at = max((post.created_at for post in regarding_posts), default=post.created_at)
+    post.latest_regarding_post_created_at = max((post.created_at for post in regarding_posts), default=0)
 
     return post
 
@@ -182,7 +182,7 @@ def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -
                  qlink_a = element.find(".//a[@class='qlink']")
                  if qlink_a is not None:
                      no = qlink_a.get("href")[2:]
-                     contents.append(paragraph.reply_to(s=no, preview=get_preview(no)))
+                     contents.append(paragraph.reply_to(id=no, preview=get_preview(no)))
              elif element.tag == "a":
                  link_url = element.get("href")
                  contents.append(paragraph.link(link_url))
