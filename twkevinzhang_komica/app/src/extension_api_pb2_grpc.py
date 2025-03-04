@@ -49,20 +49,15 @@ class ExtensionApiStub(object):
                 request_serializer=extension__api__pb2.GetThreadInfosReq.SerializeToString,
                 response_deserializer=extension__api__pb2.GetThreadInfosRes.FromString,
                 _registered_method=True)
-        self.GetThread = channel.unary_unary(
-                '/pb.ExtensionApi/GetThread',
-                request_serializer=extension__api__pb2.GetThreadReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetThreadRes.FromString,
+        self.GetThreadPost = channel.unary_unary(
+                '/pb.ExtensionApi/GetThreadPost',
+                request_serializer=extension__api__pb2.GetThreadPostReq.SerializeToString,
+                response_deserializer=extension__api__pb2.GetThreadPostRes.FromString,
                 _registered_method=True)
         self.GetRegardingPosts = channel.unary_unary(
                 '/pb.ExtensionApi/GetRegardingPosts',
                 request_serializer=extension__api__pb2.GetRegardingPostsReq.SerializeToString,
                 response_deserializer=extension__api__pb2.GetRegardingPostsRes.FromString,
-                _registered_method=True)
-        self.GetPost = channel.unary_unary(
-                '/pb.ExtensionApi/GetPost',
-                request_serializer=extension__api__pb2.GetPostReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetPostRes.FromString,
                 _registered_method=True)
         self.GetComments = channel.unary_unary(
                 '/pb.ExtensionApi/GetComments',
@@ -92,19 +87,13 @@ class ExtensionApiServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetThread(self, request, context):
+    def GetThreadPost(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
     def GetRegardingPosts(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
-
-    def GetPost(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -134,20 +123,15 @@ def add_ExtensionApiServicer_to_server(servicer, server):
                     request_deserializer=extension__api__pb2.GetThreadInfosReq.FromString,
                     response_serializer=extension__api__pb2.GetThreadInfosRes.SerializeToString,
             ),
-            'GetThread': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetThread,
-                    request_deserializer=extension__api__pb2.GetThreadReq.FromString,
-                    response_serializer=extension__api__pb2.GetThreadRes.SerializeToString,
+            'GetThreadPost': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetThreadPost,
+                    request_deserializer=extension__api__pb2.GetThreadPostReq.FromString,
+                    response_serializer=extension__api__pb2.GetThreadPostRes.SerializeToString,
             ),
             'GetRegardingPosts': grpc.unary_unary_rpc_method_handler(
                     servicer.GetRegardingPosts,
                     request_deserializer=extension__api__pb2.GetRegardingPostsReq.FromString,
                     response_serializer=extension__api__pb2.GetRegardingPostsRes.SerializeToString,
-            ),
-            'GetPost': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetPost,
-                    request_deserializer=extension__api__pb2.GetPostReq.FromString,
-                    response_serializer=extension__api__pb2.GetPostRes.SerializeToString,
             ),
             'GetComments': grpc.unary_unary_rpc_method_handler(
                     servicer.GetComments,
@@ -247,7 +231,7 @@ class ExtensionApi(object):
             _registered_method=True)
 
     @staticmethod
-    def GetThread(request,
+    def GetThreadPost(request,
             target,
             options=(),
             channel_credentials=None,
@@ -260,9 +244,9 @@ class ExtensionApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pb.ExtensionApi/GetThread',
-            extension__api__pb2.GetThreadReq.SerializeToString,
-            extension__api__pb2.GetThreadRes.FromString,
+            '/pb.ExtensionApi/GetThreadPost',
+            extension__api__pb2.GetThreadPostReq.SerializeToString,
+            extension__api__pb2.GetThreadPostRes.FromString,
             options,
             channel_credentials,
             insecure,
@@ -290,33 +274,6 @@ class ExtensionApi(object):
             '/pb.ExtensionApi/GetRegardingPosts',
             extension__api__pb2.GetRegardingPostsReq.SerializeToString,
             extension__api__pb2.GetRegardingPostsRes.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
-
-    @staticmethod
-    def GetPost(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/pb.ExtensionApi/GetPost',
-            extension__api__pb2.GetPostReq.SerializeToString,
-            extension__api__pb2.GetPostRes.FromString,
             options,
             channel_credentials,
             insecure,

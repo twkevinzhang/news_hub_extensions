@@ -31,10 +31,10 @@ def parse_thread_html(html_content, site_id: str, board_id: str) -> pb2.Post:
     return thread
 
 
-def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str) -> list[pb2.Post]:
+def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> list[pb2.Post]:
     tree = html.fromstring(html_content)
 
-    # 計算每個回覆的回覆數
+    # 計算回覆數
     regarding_posts_count_map: dict[str, int] = {}
     latest_regarding_post_created_at_map: dict[str, int] = {}
     for post_div in tree.xpath('//div[@class="post reply"]'):
@@ -45,6 +45,7 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
                 regarding_posts_count_map[no] = regarding_posts_count_map.get(no, 0) + 1
                 latest_regarding_post_created_at_map[no] = max(latest_regarding_post_created_at_map.get(no, 0), post.created_at)
 
+    # 解析所有回覆
     regarding_posts = []
     def get_preview(no: str):
         contents: list[pb2.Paragraph] = next(iter([x.contents for x in regarding_posts if x.id == no]), None)
@@ -64,13 +65,22 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
     for post_div in tree.xpath('//div[@class="post reply"]'):
         post = _parse_post(post_div, get_preview)
         post.thread_id = thread_id
-        if post.id != thread_id:
-            post.origin_post_id = thread_id
+        post.origin_post_id = post_id
         post.site_id = site_id
         post.board_id = board_id
         post.regarding_posts_count = regarding_posts_count_map.get(post.id, 0)
         post.latest_regarding_post_created_at = latest_regarding_post_created_at_map.get(post.id, 0)
         regarding_posts.append(post)
+
+    # 根據 post_id 篩選回覆
+    if post_id is not None:
+        filtered_posts = []
+        for post in regarding_posts:
+            for c in post.contents:
+                if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO and c.reply_to.id == post_id:
+                    filtered_posts.append(post)
+        return filtered_posts
+
     return regarding_posts
 
 

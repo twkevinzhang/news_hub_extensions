@@ -56,26 +56,23 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
             )
         )
 
-    def GetThread(self, req: pb2.GetThreadReq, context) -> pb2.GetThreadRes:
+    def GetThreadPost(self, req: pb2.GetThreadPostReq, context) -> pb2.GetThreadPostRes:
         b = parse_boards.get(req.board_id)
         prefix = b.url.removesuffix("/index.htm")
         response = get(f"{prefix}/pixmicat.php?res={req.id}")
-        thread = parse_thread_html(response, req.site_id, req.board_id)
-        return pb2.GetThreadRes(
-            thread=thread,
+        thread = parse_thread_html(response, req.site_id, b)
+        return pb2.GetThreadPostRes(
+            thread_post=thread,
         )
 
     def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
         b = parse_boards.get(req.board_id)
         prefix = b.url.removesuffix("/index.htm")
         response = get(f"{prefix}/pixmicat.php?res={req.thread_id}")
-        posts = parse_regarding_posts_html(response, req.site_id, req.board_id, req.thread_id)
+        posts = parse_regarding_posts_html(response, req.site_id, req.board_id, req.thread_id, req.post_id)
         return pb2.GetRegardingPostsRes(
             regarding_posts=posts
         )
-
-    def GetPost(self, req: pb2.GetPostReq, context) -> pb2.GetPostRes:
-        pass
 
     def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadInfosRes:
         pass

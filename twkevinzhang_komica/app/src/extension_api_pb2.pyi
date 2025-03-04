@@ -131,7 +131,7 @@ class GetThreadInfosRes(_message.Message):
     page: PaginationRes
     def __init__(self, thread_infos: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
 
-class GetThreadReq(_message.Message):
+class GetThreadPostReq(_message.Message):
     __slots__ = ("id", "site_id", "board_id")
     ID_FIELD_NUMBER: _ClassVar[int]
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
@@ -141,23 +141,25 @@ class GetThreadReq(_message.Message):
     board_id: str
     def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ...) -> None: ...
 
-class GetThreadRes(_message.Message):
-    __slots__ = ("thread",)
-    THREAD_FIELD_NUMBER: _ClassVar[int]
-    thread: Post
-    def __init__(self, thread: _Optional[_Union[Post, _Mapping]] = ...) -> None: ...
+class GetThreadPostRes(_message.Message):
+    __slots__ = ("thread_post",)
+    THREAD_POST_FIELD_NUMBER: _ClassVar[int]
+    thread_post: Post
+    def __init__(self, thread_post: _Optional[_Union[Post, _Mapping]] = ...) -> None: ...
 
 class GetRegardingPostsReq(_message.Message):
-    __slots__ = ("site_id", "board_id", "thread_id", "page")
+    __slots__ = ("site_id", "board_id", "thread_id", "post_id", "page")
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
+    POST_ID_FIELD_NUMBER: _ClassVar[int]
     PAGE_FIELD_NUMBER: _ClassVar[int]
     site_id: str
     board_id: str
     thread_id: str
+    post_id: str
     page: PaginationReq
-    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., post_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
 
 class GetRegardingPostsRes(_message.Message):
     __slots__ = ("regarding_posts", "page")
@@ -166,24 +168,6 @@ class GetRegardingPostsRes(_message.Message):
     regarding_posts: _containers.RepeatedCompositeFieldContainer[Post]
     page: PaginationRes
     def __init__(self, regarding_posts: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
-
-class GetPostReq(_message.Message):
-    __slots__ = ("site_id", "board_id", "thread_id", "id")
-    SITE_ID_FIELD_NUMBER: _ClassVar[int]
-    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
-    THREAD_ID_FIELD_NUMBER: _ClassVar[int]
-    ID_FIELD_NUMBER: _ClassVar[int]
-    site_id: str
-    board_id: str
-    thread_id: str
-    id: str
-    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., id: _Optional[str] = ...) -> None: ...
-
-class GetPostRes(_message.Message):
-    __slots__ = ("post",)
-    POST_FIELD_NUMBER: _ClassVar[int]
-    post: Post
-    def __init__(self, post: _Optional[_Union[Post, _Mapping]] = ...) -> None: ...
 
 class Paragraph(_message.Message):
     __slots__ = ("type", "image", "video", "text", "quote", "reply_to", "link")
