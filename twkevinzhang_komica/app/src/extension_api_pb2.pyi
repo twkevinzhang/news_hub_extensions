@@ -12,6 +12,7 @@ class ParagraphType(int, metaclass=_enum_type_wrapper.EnumTypeWrapper):
     PARAGRAPH_TYPE_QUOTE: _ClassVar[ParagraphType]
     PARAGRAPH_TYPE_REPLY_TO: _ClassVar[ParagraphType]
     PARAGRAPH_TYPE_TEXT: _ClassVar[ParagraphType]
+    PARAGRAPH_TYPE_NEW_LINE: _ClassVar[ParagraphType]
     PARAGRAPH_TYPE_IMAGE: _ClassVar[ParagraphType]
     PARAGRAPH_TYPE_LINK: _ClassVar[ParagraphType]
     PARAGRAPH_TYPE_VIDEO: _ClassVar[ParagraphType]
@@ -19,6 +20,7 @@ PARAGRAPH_TYPE_UNSPECIFIED: ParagraphType
 PARAGRAPH_TYPE_QUOTE: ParagraphType
 PARAGRAPH_TYPE_REPLY_TO: ParagraphType
 PARAGRAPH_TYPE_TEXT: ParagraphType
+PARAGRAPH_TYPE_NEW_LINE: ParagraphType
 PARAGRAPH_TYPE_IMAGE: ParagraphType
 PARAGRAPH_TYPE_LINK: ParagraphType
 PARAGRAPH_TYPE_VIDEO: ParagraphType
@@ -172,11 +174,12 @@ class GetRegardingPostsRes(_message.Message):
     def __init__(self, regarding_posts: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
 
 class Paragraph(_message.Message):
-    __slots__ = ("type", "image", "video", "text", "quote", "reply_to", "link")
+    __slots__ = ("type", "image", "video", "text", "new_line", "quote", "reply_to", "link")
     TYPE_FIELD_NUMBER: _ClassVar[int]
     IMAGE_FIELD_NUMBER: _ClassVar[int]
     VIDEO_FIELD_NUMBER: _ClassVar[int]
     TEXT_FIELD_NUMBER: _ClassVar[int]
+    NEW_LINE_FIELD_NUMBER: _ClassVar[int]
     QUOTE_FIELD_NUMBER: _ClassVar[int]
     REPLY_TO_FIELD_NUMBER: _ClassVar[int]
     LINK_FIELD_NUMBER: _ClassVar[int]
@@ -184,10 +187,11 @@ class Paragraph(_message.Message):
     image: ImageParagraph
     video: VideoParagraph
     text: TextParagraph
+    new_line: NewLineParagraph
     quote: QuoteParagraph
     reply_to: ReplyToParagraph
     link: LinkParagraph
-    def __init__(self, type: _Optional[_Union[ParagraphType, str]] = ..., image: _Optional[_Union[ImageParagraph, _Mapping]] = ..., video: _Optional[_Union[VideoParagraph, _Mapping]] = ..., text: _Optional[_Union[TextParagraph, _Mapping]] = ..., quote: _Optional[_Union[QuoteParagraph, _Mapping]] = ..., reply_to: _Optional[_Union[ReplyToParagraph, _Mapping]] = ..., link: _Optional[_Union[LinkParagraph, _Mapping]] = ...) -> None: ...
+    def __init__(self, type: _Optional[_Union[ParagraphType, str]] = ..., image: _Optional[_Union[ImageParagraph, _Mapping]] = ..., video: _Optional[_Union[VideoParagraph, _Mapping]] = ..., text: _Optional[_Union[TextParagraph, _Mapping]] = ..., new_line: _Optional[_Union[NewLineParagraph, _Mapping]] = ..., quote: _Optional[_Union[QuoteParagraph, _Mapping]] = ..., reply_to: _Optional[_Union[ReplyToParagraph, _Mapping]] = ..., link: _Optional[_Union[LinkParagraph, _Mapping]] = ...) -> None: ...
 
 class ImageParagraph(_message.Message):
     __slots__ = ("thumb", "raw")
@@ -210,6 +214,12 @@ class TextParagraph(_message.Message):
     CONTENT_FIELD_NUMBER: _ClassVar[int]
     content: str
     def __init__(self, content: _Optional[str] = ...) -> None: ...
+
+class NewLineParagraph(_message.Message):
+    __slots__ = ("symbol",)
+    SYMBOL_FIELD_NUMBER: _ClassVar[int]
+    symbol: str
+    def __init__(self, symbol: _Optional[str] = ...) -> None: ...
 
 class QuoteParagraph(_message.Message):
     __slots__ = ("content",)

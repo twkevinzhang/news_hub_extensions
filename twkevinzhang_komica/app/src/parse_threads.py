@@ -170,6 +170,7 @@ def _parse_thread(tree) -> domain.Post:
 
     return post
 
+
 def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -> list[pb2.Paragraph]:
     """解析貼文內容，返回 Paragraph 列表"""
 
@@ -177,23 +178,47 @@ def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -
     contents = []
     quote_div = post_div.find(".//div[@class='quote']")
     if quote_div is not None:
-        for element in quote_div.iterchildren():
-             if element.tag == "span" and element.get("class") == "resquote":
-                 qlink_a = element.find(".//a[@class='qlink']")
-                 if qlink_a is not None:
-                     no = qlink_a.get("href")[2:]
-                     contents.append(paragraph.reply_to(id=no, preview=get_preview(no)))
-             elif element.tag == "a":
-                 link_url = element.get("href")
-                 contents.append(paragraph.link(link_url))
-
-             else:
-                 text = element.tail
-                 if text and text.strip():
-                     contents.append(paragraph.text(text.strip()))
-
+        # 處理 quote_div 的文本內容
         if quote_div.text and quote_div.text.strip():
-            contents.insert(0, paragraph.text(quote_div.text.strip()))
+            contents.append(paragraph.text(quote_div.text.strip()))
+
+        # 使用 etree.tostring 轉換HTML為字符串，以便處理 <br> 標籤
+        # 然後使用解析函數處理所有元素
+        for child in quote_div:
+            # 處理 <br> 標籤
+            if child.tag == 'br':
+                contents.append(paragraph.newLine())
+                # 檢查 br 後是否有文本
+                if child.tail and child.tail.strip():
+                    contents.append(paragraph.text(child.tail.strip()))
+            # 處理引用的回覆
+            elif child.tag == "span" and child.get("class") == "resquote":
+                qlink_a = child.find(".//a[@class='qlink']")
+                if qlink_a is not None:
+                    no = qlink_a.get("href")[2:]
+                    contents.append(paragraph.reply_to(id=no, preview=get_preview(no)))
+                # 檢查 span 後是否有文本
+                if child.tail and child.tail.strip():
+                    contents.append(paragraph.text(child.tail.strip()))
+            # 處理連結
+            elif child.tag == "a":
+                link_url = child.get("href")
+                contents.append(paragraph.link(link_url))
+                # 檢查連結後是否有文本
+                if child.tail and child.tail.strip():
+                    contents.append(paragraph.text(child.tail.strip()))
+            # 處理其他元素
+            else:
+                # 獲取元素文本
+                if child.text and child.text.strip():
+                    contents.append(paragraph.text(child.text.strip()))
+                # 處理子元素中的 <br> 標籤
+                for subelem in child.iter():
+                    if subelem.tag == 'br':
+                        contents.append(paragraph.newLine())
+                # 檢查元素後是否有文本
+                if child.tail and child.tail.strip():
+                    contents.append(paragraph.text(child.tail.strip()))
     else:
         # if no quote div, it might be "無本文"
         quote = post_div.find(".//div[@class='quote']")
@@ -210,7 +235,7 @@ def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -
             image_link = image_link_element.get("href")
             image_thumb_element = post_div.find(".//a[@class='file-thumb']/img")
             if image_thumb_element is not None:
-                 image_thumb = image_thumb_element.get("src")
+                image_thumb = image_thumb_element.get("src")
 
             if image_link and image_thumb:
                 if image_link.startswith("//"):
