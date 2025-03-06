@@ -95,12 +95,12 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
     def GetThreadPost(self, req: pb2.GetThreadPostReq, context) -> pb2.GetThreadPostRes:
         site_id = salt.decode(req.site_id)
         board_id = salt.decode(req.board_id)
-        thread_id = salt.decode(req.id)
-        post_id = salt.decode(req.post_id)
+        thread_id = salt.decode(req.thread_id)
+        reply_to_id = salt.decode(req.reply_to_id)
         [subdomain, board_sub_id] = board_id.split("/")
         response = get(f'https://{subdomain}.komica1.org/{board_sub_id}/pixmicat.php?res={thread_id}')
 
-        thread = parse_thread_html(response, site_id, board_id, thread_id, post_id)
+        thread = parse_thread_html(response, site_id, board_id, thread_id, reply_to_id)
         return pb2.GetThreadPostRes(
             thread_post=thread.toSaltPb2(),
         )
@@ -109,11 +109,11 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         site_id = salt.decode(req.site_id)
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
-        post_id = salt.decode(req.post_id)
+        reply_to_id = salt.decode(req.reply_to_id)
         [subdomain, board_sub_id] = board_id.split("/")
         response = get(f'https://{subdomain}.komica1.org/{board_sub_id}/pixmicat.php?res={thread_id}')
 
-        posts, page = parse_regarding_posts_html(response, site_id, board_id, thread_id, post_id), None
+        posts, page = parse_regarding_posts_html(response, site_id, board_id, thread_id, reply_to_id), None
         if req.page is not None:
             posts, page = pagination(req.page, posts)
 

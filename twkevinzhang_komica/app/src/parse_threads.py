@@ -23,9 +23,9 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[d
     return thread_infos
 
 
-def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
+def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> domain.Post:
     tree = html.fromstring(html_content)
-    if len(post_id) == 0:
+    if len(reply_to_id) == 0:
         thread = _parse_thread(tree)
         thread.site_id = site_id
         thread.board_id = board_id
@@ -33,10 +33,10 @@ def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str,
         return thread
     else:
         all_posts = parse_regarding_posts_html(tree, site_id, board_id, thread_id, None)
-        return next(iter([x for x in all_posts if x.id == post_id]), None)
+        return next(iter([x for x in all_posts if x.id == reply_to_id]), None)
 
 
-def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> list[domain.Post]:
+def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> list[domain.Post]:
     tree = html.fromstring(html_content)
 
     # 計算回覆數
@@ -76,12 +76,12 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
         post.latest_regarding_post_created_at = latest_regarding_post_created_at_map.get(post.id, 0)
         regarding_posts.append(post)
 
-    # 根據 post_id 篩選回覆
-    if len(post_id) > 0:
+    # 根據 reply to post id 篩選回覆
+    if len(reply_to_id) > 0:
         filtered_posts = []
         for post in regarding_posts:
             for c in post.contents:
-                if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO and c.reply_to.id == post_id:
+                if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO and c.reply_to.id == reply_to_id:
                     filtered_posts.append(post)
         return filtered_posts
 
