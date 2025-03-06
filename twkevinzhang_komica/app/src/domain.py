@@ -45,6 +45,20 @@ class Post:
         return f"Post({self.__dict__})"
 
     def toSaltPb2(self) -> pb2.Post:
+        new_contents = []
+        for content in self.contents:
+            if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO:
+                new_contents.append(pb2.Paragraph(
+                    type=pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                    reply_to=pb2.ReplyToParagraph(
+                        id=salt.encode(content.reply_to.id),
+                        author_name=content.reply_to.author_name,
+                        preview=content.reply_to.preview
+                    )
+                ))
+            else:
+                new_contents.append(content)
+
         return pb2.Post(
             id=salt.encode(self.id),
             thread_id=salt.encode(self.thread_id),
@@ -57,7 +71,7 @@ class Post:
             liked=self.liked,
             disliked=self.disliked,
             comments=self.comments,
-            contents=self.contents,
+            contents=new_contents,
             tags=self.tags,
             latest_regarding_post_created_at=self.latest_regarding_post_created_at,
             regarding_posts_count=self.regarding_posts_count,
