@@ -96,11 +96,10 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         site_id = salt.decode(req.site_id)
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
-        reply_to_id = salt.decode(req.reply_to_id)
+        post_id = salt.decode(req.post_id)
         [subdomain, board_sub_id] = board_id.split("/")
         response = get(f'https://{subdomain}.komica1.org/{board_sub_id}/pixmicat.php?res={thread_id}')
-
-        thread = parse_thread_html(response, site_id, board_id, thread_id, reply_to_id)
+        thread = parse_thread_html(response, site_id, board_id, thread_id, post_id)
         return pb2.GetThreadPostRes(
             thread_post=thread.toSaltPb2(),
         )

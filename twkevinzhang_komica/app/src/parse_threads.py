@@ -23,17 +23,17 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[d
     return thread_infos
 
 
-def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> domain.Post:
+def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
     tree = html.fromstring(html_content)
-    if len(reply_to_id) == 0:
+    if post_id is None or len(post_id) == 0 or post_id == thread_id:
         thread = _parse_thread(tree)
         thread.site_id = site_id
         thread.board_id = board_id
         thread.thread_id = thread_id
         return thread
     else:
-        all_posts = parse_regarding_posts_html(tree, site_id, board_id, thread_id, None)
-        return next(iter([x for x in all_posts if x.id == reply_to_id]), None)
+        all_posts = parse_regarding_posts_html(html_content, site_id, board_id, thread_id, None)
+        return next(iter([x for x in all_posts if x.id == post_id]), None)
 
 
 def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> list[domain.Post]:
@@ -77,7 +77,7 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
         regarding_posts.append(post)
 
     # 根據 reply to post id 篩選回覆
-    if len(reply_to_id) > 0:
+    if reply_to_id is not None and len(reply_to_id) > 0 and reply_to_id != thread_id:
         filtered_posts = []
         for post in regarding_posts:
             for c in post.contents:
