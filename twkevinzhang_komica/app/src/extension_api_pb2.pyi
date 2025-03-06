@@ -134,16 +134,16 @@ class GetThreadInfosRes(_message.Message):
     def __init__(self, thread_infos: _Optional[_Iterable[_Union[Post, _Mapping]]] = ..., page: _Optional[_Union[PaginationRes, _Mapping]] = ...) -> None: ...
 
 class GetThreadPostReq(_message.Message):
-    __slots__ = ("id", "site_id", "board_id", "post_id")
-    ID_FIELD_NUMBER: _ClassVar[int]
+    __slots__ = ("thread_id", "site_id", "board_id", "post_id")
+    THREAD_ID_FIELD_NUMBER: _ClassVar[int]
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     POST_ID_FIELD_NUMBER: _ClassVar[int]
-    id: str
+    thread_id: str
     site_id: str
     board_id: str
     post_id: str
-    def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., post_id: _Optional[str] = ...) -> None: ...
+    def __init__(self, thread_id: _Optional[str] = ..., site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., post_id: _Optional[str] = ...) -> None: ...
 
 class GetThreadPostRes(_message.Message):
     __slots__ = ("thread_post",)
@@ -152,18 +152,18 @@ class GetThreadPostRes(_message.Message):
     def __init__(self, thread_post: _Optional[_Union[Post, _Mapping]] = ...) -> None: ...
 
 class GetRegardingPostsReq(_message.Message):
-    __slots__ = ("site_id", "board_id", "thread_id", "post_id", "page")
+    __slots__ = ("site_id", "board_id", "thread_id", "reply_to_id", "page")
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
-    POST_ID_FIELD_NUMBER: _ClassVar[int]
+    REPLY_TO_ID_FIELD_NUMBER: _ClassVar[int]
     PAGE_FIELD_NUMBER: _ClassVar[int]
     site_id: str
     board_id: str
     thread_id: str
-    post_id: str
+    reply_to_id: str
     page: PaginationReq
-    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., post_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
+    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., reply_to_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ...) -> None: ...
 
 class GetRegardingPostsRes(_message.Message):
     __slots__ = ("regarding_posts", "page")
@@ -228,12 +228,14 @@ class QuoteParagraph(_message.Message):
     def __init__(self, content: _Optional[str] = ...) -> None: ...
 
 class ReplyToParagraph(_message.Message):
-    __slots__ = ("id", "preview")
+    __slots__ = ("id", "author_name", "preview")
     ID_FIELD_NUMBER: _ClassVar[int]
+    AUTHOR_NAME_FIELD_NUMBER: _ClassVar[int]
     PREVIEW_FIELD_NUMBER: _ClassVar[int]
     id: str
+    author_name: str
     preview: str
-    def __init__(self, id: _Optional[str] = ..., preview: _Optional[str] = ...) -> None: ...
+    def __init__(self, id: _Optional[str] = ..., author_name: _Optional[str] = ..., preview: _Optional[str] = ...) -> None: ...
 
 class LinkParagraph(_message.Message):
     __slots__ = ("content",)
