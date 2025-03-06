@@ -120,8 +120,9 @@ def _parse_post(post_div: _Element, get_preview: Callable[[str], str]) -> domain
 
     # 解析作者名稱
     author_id = datetime_arr[2]
-    author_name = post_div.xpath('.//span[@class="name"]/text()')
-    author_name = author_name[0] if author_name else "無名"
+    # author_name = post_div.xpath('.//span[@class="name"]/text()')
+    # author_name = author_name[0] if author_name else "無名"
+    author_name = post_id
 
     # 解析內容
     contents = _parse_post_content(post_div, get_preview)
