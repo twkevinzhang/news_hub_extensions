@@ -112,18 +112,23 @@ class Board(_message.Message):
     def __init__(self, id: _Optional[str] = ..., site_id: _Optional[str] = ..., name: _Optional[str] = ..., icon: _Optional[str] = ..., large_welcome_image: _Optional[str] = ..., url: _Optional[str] = ..., supported_threads_sorting: _Optional[_Iterable[str]] = ...) -> None: ...
 
 class GetThreadInfosReq(_message.Message):
-    __slots__ = ("site_id", "board_id", "page", "sort_by", "keywords")
+    __slots__ = ("site_id", "boards_sorting", "page", "keywords")
+    class BoardsSortingEntry(_message.Message):
+        __slots__ = ("key", "value")
+        KEY_FIELD_NUMBER: _ClassVar[int]
+        VALUE_FIELD_NUMBER: _ClassVar[int]
+        key: str
+        value: str
+        def __init__(self, key: _Optional[str] = ..., value: _Optional[str] = ...) -> None: ...
     SITE_ID_FIELD_NUMBER: _ClassVar[int]
-    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    BOARDS_SORTING_FIELD_NUMBER: _ClassVar[int]
     PAGE_FIELD_NUMBER: _ClassVar[int]
-    SORT_BY_FIELD_NUMBER: _ClassVar[int]
     KEYWORDS_FIELD_NUMBER: _ClassVar[int]
     site_id: str
-    board_id: str
+    boards_sorting: _containers.ScalarMap[str, str]
     page: PaginationReq
-    sort_by: str
     keywords: str
-    def __init__(self, site_id: _Optional[str] = ..., board_id: _Optional[str] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ..., sort_by: _Optional[str] = ..., keywords: _Optional[str] = ...) -> None: ...
+    def __init__(self, site_id: _Optional[str] = ..., boards_sorting: _Optional[_Mapping[str, str]] = ..., page: _Optional[_Union[PaginationReq, _Mapping]] = ..., keywords: _Optional[str] = ...) -> None: ...
 
 class GetThreadInfosRes(_message.Message):
     __slots__ = ("thread_infos", "page")

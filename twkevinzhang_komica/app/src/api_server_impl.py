@@ -1,3 +1,4 @@
+import asyncio
 import logging
 
 import requests
@@ -7,6 +8,7 @@ import extension_api_pb2_grpc as pb2_grpc
 import parse_boards
 import salt
 from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
+from requester import Requester, Result
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -79,11 +81,27 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
 
     def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
         site_id = salt.decode(req.site_id)
-        board_id = salt.decode(req.board_id)
-        [subdomain, board_sub_id] = board_id.split("/")
-        response = get(f'https://{subdomain}.komica1.org/{board_sub_id}/index.htm')
+        urls_board_id = {} # url -> "gita/00b"
+        if req.boards_sorting is not None:
+            for encoded_id, sorting in req.boards_sorting.items():
+                board_id = salt.decode(encoded_id)
+                [subdomain, id] = board_id.split("/")
+                urls_board_id[f"https://{subdomain}.komica1.org/{id}/index.htm"] = board_id
+        else:
+            urls_board_id[f"https://gita.komica1.org/00b/index.htm"] = "gita/00b"
+        requester = Requester()
+        results: list[Result] = asyncio.run(requester.crawl(urls_board_id.keys()))
+        thread_infos = []
+        for result in results:
+            if result.is_failed():
+                logging.error(f"Failed to fetch {result.url}")
+                logging.exception(result.error)
+            else:
+                board_id = urls_board_id[result.url]
+                # TODO: Implement Pagination
+                thread_infos += parse_thread_infos_html(result.html, site_id, board_id)
 
-        thread_infos, page = parse_thread_infos_html(response, site_id, board_id), None
+        page = None
         if req.page is not None:
             thread_infos, page = pagination(req.page, thread_infos)
 

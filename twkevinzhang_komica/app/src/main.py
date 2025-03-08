@@ -45,11 +45,6 @@ dictConfig({
 })
 logging.debug(f'__name__ "{__name__}"')
 
-# serious_python unsupported multiprocessing
-os.environ['OPENBLAS_NUM_THREADS'] = '1'
-os.environ['NUMEXPR_NUM_THREADS'] = '1'
-os.environ['MKL_NUM_THREADS'] = '1'
-
 # When called by serious_python, __name__ is "main"
 if __name__ == "__main__" or __name__ == "main":
     try:
