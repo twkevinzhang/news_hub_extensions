@@ -7,6 +7,7 @@ from lxml.etree import _Element
 import extension_api_pb2 as pb2
 import paragraph
 import domain
+from nullable import is_zero_str, is_zero_list
 
 
 def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[domain.Post]:
@@ -25,7 +26,7 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[d
 
 def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
     tree = html.fromstring(html_content)
-    if post_id is None or len(post_id) == 0 or post_id == thread_id:
+    if is_zero_str(post_id) or post_id == thread_id:
         thread = _parse_thread(tree)
         thread.site_id = site_id
         thread.board_id = board_id
@@ -54,7 +55,7 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
     regarding_posts = []
     def get_preview(no: str):
         contents: list[pb2.Paragraph] = next(iter([x.contents for x in regarding_posts if x.id == no]), None)
-        if contents is None:
+        if is_zero_list(contents):
             return ""
         preview = ""
         for c in contents:
@@ -77,7 +78,7 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
         regarding_posts.append(post)
 
     # 根據 reply to post id 篩選回覆
-    if reply_to_id is not None and len(reply_to_id) > 0 and reply_to_id != thread_id:
+    if not is_zero_str(reply_to_id) and reply_to_id != thread_id:
         filtered_posts = []
         for post in regarding_posts:
             for c in post.contents:

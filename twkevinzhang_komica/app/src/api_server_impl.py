@@ -9,6 +9,7 @@ import parse_boards
 import salt
 from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
 from requester import Requester, Result
+from nullable import is_zero_map
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -82,7 +83,7 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
     def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
         site_id = salt.decode(req.site_id)
         urls_board_id = {} # url -> "gita/00b"
-        if req.boards_sorting is not None:
+        if not is_zero_map(req.boards_sorting):
             for encoded_id, sorting in req.boards_sorting.items():
                 board_id = salt.decode(encoded_id)
                 [subdomain, id] = board_id.split("/")
