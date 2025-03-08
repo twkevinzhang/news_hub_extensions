@@ -27,7 +27,11 @@ class Requester:
         except Exception as e:
             return Result(url, None, e)
 
-    async def crawl(self, urls):
+    async def crawl(self, urls) -> list[Result]:
         async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
             tasks = [self.__fetch(session, x) for x in urls]
             return await asyncio.gather(*tasks)
+
+    async def single_crawl(self, url) -> Result:
+        async with aiohttp.ClientSession(connector=aiohttp.TCPConnector(verify_ssl=False)) as session:
+            return await self.__fetch(session, url)
