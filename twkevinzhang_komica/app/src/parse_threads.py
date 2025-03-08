@@ -20,6 +20,8 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[d
         thread_info.site_id = site_id
         thread_info.board_id = board_id
         thread_info.thread_id = thread_info.id
+        prefix = domain.board_id_to_url_prefix(board_id)
+        thread_info.url = f"{prefix}/pixmicat.php?res={thread_info.id}"
         thread_infos.append(thread_info)
     return thread_infos
 
@@ -31,6 +33,8 @@ def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str,
         thread.site_id = site_id
         thread.board_id = board_id
         thread.thread_id = thread_id
+        prefix = domain.board_id_to_url_prefix(board_id)
+        thread.url = f"{prefix}/pixmicat.php?res={thread_id}"
         return thread
     else:
         all_posts = parse_regarding_posts_html(html_content, site_id, board_id, thread_id, None)
@@ -73,6 +77,7 @@ def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread
         post.thread_id = thread_id
         post.site_id = site_id
         post.board_id = board_id
+        post.url = None
         post.regarding_posts_count = regarding_posts_count_map.get(post.id, 0)
         post.latest_regarding_post_created_at = latest_regarding_post_created_at_map.get(post.id, 0)
         regarding_posts.append(post)

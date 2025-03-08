@@ -10,6 +10,7 @@ import salt
 from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
 from requester import Requester, Result
 from nullable import is_zero_map
+from domain import board_id_to_url_prefix
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36"
@@ -86,8 +87,8 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         if not is_zero_map(req.boards_sorting):
             for encoded_id, sorting in req.boards_sorting.items():
                 board_id = salt.decode(encoded_id)
-                [subdomain, id] = board_id.split("/")
-                urls_board_id[f"https://{subdomain}.komica1.org/{id}/index.htm"] = board_id
+                prefix = board_id_to_url_prefix(board_id)
+                urls_board_id[f"{prefix}/index.htm"] = board_id
         else:
             urls_board_id[f"https://gita.komica1.org/00b/index.htm"] = "gita/00b"
         requester = Requester()
@@ -116,8 +117,8 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         post_id = salt.decode(req.post_id)
-        [subdomain, board_sub_id] = board_id.split("/")
-        response = get(f'https://{subdomain}.komica1.org/{board_sub_id}/pixmicat.php?res={thread_id}')
+        prefix = board_id_to_url_prefix(board_id)
+        response = get(f'{prefix}/pixmicat.php?res={thread_id}')
         thread = parse_thread_html(response, site_id, board_id, thread_id, post_id)
         return pb2.GetThreadPostRes(
             thread_post=thread.toSaltPb2(),
@@ -128,8 +129,8 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         reply_to_id = salt.decode(req.reply_to_id)
-        [subdomain, board_sub_id] = board_id.split("/")
-        response = get(f'https://{subdomain}.komica1.org/{board_sub_id}/pixmicat.php?res={thread_id}')
+        prefix = board_id_to_url_prefix(board_id)
+        response = get(f'{prefix}/pixmicat.php?res={thread_id}')
 
         posts, page = parse_regarding_posts_html(response, site_id, board_id, thread_id, reply_to_id), None
         if req.page is not None:
