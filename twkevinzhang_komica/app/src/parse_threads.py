@@ -11,7 +11,7 @@ from nullable import is_zero_str, is_zero_list
 
 
 def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[domain.Post]:
-    tree = html.fromstring(html_content)
+    tree = html.fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
     thread_infos = []
 
     for thread_div in tree.xpath('//div[@class="thread"]'):
@@ -27,7 +27,7 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[d
 
 
 def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
-    tree = html.fromstring(html_content)
+    tree = html.fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
     if is_zero_str(post_id) or post_id == thread_id:
         thread = _parse_thread(tree)
         thread.site_id = site_id
@@ -42,7 +42,7 @@ def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str,
 
 
 def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> list[domain.Post]:
-    tree = html.fromstring(html_content)
+    tree = html.fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
 
     # 計算回覆數
     regarding_posts_count_map: dict[str, int] = {}
