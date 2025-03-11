@@ -12,7 +12,7 @@ def newLine() -> pb2.Paragraph:
         new_line=pb2.NewLineParagraph(symbol="\n")
     )
 
-def video(s: str, thumb: str) -> pb2.Paragraph:
+def video(s: str) -> pb2.Paragraph:
     return pb2.Paragraph(
         type=pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO,
         video=pb2.VideoParagraph(url=s)

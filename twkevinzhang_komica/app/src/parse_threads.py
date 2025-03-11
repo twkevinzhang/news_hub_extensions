@@ -8,6 +8,7 @@ import extension_api_pb2 as pb2
 import paragraph
 import domain
 from nullable import is_zero_str, is_zero_list
+from utilities import is_youtube, is_image, is_video
 
 
 def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[domain.Post]:
@@ -210,7 +211,10 @@ def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -
             # 處理連結
             elif child.tag == "a":
                 link_url = child.get("href")
-                contents.append(paragraph.link(link_url))
+                if is_youtube(link_url):
+                    contents.append(paragraph.youtube_video(link_url))
+                else:
+                    contents.append(paragraph.link(link_url))
                 # 檢查連結後是否有文本
                 if child.tail and child.tail.strip():
                     contents.append(paragraph.text(child.tail.strip()))
@@ -233,22 +237,26 @@ def _parse_post_content(post_div: _Element, get_preview: Callable[[str], str]) -
             contents.append(paragraph.text("無本文"))
 
     # Extract image information
-    file_text_div = post_div.find(".//div[@class='file-text']")
-    image_link = None
-    image_thumb = None
-    if file_text_div is not None:
-        image_link_element = file_text_div.find(".//a")
-        if image_link_element is not None:
-            image_link = image_link_element.get("href")
-            image_thumb_element = post_div.find(".//a[@class='file-thumb']/img")
-            if image_thumb_element is not None:
-                image_thumb = image_thumb_element.get("src")
+    file_thumb = post_div.find(".//a[@class='file-thumb']")
 
+    if file_thumb is not None:
+        href = file_thumb.get("href")
+        if is_image(href):
+            image_link = href
+            image_thumb = None
+            thumb_element = file_thumb.find("img")
+            if thumb_element is not None:
+                image_thumb = thumb_element.get("src")
             if image_link and image_thumb:
                 if image_link.startswith("//"):
                     image_link = "https:" + image_link
                 if image_thumb.startswith("//"):
                     image_thumb = "https:" + image_thumb
                 contents.insert(0, paragraph.image(s=image_link, thumb=image_thumb))
-
+        if is_video(href):
+            video_link = href
+            if video_link:
+                if video_link.startswith("//"):
+                    video_link = "https:" + video_link
+                contents.insert(0, paragraph.video(video_link))
     return contents

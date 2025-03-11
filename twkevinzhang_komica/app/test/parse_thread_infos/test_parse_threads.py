@@ -5,7 +5,7 @@ from unittest import TestCase
 from google.protobuf.json_format import MessageToDict
 
 from src import paragraph
-from src.parse_threads import parse_thread_infos_html, parse_regarding_posts_html
+from src.parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
 import src.domain as domain
 
 
@@ -13,15 +13,15 @@ class TestParseThreadInfos(TestCase):
     def test_parse_thread_infos_html(self):
         with open(get_html_filename("thread_infos.fragment.html"), "r") as f:
             html = f.read()
-            thread_infos = parse_thread_infos_html(html, 'mock', 'mock')
+            thread_infos = parse_thread_infos_html(html, 'mock', 'gaia/1')
             thread_info1 = domain.Post(
                 id="26765435",
                 thread_id="26765435",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 title="無題",
                 author_id="ID:Ho37W5Jk(1/4)",
-                author_name="無名",
+                author_name="26765435",
                 created_at=1740432284,  # 2025/02/25(二) 05:24:44.001 GMT+8
                 liked=0,
                 disliked=0,
@@ -32,21 +32,22 @@ class TestParseThreadInfos(TestCase):
                         thumb="https://gita.komica1.org/00b/thumb/1740432283914s.jpg",
                     ),
                     paragraph.text("美國正式加入中俄勢力"),
+                    paragraph.newLine(),
                     paragraph.text("島民現在在想什麼?"),
                 ],
                 latest_regarding_post_created_at=1740432471,
                 regarding_posts_count=1,
                 tags=[],
-                url=None,
+                url='https://gaia.komica1.org/1/pixmicat.php?res=26765435',
             )
             thread_info2 = domain.Post(
                 id="26765468",
                 thread_id="26765468",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 title="無題",
                 author_id="ID:tMp8iWdc",
-                author_name="無名",
+                author_name="26765468",
                 created_at=1740434415,  # 2025/02/25(二) 06:00:15.732 GMT+8
                 liked=0,
                 disliked=0,
@@ -61,48 +62,77 @@ class TestParseThreadInfos(TestCase):
                 latest_regarding_post_created_at=0,
                 regarding_posts_count=0,
                 tags=[],
-                url=None,
+                url='https://gaia.komica1.org/1/pixmicat.php?res=26765468',
             )
             thread_info3 = domain.Post(
                 id="26765356",
                 thread_id="26765356",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 title="無題",
                 author_id="ID:lkoVmHUo",
-                author_name="無名",
+                author_name="26765356",
                 created_at=1740426590,  # 2025/02/25(二) 03:49:50.664 GMT+8
                 liked=0,
                 disliked=0,
                 comments=0,
                 contents=[
-                    paragraph.image(
+                    paragraph.video(
                         s="https://gita.komica1.org/00b/src/1740426590497.webm",
-                        thumb="https://gita.komica1.org/00b/thumb/1740426590497s.jpg",
                     ),
                     paragraph.text("有洗貓的影片嗎"),
                 ],
                 latest_regarding_post_created_at=1740434260,  # 2025/02/25(二) 03:49:50.664 GMT+8
                 regarding_posts_count=3,
                 tags=[],
-                url=None,
+                url='https://gaia.komica1.org/1/pixmicat.php?res=26765356',
             )
             self.assertEqual(thread_infos[0], thread_info1)
             self.assertEqual(thread_infos[1], thread_info2)
             self.assertEqual(thread_infos[2], thread_info3)
             self.assertEqual(len(thread_infos), 3)
 
+    def test_parse_thread_post_html(self):
+        with open(get_html_filename("thread_detail.fragment.html"), "r") as f:
+            html = f.read()
+            post = parse_thread_html(html, 'mock', 'gaia/1', '26812758', None)
+            post1 = domain.Post(
+                id="26812758",
+                thread_id="26812758",
+                board_id="gaia/1",
+                site_id="mock",
+                author_id="ID:r76NdmK.(1/4)",
+                author_name="26812758",
+                created_at=1740886170,  # 2025/03/02(日) 11:29:30.725 GMT+8
+                title="無題",
+                liked=0,
+                disliked=0,
+                comments=0,
+                contents=[
+                    paragraph.video(
+                        s="https://gita.komica1.org/00b/src/1741657478203.webm",
+                    ),
+                    paragraph.youtube_video(s="https://www.youtube.com/watch?v=AP0N4-4JLdA"),
+                    paragraph.text("["),
+                ],
+                tags=[],
+                latest_regarding_post_created_at=1740886961,  # 2025/03/02(日) 11:42:41.772 GMT+8
+                regarding_posts_count=6,
+                url='https://gaia.komica1.org/1/pixmicat.php?res=26812758',
+            )
+            self.assertEqual(post, post1)
+
     def test_parse_regarding_posts_html(self):
         with open(get_html_filename("thread_detail.fragment.html"), "r") as f:
             html = f.read()
-            posts = parse_regarding_posts_html(html, 'mock', 'mock', 'mock', None)
+            posts = parse_regarding_posts_html(html, 'mock', 'gaia/1', 'mock', None)
             post1 = domain.Post(
                 id="26812766",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:r76NdmK.(2/4)",
-                author_name="無名",
+                author_name="26812766",
                 created_at=1740886260,  # 2025/03/02(日) 11:31:00.943 GMT+8
                 title="無題",
                 liked=0,
@@ -120,10 +150,10 @@ class TestParseThreadInfos(TestCase):
             post2 = domain.Post(
                 id="26812792",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:Vzxlijiw",
-                author_name="無名",
+                author_name="26812792",
                 created_at=1740886457,  # 2025/03/02(日) 11:34:17.391 GMT+8
                 title="無題",
                 liked=0,
@@ -131,6 +161,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812758", preview=''),
+                    paragraph.newLine(),
                     paragraph.text("法蘭可愛"),
                 ],
                 tags=[],
@@ -141,10 +172,10 @@ class TestParseThreadInfos(TestCase):
             post3 = domain.Post(
                 id="26812814",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:r76NdmK.(3/4)",
-                author_name="無名",
+                author_name="26812814",
                 created_at=1740886613,  # 2025/03/02(日) 11:36:53.647 GMT+8
                 title="無題",
                 liked=0,
@@ -162,10 +193,10 @@ class TestParseThreadInfos(TestCase):
             post4 = domain.Post(
                 id="26812830",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:r76NdmK.(4/4)",
-                author_name="無名",
+                author_name="26812830",
                 created_at=1740886843,  # 2025/03/02(日) 11:40:43.161 GMT+8
                 title="無題",
                 liked=0,
@@ -183,10 +214,10 @@ class TestParseThreadInfos(TestCase):
             post5 = domain.Post(
                 id="26812836",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:Tx/LDMKs",
-                author_name="無名",
+                author_name="26812836",
                 created_at=1740886939,  # 2025/03/02(日) 11:42:19.134 GMT+8
                 title="無題",
                 liked=0,
@@ -194,6 +225,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812758", preview=''),
+                    paragraph.newLine(),
                     paragraph.text("感覺女角越穿越少..?"),
                 ],
                 tags=[],
@@ -204,10 +236,10 @@ class TestParseThreadInfos(TestCase):
             post6 = domain.Post(
                 id="26812841",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:dvKAH0Qw",
-                author_name="無名",
+                author_name="26812841",
                 created_at=1740886961,  # 2025/03/02(日) 11:42:41.772 GMT+8
                 title="無題",
                 liked=0,
@@ -215,6 +247,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812830", preview='[圖片]無本文'),
+                    paragraph.newLine(),
                     paragraph.text("誰"),
                 ],
                 tags=[],
@@ -233,14 +266,14 @@ class TestParseThreadInfos(TestCase):
     def test_parse_regarding_posts_html_with_post_id(self):
         with open(get_html_filename("thread_detail.fragment.html"), "r") as f:
             html = f.read()
-            posts = parse_regarding_posts_html(html, 'mock', 'mock', 'mock', "26812830")
+            posts = parse_regarding_posts_html(html, 'mock', 'gaia/1', 'mock', "26812830")
             post6 = domain.Post(
                 id="26812841",
                 thread_id="mock",
-                board_id="mock",
+                board_id="gaia/1",
                 site_id="mock",
                 author_id="ID:dvKAH0Qw",
-                author_name="無名",
+                author_name="26812841",
                 created_at=1740886961,  # 2025/03/02(日) 11:42:41.772 GMT+8
                 title="無題",
                 liked=0,
@@ -248,6 +281,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812830", preview='[圖片]無本文'),
+                    paragraph.newLine(),
                     paragraph.text("誰"),
                 ],
                 tags=[],
