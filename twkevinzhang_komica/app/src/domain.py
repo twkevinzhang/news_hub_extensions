@@ -81,3 +81,6 @@ class Post:
 def board_id_to_url_prefix(board_id: str) -> str:
     [subdomain, id] = board_id.split("/")
     return f"https://{subdomain}.komica1.org/{id}"
+
+class OverPageError(Exception):
+    pass

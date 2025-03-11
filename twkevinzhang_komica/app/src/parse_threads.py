@@ -1,3 +1,4 @@
+import logging
 from collections.abc import Callable
 from datetime import datetime
 
@@ -7,12 +8,29 @@ from lxml.etree import _Element
 import extension_api_pb2 as pb2
 import paragraph
 import domain
+from domain import OverPageError
 from nullable import is_zero_str, is_zero_list
 from utilities import is_youtube, is_image, is_video
 
+def check_page_error(tree: _Element):
+    error_elements = tree.xpath('//div[@id="error"]//span/text()')
+    if not error_elements:
+        return
 
-def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[domain.Post]:
-    tree = html.fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+    error_message = error_elements[0].strip()
+    if error_message == "對不起，您所要求的頁數並不存在":
+        raise OverPageError
+
+
+def parse_thread_infos_html(html_content: str, site_id: str, board_id: str) -> (list[domain.Post], int, int):
+    """
+    :param html_content:
+    :param site_id:
+    :param board_id:
+    :return: items, current_page, total_page
+    """
+    tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+    check_page_error(tree)
     thread_infos = []
 
     for thread_div in tree.xpath('//div[@class="thread"]'):
@@ -24,11 +42,18 @@ def parse_thread_infos_html(html_content, site_id: str, board_id: str) -> list[d
         prefix = domain.board_id_to_url_prefix(board_id)
         thread_info.url = f"{prefix}/pixmicat.php?res={thread_info.id}"
         thread_infos.append(thread_info)
-    return thread_infos
+
+    # 找出當前頁數（bold <b> 標籤內的數字）
+    current_page = int(tree.xpath('//div[@id="page_switch"]//b/text()')[0])
+
+    # 找出所有 <a> 標籤內的數字，過濾掉 "..." 的 <a>，最後一個就是 total_page
+    page_numbers = [int(a.text) for a in tree.xpath('//div[@id="page_switch"]//a') if a.text.isdigit()]
+    total_page = max(page_numbers) if page_numbers else None
+    return thread_infos, current_page, total_page
 
 
-def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
-    tree = html.fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+def parse_thread_html(html_content: str, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
+    tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
     if is_zero_str(post_id) or post_id == thread_id:
         thread = _parse_thread(tree)
         thread.site_id = site_id
@@ -42,8 +67,8 @@ def parse_thread_html(html_content, site_id: str, board_id: str, thread_id: str,
         return next(iter([x for x in all_posts if x.id == post_id]), None)
 
 
-def parse_regarding_posts_html(html_content, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> list[domain.Post]:
-    tree = html.fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> list[domain.Post]:
+    tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
 
     # 計算回覆數
     regarding_posts_count_map: dict[str, int] = {}

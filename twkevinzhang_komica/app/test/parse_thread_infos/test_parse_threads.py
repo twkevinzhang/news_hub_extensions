@@ -13,7 +13,7 @@ class TestParseThreadInfos(TestCase):
     def test_parse_thread_infos_html(self):
         with open(get_html_filename("thread_infos.fragment.html"), "r") as f:
             html = f.read()
-            thread_infos = parse_thread_infos_html(html, 'mock', 'gaia/1')
+            thread_infos, current_page, total_page = parse_thread_infos_html(html, 'mock', 'gaia/1')
             thread_info1 = domain.Post(
                 id="26765435",
                 thread_id="26765435",
@@ -90,6 +90,8 @@ class TestParseThreadInfos(TestCase):
             self.assertEqual(thread_infos[0], thread_info1)
             self.assertEqual(thread_infos[1], thread_info2)
             self.assertEqual(thread_infos[2], thread_info3)
+            self.assertEqual(current_page, 1)
+            self.assertEqual(total_page, 820)
             self.assertEqual(len(thread_infos), 3)
 
     def test_parse_thread_post_html(self):

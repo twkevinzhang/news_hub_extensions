@@ -5,8 +5,8 @@ import extension_api_pb2 as pb2
 import extension_api_pb2_grpc as pb2_grpc
 import parse_boards
 import salt
-from domain import board_id_to_url_prefix
-from nullable import is_zero_map
+from domain import board_id_to_url_prefix, OverPageError
+from nullable import is_zero_map, is_zero_int
 from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
 from requester import Requester
 
@@ -61,34 +61,56 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         )
 
     def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
+        """
+        :param req:
+        req.page.page_size is not useful, it is determined by the parser.
+        req.page.page is the current page, if too much, it will be ignored.
+        :param context:
+        :return:
+        """
         site_id = salt.decode(req.site_id)
-        urls_board_id = {}  # url -> "gita/00b"
-        if not is_zero_map(req.boards_sorting):
-            for encoded_id, sorting in req.boards_sorting.items():
-                board_id = salt.decode(encoded_id)
-                prefix = board_id_to_url_prefix(board_id)
-                urls_board_id[f"{prefix}/index.htm"] = board_id
-        else:
-            urls_board_id[f"https://gita.komica1.org/00b/index.htm"] = "gita/00b"
+        urls = {}
+        boards_sorting = req.boards_sorting
+        if is_zero_map(req.boards_sorting):
+            boards_sorting = {
+                salt.encode("gita/00b"): "https://gita.komica1.org/00b/index.htm",
+            }
+        for encoded_id, sorting in boards_sorting.items():
+            board_id = salt.decode(encoded_id)
+            if req.page is not None:
+                urls[board_id] = board_id_to_url_prefix(board_id) + f'/{req.page.page + 1}.htm'
+            else:
+                urls[board_id] = board_id_to_url_prefix(board_id) + '/index.htm'
+
+        total_page = 0
         requester = Requester()
-        results = asyncio.run(requester.crawl(urls_board_id.keys()))
+        results = asyncio.run(requester.crawl(urls))
         thread_infos = []
         for result in results:
             if result.is_failed():
                 logging.error(f"Failed to fetch {result.url}")
                 logging.exception(result.error)
             else:
-                board_id = urls_board_id[result.url]
-                # TODO: Implement Pagination
-                thread_infos += parse_thread_infos_html(result.html, site_id, board_id)
+                try:
+                    board_id = result.key
+                    items, _, total = parse_thread_infos_html(result.html, site_id, board_id)
+                    thread_infos += items
+                    total_page = max(total_page, total)
+                except OverPageError:
+                    logging.warning(f"{result.url} is over page")
+                except Exception as e:
+                    raise e
 
-        page = None
+        current_page = 1
         if req.page is not None:
-            thread_infos, page = pagination(req.page, thread_infos)
-
+            if not is_zero_int(req.page.page):
+                current_page = req.page.page
         return pb2.GetThreadInfosRes(
             thread_infos=[thread.toSaltPb2() for thread in thread_infos],
-            page=page,
+            page=pb2.PaginationRes(
+                current_page=current_page,
+                total_page=total_page,
+            ),
         )
 
     def GetThreadPost(self, req: pb2.GetThreadPostReq, context) -> pb2.GetThreadPostRes:
