@@ -9,8 +9,8 @@ import extension_api_pb2 as pb2
 import paragraph
 import domain
 from domain import OverPageError
-from nullable import is_zero_str, is_zero_list
-from utilities import is_youtube, is_image, is_video
+from utilities import is_youtube, is_image, is_video, is_zero
+
 
 def check_page_error(tree: _Element):
     error_elements = tree.xpath('//div[@id="error"]//span/text()')
@@ -54,7 +54,7 @@ def parse_thread_infos_html(html_content: str, site_id: str, board_id: str) -> (
 
 def parse_thread_html(html_content: str, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
     tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
-    if is_zero_str(post_id) or post_id == thread_id:
+    if is_zero(post_id) or post_id == thread_id:
         thread = _parse_thread(tree)
         thread.site_id = site_id
         thread.board_id = board_id
@@ -85,7 +85,7 @@ def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, t
     regarding_posts = []
     def get_preview(no: str):
         contents: list[pb2.Paragraph] = next(iter([x.contents for x in regarding_posts if x.id == no]), None)
-        if is_zero_list(contents):
+        if is_zero(contents):
             return ""
         preview = ""
         for c in contents:
@@ -109,7 +109,7 @@ def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, t
         regarding_posts.append(post)
 
     # 根據 reply to post id 篩選回覆
-    if not is_zero_str(reply_to_id) and reply_to_id != thread_id:
+    if not is_zero(reply_to_id) and reply_to_id != thread_id:
         filtered_posts = []
         for post in regarding_posts:
             for c in post.contents:

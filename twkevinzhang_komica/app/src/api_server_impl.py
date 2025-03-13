@@ -6,9 +6,9 @@ import extension_api_pb2_grpc as pb2_grpc
 import parse_boards
 import salt
 from domain import board_id_to_url_prefix, OverPageError
-from nullable import is_zero_map, is_zero_int
 from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
 from requester import Requester
+from utilities import is_zero
 
 
 def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
@@ -71,7 +71,7 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         site_id = salt.decode(req.site_id)
         urls = {}
         boards_sorting = req.boards_sorting
-        if is_zero_map(req.boards_sorting):
+        if is_zero(req.boards_sorting):
             boards_sorting = {
                 salt.encode("gita/00b"): "https://gita.komica1.org/00b/index.htm",
             }
@@ -103,7 +103,7 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
 
         current_page = 1
         if req.page is not None:
-            if not is_zero_int(req.page.page):
+            if not is_zero(req.page.page):
                 current_page = req.page.page
         return pb2.GetThreadInfosRes(
             thread_infos=[thread.toSaltPb2() for thread in thread_infos],
