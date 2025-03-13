@@ -115,7 +115,6 @@ class TestParseThreadInfos(TestCase):
                         s="https://gita.komica1.org/00b/src/1741657478203.webm",
                     ),
                     paragraph.youtube_video(s="https://www.youtube.com/watch?v=AP0N4-4JLdA"),
-                    paragraph.text("["),
                 ],
                 tags=[],
                 latest_regarding_post_created_at=1740886961,  # 2025/03/02(日) 11:42:41.772 GMT+8
