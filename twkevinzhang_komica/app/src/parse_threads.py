@@ -2,6 +2,7 @@ import logging
 from collections.abc import Callable
 from datetime import datetime
 
+import lxml
 from lxml import html
 from lxml.etree import _Element
 
@@ -10,6 +11,49 @@ import paragraph
 import domain
 from domain import OverPageError
 from utilities import is_youtube, is_image, is_video, is_zero
+
+
+def resolve_usc4_tree(html_content) -> _Element:
+    try:
+        parser = html.HTMLParser(encoding='utf-8', remove_blank_text=True, remove_comments=True)
+        return html.document_fromstring(html_content, parser=parser)
+    except lxml.etree.XMLSyntaxError as e:
+        logging.error(f"ignore lxml.etree.XMLSyntaxError")
+        '''
+        Exception calling application: encoding not supported USC4 little endian, line 1, column 1 (<string>, line 1)
+        Traceback (most recent call last):
+          File "/data/user/0/tw.kevinzhang.news_hub/files/flet/python_site_packages/grpc/_server.py", line 610, in _call_behavior
+            response_or_iterator = behavior(argument, context)
+                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          File "/data/user/0/tw.kevinzhang.news_hub/files/extensions/twkevinzhang_komica/api_server_impl.py", line 102, in GetThreadInfos
+            raise e
+          File "/data/user/0/tw.kevinzhang.news_hub/files/extensions/twkevinzhang_komica/api_server_impl.py", line 96, in GetThreadInfos
+            items, _, total = parse_thread_infos_html(result.html, site_id, board_id)
+                              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          File "/data/user/0/tw.kevinzhang.news_hub/files/extensions/twkevinzhang_komica/parse_threads.py", line 46, in parse_thread_infos_html
+            tree = resolve_usc4_tree(html_content)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          File "/data/user/0/tw.kevinzhang.news_hub/files/extensions/twkevinzhang_komica/parse_threads.py", line 22, in resolve_usc4_tree
+            return html.document_fromstring(html_content, parser=parser)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          File "/data/user/0/tw.kevinzhang.news_hub/files/flet/python_site_packages/lxml/html/__init__.py", line 736, in document_fromstring
+            value = etree.fromstring(html, parser, **kw)
+                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+          File "src/lxml/etree.pyx", line 3306, in lxml.etree.fromstring
+          File "src/lxml/parser.pxi", line 1995, in lxml.etree._parseMemoryDocument
+          File "src/lxml/parser.pxi", line 1875, in lxml.etree._parseDoc
+          File "src/lxml/parser.pxi", line 1105, in lxml.etree._BaseParser._parseUnicodeDoc
+          File "src/lxml/parser.pxi", line 633, in lxml.etree._ParserContext._handleParseResultDoc
+          File "src/lxml/parser.pxi", line 743, in lxml.etree._handleParseResult
+          File "src/lxml/parser.pxi", line 672, in lxml.etree._raiseParseError
+          File "<string>", line 1
+        lxml.etree.XMLSyntaxError: encoding not supported USC4 little endian, line 1, column 1
+        '''
+        pass
+    except Exception as e:
+        logging.error(f"HTML解析错误: {e}")
+        logging.debug(f"HTML内容前100字符: {html_content[:100] if html_content else 'None'}")
+        raise
 
 
 def check_page_error(tree: _Element):
@@ -29,7 +73,7 @@ def parse_thread_infos_html(html_content: str, site_id: str, board_id: str) -> (
     :param board_id:
     :return: items, current_page, total_page
     """
-    tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+    tree = resolve_usc4_tree(html_content)
     check_page_error(tree)
     thread_infos = []
 
@@ -53,7 +97,7 @@ def parse_thread_infos_html(html_content: str, site_id: str, board_id: str) -> (
 
 
 def parse_thread_html(html_content: str, site_id: str, board_id: str, thread_id: str, post_id: str | None) -> domain.Post:
-    tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+    tree = resolve_usc4_tree(html_content)
     if is_zero(post_id) or post_id == thread_id:
         thread = _parse_thread(tree)
         thread.site_id = site_id
@@ -68,7 +112,7 @@ def parse_thread_html(html_content: str, site_id: str, board_id: str, thread_id:
 
 
 def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, thread_id: str, reply_to_id: str | None) -> list[domain.Post]:
-    tree = html.document_fromstring(html_content, parser=html.HTMLParser(encoding='utf-8'))
+    tree = resolve_usc4_tree(html_content)
 
     # 計算回覆數
     regarding_posts_count_map: dict[str, int] = {}
