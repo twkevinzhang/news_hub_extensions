@@ -73,7 +73,7 @@ class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
         boards_sorting = req.boards_sorting
         if is_zero(req.boards_sorting):
             boards_sorting = {
-                salt.encode("gita/00b"): "https://gita.komica1.org/00b/index.htm",
+                salt.encode("gita/00b"): "latest_replied",
             }
         for encoded_id, sorting in boards_sorting.items():
             board_id = salt.decode(encoded_id)
