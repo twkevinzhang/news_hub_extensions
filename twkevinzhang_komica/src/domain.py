@@ -1,6 +1,7 @@
 import extension_api_pb2 as pb2
 import salt
 
+pkg_name = "twkevinzhang_komica"
 
 class Post:
     def __init__(self,
@@ -21,10 +22,11 @@ class Post:
                  regarding_posts_count: int,
                  url: str | None,
                  ):
-        self.id = id
-        self.thread_id = thread_id
-        self.board_id = board_id
+        self.pkg_name = pkg_name
         self.site_id = site_id
+        self.board_id = board_id
+        self.thread_id = thread_id
+        self.id = id
         self.author_id = author_id
         self.author_name = author_name
         self.created_at = created_at
@@ -60,6 +62,7 @@ class Post:
                 new_contents.append(content)
 
         return pb2.Post(
+            pkg_name=self.pkg_name,
             id=salt.encode(self.id),
             thread_id=salt.encode(self.thread_id),
             board_id=salt.encode(self.board_id),

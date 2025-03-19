@@ -25,7 +25,7 @@ def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
         ))
 
 
-class ApiServerImpl(pb2_grpc.ExtensionApiServicer):
+class ResolverImpl(pb2_grpc.ExtensionApiServicer):
     def __init__(self):
         pass
 

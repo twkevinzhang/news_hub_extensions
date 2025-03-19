@@ -1,10 +1,12 @@
 import extension_api_pb2 as pb2
+from domain import pkg_name
 
 
 def list():
     # 目前先實作 Top50 的版面
     return [
         pb2.Board(
+            pkg_name=pkg_name,
             id="gita/00b",
             site_id="1",
             name="綜合",
@@ -14,6 +16,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/79",
             site_id="1",
             name="新番捏他",
@@ -23,6 +26,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/42",
             site_id="1",
             name="四格",
@@ -32,6 +36,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/19",
             site_id="1",
             name="女性角色",
@@ -41,6 +46,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/38",
             site_id="1",
             name="男性角色",
@@ -50,6 +56,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/78",
             site_id="1",
             name="新番實況",
@@ -59,6 +66,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="atri/12",
             site_id="1",
             name="歡樂惡搞",
@@ -68,6 +76,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="atri/23",
             site_id="1",
             name="GIF/WebM",
@@ -77,6 +86,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="atri/67",
             site_id="1",
             name="政治",
@@ -86,6 +96,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/09",
             site_id="1",
             name="模型",
@@ -95,6 +106,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/15",
             site_id="1",
             name="蘿蔔",
@@ -113,6 +125,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="atri/61",
             site_id="1",
             name="鋼普拉",
@@ -122,6 +135,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="iris/72",
             site_id="1",
             name="Figure/GK",
@@ -131,6 +145,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/17",
             site_id="1",
             name="軍武",
@@ -140,6 +155,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/13",
             site_id="1",
             name="特攝",
@@ -149,6 +165,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="sora/69",
             site_id="1",
             name="短片2",
@@ -167,6 +184,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/74",
             site_id="1",
             name="Vtuber",
@@ -176,6 +194,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/73",
             site_id="1",
             name="遊戲王",
@@ -185,6 +204,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="gaia/60",
             site_id="1",
             name="奇幻/科幻",
@@ -194,6 +214,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="sora/81",
             site_id="1",
             name="漫畫",
@@ -203,6 +224,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="sora/16",
             site_id="1",
             name="寫真",
@@ -221,6 +243,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="iris/64",
             site_id="1",
             name="掛圖",
@@ -230,6 +253,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/57",
             site_id="1",
             name="中性角色",
@@ -239,6 +263,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="sora/80",
             site_id="1",
             name="動畫",
@@ -257,6 +282,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/25",
             site_id="1",
             name="新聞",
@@ -266,6 +292,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/27",
             site_id="1",
             name="遊戲速報",
@@ -275,6 +302,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="iris/35",
             site_id="1",
             name="小說",
@@ -311,6 +339,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/52",
             site_id="1",
             name="網路遊戲",
@@ -320,6 +349,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/46",
             site_id="1",
             name="布袋戲",
@@ -329,6 +359,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/37",
             site_id="1",
             name="電腦/消費電子",
@@ -383,6 +414,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/30",
             site_id="1",
             name="塗鴉王國",
@@ -401,6 +433,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/36",
             site_id="1",
             name="擬人化",
@@ -410,6 +443,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/49",
             site_id="1",
             name="體育",
@@ -419,6 +453,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/33",
             site_id="1",
             name="高解析度",
@@ -428,6 +463,7 @@ def list():
             supported_threads_sorting=["latest_replied"]
         ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/10",
             site_id="1",
             name="紙牌",
@@ -446,6 +482,7 @@ def list():
         #     supported_threads_sorting=["latest_replied"]
         # ),
         pb2.Board(
+            pkg_name=pkg_name,
             id="grea/62",
             site_id="1",
             name="氣象",

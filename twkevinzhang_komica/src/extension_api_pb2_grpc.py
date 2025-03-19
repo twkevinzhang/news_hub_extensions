@@ -36,7 +36,7 @@ class ExtensionApiStub(object):
         """
         self.GetSite = channel.unary_unary(
                 '/pb.ExtensionApi/GetSite',
-                request_serializer=extension__api__pb2.Empty.SerializeToString,
+                request_serializer=extension__api__pb2.GetSiteReq.SerializeToString,
                 response_deserializer=extension__api__pb2.GetSiteRes.FromString,
                 _registered_method=True)
         self.GetBoards = channel.unary_unary(
@@ -110,7 +110,7 @@ def add_ExtensionApiServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'GetSite': grpc.unary_unary_rpc_method_handler(
                     servicer.GetSite,
-                    request_deserializer=extension__api__pb2.Empty.FromString,
+                    request_deserializer=extension__api__pb2.GetSiteReq.FromString,
                     response_serializer=extension__api__pb2.GetSiteRes.SerializeToString,
             ),
             'GetBoards': grpc.unary_unary_rpc_method_handler(
@@ -164,7 +164,7 @@ class ExtensionApi(object):
             request,
             target,
             '/pb.ExtensionApi/GetSite',
-            extension__api__pb2.Empty.SerializeToString,
+            extension__api__pb2.GetSiteReq.SerializeToString,
             extension__api__pb2.GetSiteRes.FromString,
             options,
             channel_credentials,
