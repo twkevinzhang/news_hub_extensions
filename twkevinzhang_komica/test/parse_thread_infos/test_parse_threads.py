@@ -14,7 +14,7 @@ class TestParseThreadInfos(TestCase):
         with open(get_html_filename("thread_infos.fragment.html"), "r") as f:
             html = f.read()
             thread_infos, current_page, total_page = parse_thread_infos_html(html, 'mock', 'gaia/1')
-            thread_info1 = domain.Post(
+            thread_info1 = domain.ArticlePost(
                 id="26765435",
                 thread_id="26765435",
                 board_id="gaia/1",
@@ -40,7 +40,7 @@ class TestParseThreadInfos(TestCase):
                 tags=[],
                 url='https://gaia.komica1.org/1/pixmicat.php?res=26765435',
             )
-            thread_info2 = domain.Post(
+            thread_info2 = domain.ArticlePost(
                 id="26765468",
                 thread_id="26765468",
                 board_id="gaia/1",
@@ -64,7 +64,7 @@ class TestParseThreadInfos(TestCase):
                 tags=[],
                 url='https://gaia.komica1.org/1/pixmicat.php?res=26765468',
             )
-            thread_info3 = domain.Post(
+            thread_info3 = domain.ArticlePost(
                 id="26765356",
                 thread_id="26765356",
                 board_id="gaia/1",
@@ -98,7 +98,7 @@ class TestParseThreadInfos(TestCase):
         with open(get_html_filename("thread_detail.fragment.html"), "r") as f:
             html = f.read()
             post = parse_thread_html(html, 'mock', 'gaia/1', '26812758', None)
-            post1 = domain.Post(
+            post1 = domain.ArticlePost(
                 id="26812758",
                 thread_id="26812758",
                 board_id="gaia/1",
@@ -127,7 +127,7 @@ class TestParseThreadInfos(TestCase):
         with open(get_html_filename("thread_detail.fragment.html"), "r") as f:
             html = f.read()
             posts = parse_regarding_posts_html(html, 'mock', 'gaia/1', 'mock', None)
-            post1 = domain.Post(
+            post1 = domain.ArticlePost(
                 id="26812766",
                 thread_id="mock",
                 board_id="gaia/1",
@@ -148,7 +148,7 @@ class TestParseThreadInfos(TestCase):
                 regarding_posts_count=0,
                 url=None,
             )
-            post2 = domain.Post(
+            post2 = domain.ArticlePost(
                 id="26812792",
                 thread_id="mock",
                 board_id="gaia/1",
@@ -170,7 +170,7 @@ class TestParseThreadInfos(TestCase):
                 regarding_posts_count=0,
                 url=None,
             )
-            post3 = domain.Post(
+            post3 = domain.ArticlePost(
                 id="26812814",
                 thread_id="mock",
                 board_id="gaia/1",
@@ -191,7 +191,7 @@ class TestParseThreadInfos(TestCase):
                 regarding_posts_count=0,
                 url=None,
             )
-            post4 = domain.Post(
+            post4 = domain.ArticlePost(
                 id="26812830",
                 thread_id="mock",
                 board_id="gaia/1",
@@ -212,7 +212,7 @@ class TestParseThreadInfos(TestCase):
                 regarding_posts_count=1,
                 url=None,
             )
-            post5 = domain.Post(
+            post5 = domain.ArticlePost(
                 id="26812836",
                 thread_id="mock",
                 board_id="gaia/1",
@@ -234,7 +234,7 @@ class TestParseThreadInfos(TestCase):
                 regarding_posts_count=0,
                 url=None,
             )
-            post6 = domain.Post(
+            post6 = domain.ArticlePost(
                 id="26812841",
                 thread_id="mock",
                 board_id="gaia/1",
@@ -268,7 +268,7 @@ class TestParseThreadInfos(TestCase):
         with open(get_html_filename("thread_detail.fragment.html"), "r") as f:
             html = f.read()
             posts = parse_regarding_posts_html(html, 'mock', 'gaia/1', 'mock', "26812830")
-            post6 = domain.Post(
+            post6 = domain.ArticlePost(
                 id="26812841",
                 thread_id="mock",
                 board_id="gaia/1",

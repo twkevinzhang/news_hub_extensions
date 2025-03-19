@@ -23,4 +23,4 @@ test:
 
 .PHONY: run
 run:
-	python src/main.py
+	python test_resolver_impl.py

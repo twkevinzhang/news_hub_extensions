@@ -106,7 +106,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             if not is_zero(req.page.page):
                 current_page = req.page.page
         return pb2.GetThreadInfosRes(
-            thread_infos=[thread.toSaltPb2() for thread in thread_infos],
+            thread_infos=[thread.toSaltPb2('single_image_post') for thread in thread_infos],
             page=pb2.PaginationRes(
                 current_page=current_page,
                 total_page=total_page,
@@ -127,7 +127,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             raise result.error
         thread = parse_thread_html(result.html, site_id, board_id, thread_id, post_id)
         return pb2.GetThreadPostRes(
-            thread_post=thread.toSaltPb2(),
+            thread_post=thread.toSaltPb2('article_post'),
         )
 
     def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
@@ -148,7 +148,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             posts, page = pagination(req.page, posts)
 
         return pb2.GetRegardingPostsRes(
-            regarding_posts=[post.toSaltPb2() for post in posts],
+            regarding_posts=[post.toSaltPb2('article_post') for post in posts],
             page=page,
         )
 
