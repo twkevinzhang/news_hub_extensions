@@ -109,6 +109,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                 except OverPageError:
                     logging.warning(f"{result.url} is over page")
                 except Exception as e:
+                    logging.error(f"{result.url} has parse error")
                     raise e
 
         current_page = 1
@@ -135,7 +136,12 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             logging.error(f"Failed to fetch {result.url}")
             logging.exception(result.error)
             raise result.error
-        thread = parse_thread_html(result.html, site_id, board_id, thread_id, post_id)
+        thread = None
+        try:
+            thread = parse_thread_html(result.html, site_id, board_id, thread_id, post_id)
+        except Exception as e:
+            logging.error(f"{result.url} has parse error")
+            raise e
         return pb2.GetThreadPostRes(
             thread_post=thread.toSaltPb2('article_post'),
         )
@@ -177,7 +183,12 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             logging.error(f"Failed to fetch {result.url}")
             logging.exception(result.error)
             raise result.error
-        posts, page = parse_regarding_posts_html(result.html, site_id, board_id, thread_id, reply_to_id), 1
+        posts = []
+        try:
+            posts = parse_regarding_posts_html(result.html, site_id, board_id, thread_id, reply_to_id)
+        except Exception as e:
+            logging.error(f"{result.url} has parse error")
+            raise e
         return pb2.GetRegardingPostsRes(
             regarding_posts=[post.toSaltPb2('article_post') for post in posts],
             page=pb2.PaginationRes(
