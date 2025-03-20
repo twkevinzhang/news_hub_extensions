@@ -6,6 +6,7 @@ import extension_api_pb2 as pb2
 import paragraph
 import domain
 from domain import OverPageError
+from paragraph import youtube_video, image
 from utilities import is_youtube, is_image, is_video, is_zero
 
 
@@ -200,6 +201,14 @@ def _parse_post(post_div: Tag, get_preview: Callable[[str], str]) -> domain.Post
     # 解析內容
     contents = _parse_post_content(post_div, get_preview)
 
+    # 解析第一張圖片
+    first_image = next((content.image for content in contents if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE), None)
+    if not first_image:
+        if youtube_video_link := next((content.video for content in contents if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO and is_youtube(content.video.url)), None):
+            clip = youtube_video_link.url.split('?v=')[-1]
+            link = f"https://img.youtube.com/vi/{clip}/0.jpg"
+            first_image = image(s=link, thumb=link)
+
     return domain.Post(
         id=post_id,
         thread_id=None,
@@ -212,6 +221,7 @@ def _parse_post(post_div: Tag, get_preview: Callable[[str], str]) -> domain.Post
         liked=0,
         disliked=0,
         comments=0,
+        image=first_image,
         contents=contents,
         tags=[],
         latest_regarding_post_created_at=0,

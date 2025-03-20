@@ -18,6 +18,7 @@ class Post:
                  liked: int,
                  disliked: int,
                  comments: int,
+                 image: pb2.ImageParagraph | None,
                  contents: list[pb2.Paragraph],
                  tags: list[str],
                  latest_regarding_post_created_at: int,
@@ -36,6 +37,7 @@ class Post:
         self.liked = liked
         self.disliked = disliked
         self.comments = comments
+        self.image = image
         self.contents = contents
         self.tags = tags
         self.latest_regarding_post_created_at = latest_regarding_post_created_at
@@ -87,7 +89,6 @@ class Post:
                 ),
             )
         elif ui_layout == 'single_image_post':
-            first_image = next((content.image for content in new_contents if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE), None)
             return pb2.Post(
                 pkg_name=self.pkg_name,
                 id=salt.encode(self.id),
@@ -102,7 +103,7 @@ class Post:
                     liked=self.liked,
                     disliked=self.disliked,
                     contents=new_contents,
-                    image=first_image,
+                    image=self.image,
                     tags=self.tags,
                     latest_regarding_post_created_at=self.latest_regarding_post_created_at,
                     regarding_posts_count=self.regarding_posts_count,
