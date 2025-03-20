@@ -87,8 +87,11 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             }
         for encoded_id, sorting in boards_sorting.items():
             board_id = salt.decode(encoded_id)
-            if req.page is not None:
-                urls[board_id] = board_id_to_url_prefix(board_id) + f'/{req.page.page + 1}.htm'
+            if req.page is not None and not is_zero(req.page.page):
+                if req.page.page < 10:
+                    urls[board_id] = board_id_to_url_prefix(board_id) + f'/{req.page.page + 1}.htm'
+                else:
+                    urls[board_id] = board_id_to_url_prefix(board_id) + f'/pixmicat.php?page_num={req.page.page + 1}'
             else:
                 urls[board_id] = board_id_to_url_prefix(board_id) + '/index.htm'
 
