@@ -1,84 +1,9 @@
 import extension_api_pb2 as pb2
 import salt
-from paragraph import image
+
 
 pkg_name = "twkevinzhang_komica"
 
-def article_post(
-        id: str,
-        thread_id: str | None,
-        board_id: str | None,
-        site_id: str | None,
-        author_id: str,
-        author_name: str,
-        created_at: int,
-        title: str,
-        liked: int,
-        disliked: int,
-        contents: list[pb2.Paragraph],
-        tags: list[str],
-        latest_regarding_post_created_at: int,
-        regarding_posts_count: int,
-        url: str | None,
-) -> pb2.Post:
-    return pb2.Post(
-        pkg_name=pkg_name,
-        id=salt.encode(id),
-        thread_id=salt.encode(thread_id),
-        board_id=salt.encode(board_id),
-        site_id=salt.encode(site_id),
-        article_post = pb2.ArticlePost(
-            author_id=salt.encode(author_id),
-            author_name=author_name,
-            created_at=created_at,
-            title=title,
-            liked=liked,
-            disliked=disliked,
-            contents=contents,
-            tags=tags,
-            latest_regarding_post_created_at=latest_regarding_post_created_at,
-            regarding_posts_count=regarding_posts_count,
-            url=url
-        ),
-    )
-
-def single_image_post(
-        id: str,
-        thread_id: str | None,
-        board_id: str | None,
-        site_id: str | None,
-        author_id: str,
-        author_name: str,
-        created_at: int,
-        title: str,
-        liked: int,
-        disliked: int,
-        contents: list[pb2.Paragraph],
-        tags: list[str],
-        latest_regarding_post_created_at: int,
-        regarding_posts_count: int,
-        url: str | None,
-) -> pb2.Post:
-    return pb2.Post(
-        pkg_name=pkg_name,
-        id=salt.encode(id),
-        thread_id=salt.encode(thread_id),
-        board_id=salt.encode(board_id),
-        site_id=salt.encode(site_id),
-        single_image_post = pb2.SingleImagePost(
-            author_id=salt.encode(author_id),
-            author_name=author_name,
-            created_at=created_at,
-            title=title,
-            liked=liked,
-            disliked=disliked,
-            contents=contents,
-            tags=tags,
-            latest_regarding_post_created_at=latest_regarding_post_created_at,
-            regarding_posts_count=regarding_posts_count,
-            url=url
-        ),
-    )
 
 class Post:
     def __init__(self,

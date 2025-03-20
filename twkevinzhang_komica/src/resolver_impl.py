@@ -62,11 +62,21 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
 
     def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
         """
-        :param req:
-        req.page.page_size is not useful, it is determined by the parser.
-        req.page.page is the current page, if too much, it will be ignored.
-        :param context:
-        :return:
+        取得貼文資訊。
+
+        Args:
+            req (pb2.GetThreadInfosReq): 討論串請求物件，包含：
+                page (PageReq): 分頁相關資訊：
+                    page_size (int): **無效**，由解析器決定實際大小。
+                    page (int): 要請求的頁碼。
+            context (grpc.ServicerContext): gRPC 服務端的請求上下文。
+
+        Returns:
+            pb2.GetThreadInfosRes: 討論串資訊回應物件，包含：
+                thread_infos (list[ThreadInfo]): 討論串資訊列表。
+                page (PageRes): 分頁資訊：
+                    current_page (int): 當前頁碼。
+                    total_page (int): 總頁數。
         """
         site_id = salt.decode(req.site_id)
         urls = {}
@@ -131,6 +141,31 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
         )
 
     def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
+        """
+        取得貼文討論串。
+
+        Args:
+            req (pb2.GetRegardingPostsReq): 討論串請求物件，包含：
+                page (PageReq): 分頁相關資訊：
+                    page_size (int): **無效**，由解析器決定實際大小。
+                    page (int): **無效**，如果輸入大於 1 將回傳空結果，因為永遠只有一頁。
+            context (grpc.ServicerContext): gRPC 服務端的請求上下文。
+
+        Returns:
+            pb2.GetRegardingPostsRes: 討論串資訊回應物件，包含：
+                thread_infos (list[ThreadInfo]): 討論串資訊列表。
+                page (PageRes): 分頁資訊：
+                    current_page (int): 永遠只有第一頁。
+                    total_page (int): 永遠只有一頁。
+        """
+        if req.page and req.page.page > 1:
+            return pb2.GetRegardingPostsRes(
+                regarding_posts=[],
+                page=pb2.PaginationRes(
+                    current_page=1,
+                    total_page=1,
+                ),
+            )
         site_id = salt.decode(req.site_id)
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
@@ -142,14 +177,13 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             logging.error(f"Failed to fetch {result.url}")
             logging.exception(result.error)
             raise result.error
-        posts, page = parse_regarding_posts_html(result.html, site_id, board_id, thread_id, reply_to_id), None
-
-        if req.page is not None:
-            posts, page = pagination(req.page, posts)
-
+        posts, page = parse_regarding_posts_html(result.html, site_id, board_id, thread_id, reply_to_id), 1
         return pb2.GetRegardingPostsRes(
             regarding_posts=[post.toSaltPb2('article_post') for post in posts],
-            page=page,
+            page=pb2.PaginationRes(
+                current_page=1,
+                total_page=1,
+            ),
         )
 
     def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadInfosRes:
