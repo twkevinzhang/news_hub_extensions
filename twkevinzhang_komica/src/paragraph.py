@@ -6,7 +6,7 @@ def text(s: str) -> pb2.Paragraph:
         text=pb2.TextParagraph(content=s)
     )
 
-def newLine() -> pb2.Paragraph:
+def new_line() -> pb2.Paragraph:
     return pb2.Paragraph(
         type=pb2.ParagraphType.PARAGRAPH_TYPE_NEW_LINE,
         new_line=pb2.NewLineParagraph(symbol="\n")

@@ -207,7 +207,7 @@ def _parse_post(post_div: Tag, get_preview: Callable[[str], str]) -> domain.Post
         if youtube_video_link := next((content.video for content in contents if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO and is_youtube(content.video.url)), None):
             clip = youtube_video_link.url.split('?v=')[-1]
             link = f"https://img.youtube.com/vi/{clip}/0.jpg"
-            first_image = image(s=link, thumb=link)
+            first_image = image(s=link, thumb=link).image
 
     return domain.Post(
         id=post_id,
@@ -289,7 +289,7 @@ def _parse_post_content(post_div: Tag, get_preview: Callable[[str], str]) -> lis
             elif isinstance(child, Tag):
                 # 處理換行
                 if child.name == 'br':
-                    contents.append(paragraph.newLine())
+                    contents.append(paragraph.new_line())
                 # 處理引用回覆
                 elif child.name == 'span' and child.get('class') and 'resquote' in child.get('class'):
                     qlink_a = child.select_one('a.qlink')

@@ -32,7 +32,7 @@ class TestParseThreadInfos(TestCase):
                         thumb="https://gita.komica1.org/00b/thumb/1740432283914s.jpg",
                     ),
                     paragraph.text("美國正式加入中俄勢力"),
-                    paragraph.newLine(),
+                    paragraph.new_line(),
                     paragraph.text("島民現在在想什麼?"),
                 ],
                 latest_regarding_post_created_at=1740432471,
@@ -162,7 +162,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812758", preview=''),
-                    paragraph.newLine(),
+                    paragraph.new_line(),
                     paragraph.text("法蘭可愛"),
                 ],
                 tags=[],
@@ -226,7 +226,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812758", preview=''),
-                    paragraph.newLine(),
+                    paragraph.new_line(),
                     paragraph.text("感覺女角越穿越少..?"),
                 ],
                 tags=[],
@@ -248,7 +248,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812830", preview='[圖片]無本文'),
-                    paragraph.newLine(),
+                    paragraph.new_line(),
                     paragraph.text("誰"),
                 ],
                 tags=[],
@@ -282,7 +282,7 @@ class TestParseThreadInfos(TestCase):
                 comments=0,
                 contents=[
                     paragraph.reply_to(id="26812830", preview='[圖片]無本文'),
-                    paragraph.newLine(),
+                    paragraph.new_line(),
                     paragraph.text("誰"),
                 ],
                 tags=[],
