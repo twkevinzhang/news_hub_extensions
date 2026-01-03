@@ -1,3 +1,0 @@
-[submodule "news_hub_protos"]
-	path = news_hub_protos
-	url = git@github.com:twkevinzhang/news_hub_protos
