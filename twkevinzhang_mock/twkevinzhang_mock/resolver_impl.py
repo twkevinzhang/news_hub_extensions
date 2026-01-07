@@ -23,25 +23,12 @@ def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
 
 class ResolverImpl(pb2_grpc.ExtensionApiServicer):
     def __init__(self):
-        self.site_id = "mock_site"
         self.pkg_name = "twkevinzhang_mock"
-
-    def GetSite(self, req: pb2.Empty, context) -> pb2.GetSiteRes:
-        return pb2.GetSiteRes(
-            site=pb2.Site(
-                id=salt.encode(self.site_id),
-                icon="https://img.icons8.com/color/96/test-partial-passed.png",
-                name="Mock Site",
-                description="A mock site for testing purposes",
-                url="https://example.com/mock",
-            )
-        )
 
     def GetBoards(self, req: pb2.GetBoardsReq, context) -> pb2.GetBoardsRes:
         boards = [
             pb2.Board(
                 id=salt.encode("board_1"),
-                site_id=salt.encode(self.site_id),
                 name="General Discussion",
                 icon="https://img.icons8.com/color/48/chat--v1.png",
                 url="https://example.com/mock/board1",
@@ -49,7 +36,6 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             ),
             pb2.Board(
                 id=salt.encode("board_2"),
-                site_id=salt.encode(self.site_id),
                 name="Tech News",
                 icon="https://img.icons8.com/color/48/electronics.png",
                 url="https://example.com/mock/board2",
@@ -57,7 +43,6 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             ),
             pb2.Board(
                 id=salt.encode("board_3"),
-                site_id=salt.encode(self.site_id),
                 name="Anime & Manga",
                 icon="https://img.icons8.com/color/48/anime.png",
                 url="https://example.com/mock/board3",
@@ -74,28 +59,25 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             page=page_res,
         )
 
-    def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
-        site_id = salt.decode(req.site_id)
-        
+    def GetThreads(self, req: pb2.GetThreadsReq, context) -> pb2.GetThreadsRes:
         # Determine which boards to generate data for
         boards_to_process = []
-        if req.boards_sorting:
-            for encoded_id in req.boards_sorting.keys():
+        if req.board_sorts:
+            for encoded_id in req.board_sorts.keys():
                 boards_to_process.append(salt.decode(encoded_id))
         else:
             boards_to_process = ["board_1"]
 
-        thread_infos = []
+        threads = []
         now = int(time.time())
         
         for board_id in boards_to_process:
             for i in range(1, 11):
                 tid = f"thread_{board_id}_{i}"
-                thread_infos.append(Post(
+                threads.append(Post(
                     id=tid,
                     thread_id=tid,
                     board_id=board_id,
-                    site_id=site_id,
                     author_id="user_123",
                     author_name=f"Mock Author {i}",
                     created_at=now - (i * 3600),
@@ -114,28 +96,27 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                         )
                     ],
                     tags=["Mock", board_id],
-                    latest_regarding_post_created_at=now - (i * 1800),
-                    regarding_posts_count=i * 5,
+                    latest_reply_created_at=now - (i * 1800),
+                    replies_count=i * 5,
                     url=f"https://example.com/mock/{board_id}/{tid}"
                 ))
 
         current_page = 1
         total_page = 1
         if req.page:
-            thread_infos, page_res = pagination(req.page, thread_infos)
+            threads, page_res = pagination(req.page, threads)
             current_page = page_res.current_page
             total_page = page_res.total_page
 
-        return pb2.GetThreadInfosRes(
-            thread_infos=[thread.toSaltPb2('single_image_post') for thread in thread_infos],
+        return pb2.GetThreadsRes(
+            threads=[thread.toSaltPb2('single_image_post') for thread in threads],
             page=pb2.PaginationRes(
                 current_page=current_page,
                 total_page=total_page,
             ),
         )
 
-    def GetThreadPost(self, req: pb2.GetThreadPostReq, context) -> pb2.GetThreadPostRes:
-        site_id = salt.decode(req.site_id)
+    def GetOriginalPost(self, req: pb2.GetOriginalPostReq, context) -> pb2.GetOriginalPostRes:
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         post_id = salt.decode(req.post_id)
@@ -146,7 +127,6 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             id=post_id,
             thread_id=thread_id,
             board_id=board_id,
-            site_id=site_id,
             author_id="user_123",
             author_name="Mock Author Original",
             created_at=now - 86400,
@@ -172,17 +152,16 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                 )
             ],
             tags=["Mock", "Detail"],
-            latest_regarding_post_created_at=now - 3600,
-            regarding_posts_count=50,
+            latest_reply_created_at=now - 3600,
+            replies_count=50,
             url=f"https://example.com/mock/{board_id}/{thread_id}"
         )
         
-        return pb2.GetThreadPostRes(
-            thread_post=thread.toSaltPb2('article_post'),
+        return pb2.GetOriginalPostRes(
+            original_post=thread.toSaltPb2('article_post'),
         )
 
-    def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
-        site_id = salt.decode(req.site_id)
+    def GetReplies(self, req: pb2.GetRepliesReq, context) -> pb2.GetRepliesRes:
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         reply_to_id = salt.decode(req.reply_to_id)
@@ -196,7 +175,6 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                 id=pid,
                 thread_id=thread_id,
                 board_id=board_id,
-                site_id=site_id,
                 author_id=f"user_{i}",
                 author_name=f"Replier {i}",
                 created_at=now - (6-i) * 600,
@@ -220,18 +198,18 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                     )
                 ],
                 tags=[],
-                latest_regarding_post_created_at=0,
-                regarding_posts_count=0,
+                latest_reply_created_at=0,
+                replies_count=0,
                 url=None
             ))
 
-        return pb2.GetRegardingPostsRes(
-            regarding_posts=[post.toSaltPb2('article_post') for post in posts],
+        return pb2.GetRepliesRes(
+            replies=[post.toSaltPb2('article_post') for post in posts],
             page=pb2.PaginationRes(
                 current_page=1,
                 total_page=1,
             ),
         )
 
-    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadInfosRes:
-        return pb2.GetThreadInfosRes()
+    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadsRes:
+        return pb2.GetThreadsRes()

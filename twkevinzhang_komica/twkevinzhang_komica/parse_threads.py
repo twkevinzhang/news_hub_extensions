@@ -27,26 +27,24 @@ def check_page_error(soup):
         raise OverPageError
 
 
-def parse_thread_infos_html(html_content: str, site_id: str, board_id: str) -> (list[domain.Post], int, int):
+def parse_threads_html(html_content: str, board_id: str) -> (list[domain.Post], int, int):
     """
     解析討論串資訊 HTML
     :param html_content: HTML 內容
-    :param site_id: 站點 ID
     :param board_id: 看板 ID
     :return: 討論串資訊列表, 當前頁碼, 總頁數
     """
     soup = to_soup(html_content)
     check_page_error(soup)
-    thread_infos = []
+    threads = []
 
     for thread_div in soup.find_all('div', class_='thread'):
-        thread_info = _parse_thread(thread_div)
-        thread_info.site_id = site_id
-        thread_info.board_id = board_id
-        thread_info.thread_id = thread_info.id
+        thread = _parse_thread(thread_div)
+        thread.board_id = board_id
+        thread.thread_id = thread.id
         prefix = domain.board_id_to_url_prefix(board_id)
-        thread_info.url = f"{prefix}/pixmicat.php?res={thread_info.id}"
-        thread_infos.append(thread_info)
+        thread.url = f"{prefix}/pixmicat.php?res={thread.id}"
+        threads.append(thread)
 
     # 找出當前頁碼（粗體 <b> 標籤內的數字）
     page_switch = soup.select_one('div#page_switch')
@@ -62,15 +60,14 @@ def parse_thread_infos_html(html_content: str, site_id: str, board_id: str) -> (
                 page_numbers.append(int(a.get_text()))
 
     total_page = max(page_numbers) if page_numbers else 1
-    return thread_infos, current_page, total_page
+    return threads, current_page, total_page
 
 
-def parse_thread_html(html_content: str, site_id: str, board_id: str, thread_id: str,
-                      post_id: str | None) -> domain.Post:
+def parse_original_post_html(html_content: str, board_id: str, thread_id: str,
+                        post_id: str | None) -> domain.Post:
     """
     解析討論串 OP 貼文 HTML
     :param html_content: HTML 內容
-    :param site_id: 站點 ID
     :param board_id: 看板 ID
     :param thread_id: 討論串 ID
     :param post_id: 貼文 ID
@@ -80,23 +77,21 @@ def parse_thread_html(html_content: str, site_id: str, board_id: str, thread_id:
 
     if is_zero(post_id) or post_id == thread_id:
         thread = _parse_thread(soup)
-        thread.site_id = site_id
         thread.board_id = board_id
         thread.thread_id = thread_id
         prefix = domain.board_id_to_url_prefix(board_id)
         thread.url = f"{prefix}/pixmicat.php?res={thread_id}"
         return thread
     else:
-        all_posts = parse_regarding_posts_html(html_content, site_id, board_id, thread_id, None)
+        all_posts = parse_replies_html(html_content, board_id, thread_id, None)
         return next(iter([x for x in all_posts if x.id == post_id]), None)
 
 
-def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, thread_id: str,
-                               reply_to_id: str | None) -> list[domain.Post]:
+def parse_replies_html(html_content: str, board_id: str, thread_id: str,
+                        reply_to_id: str | None) -> list[domain.Post]:
     """
     解析相關回覆貼文 HTML
     :param html_content: HTML 內容
-    :param site_id: 站點 ID
     :param board_id: 看板 ID
     :param thread_id: 討論串 ID
     :param reply_to_id: 回覆目標 ID
@@ -105,23 +100,23 @@ def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, t
     soup = to_soup(html_content)
 
     # 計算回覆數
-    regarding_posts_count_map: dict[str, int] = {}
-    latest_regarding_post_created_at_map: dict[str, int] = {}
+    replies_count_map: dict[str, int] = {}
+    latest_reply_created_at_map: dict[str, int] = {}
 
     for post_div in soup.find_all('div', class_='post reply'):
         post = _parse_post(post_div, lambda x: "")
         for c in post.contents:
             if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO:
                 no = c.reply_to.id
-                regarding_posts_count_map[no] = regarding_posts_count_map.get(no, 0) + 1
-                latest_regarding_post_created_at_map[no] = max(latest_regarding_post_created_at_map.get(no, 0),
+                replies_count_map[no] = replies_count_map.get(no, 0) + 1
+                latest_reply_created_at_map[no] = max(latest_reply_created_at_map.get(no, 0),
                                                                post.created_at)
 
     # 解析所有回覆
-    regarding_posts = []
+    replies = []
 
     def get_preview(no: str):
-        contents: list[pb2.Paragraph] = next(iter([x.contents for x in regarding_posts if x.id == no]), None)
+        contents: list[pb2.Paragraph] = next(iter([x.contents for x in replies if x.id == no]), None)
         if is_zero(contents):
             return ""
         preview = ""
@@ -139,23 +134,22 @@ def parse_regarding_posts_html(html_content: str, site_id: str, board_id: str, t
     for post_div in soup.find_all('div', class_='post reply'):
         post = _parse_post(post_div, get_preview)
         post.thread_id = thread_id
-        post.site_id = site_id
         post.board_id = board_id
         post.url = None
-        post.regarding_posts_count = regarding_posts_count_map.get(post.id, 0)
-        post.latest_regarding_post_created_at = latest_regarding_post_created_at_map.get(post.id, 0)
-        regarding_posts.append(post)
+        post.replies_count = replies_count_map.get(post.id, 0)
+        post.latest_reply_created_at = latest_reply_created_at_map.get(post.id, 0)
+        replies.append(post)
 
     # 根據 reply to post id 篩選回覆
     if not is_zero(reply_to_id) and reply_to_id != thread_id:
         filtered_posts = []
-        for post in regarding_posts:
+        for post in replies:
             for c in post.contents:
                 if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO and c.reply_to.id == reply_to_id:
                     filtered_posts.append(post)
         return filtered_posts
 
-    return regarding_posts
+    return replies
 
 
 def _parse_datetime(date_str, time_str):
@@ -213,7 +207,6 @@ def _parse_post(post_div: Tag, get_preview: Callable[[str], str]) -> domain.Post
         id=post_id,
         thread_id=None,
         board_id=None,
-        site_id=None,
         author_id=author_id,
         author_name=author_name,
         created_at=created_at,
@@ -224,8 +217,8 @@ def _parse_post(post_div: Tag, get_preview: Callable[[str], str]) -> domain.Post
         image=first_image,
         contents=contents,
         tags=[],
-        latest_regarding_post_created_at=0,
-        regarding_posts_count=0,
+        latest_reply_created_at=0,
+        replies_count=0,
         url=None,
     )
 
@@ -255,15 +248,15 @@ def _parse_thread(container) -> domain.Post:
     post.title = title
 
     # 解析貼文
-    regarding_posts = []
+    replies = []
     for post_div in container.select('div.post.reply'):
-        regarding_posts.append(_parse_post(post_div, lambda x: ""))
+        replies.append(_parse_post(post_div, lambda x: ""))
 
     # 獲取回覆數
-    post.regarding_posts_count = len(regarding_posts)
+    post.replies_count = len(replies)
 
     # 獲取最新回覆時間
-    post.latest_regarding_post_created_at = max((p.created_at for p in regarding_posts), default=0)
+    post.latest_reply_created_at = max((p.created_at for p in replies), default=0)
 
     return post
 

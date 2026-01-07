@@ -10,7 +10,6 @@ class Post:
                  id: str,
                  thread_id: str | None,
                  board_id: str | None,
-                 site_id: str | None,
                  author_id: str,
                  author_name: str,
                  created_at: int,
@@ -21,12 +20,11 @@ class Post:
                  image: pb2.ImageParagraph | None,
                  contents: list[pb2.Paragraph],
                  tags: list[str],
-                 latest_regarding_post_created_at: int,
-                 regarding_posts_count: int,
+                 latest_reply_created_at: int,
+                 replies_count: int,
                  url: str | None,
                  ):
         self.pkg_name = pkg_name
-        self.site_id = site_id
         self.board_id = board_id
         self.thread_id = thread_id
         self.id = id
@@ -40,8 +38,8 @@ class Post:
         self.image = image
         self.contents = contents
         self.tags = tags
-        self.latest_regarding_post_created_at = latest_regarding_post_created_at
-        self.regarding_posts_count = regarding_posts_count
+        self.latest_reply_created_at = latest_reply_created_at
+        self.replies_count = replies_count
         self.url = url
 
     def __eq__(self, other):
@@ -73,7 +71,6 @@ class Post:
                 id=salt.encode(self.id),
                 thread_id=salt.encode(self.thread_id),
                 board_id=salt.encode(self.board_id),
-                site_id=salt.encode(self.site_id),
                 article_post = pb2.ArticlePost(
                     author_id=salt.encode(self.author_id),
                     author_name=self.author_name,
@@ -83,8 +80,8 @@ class Post:
                     disliked=self.disliked,
                     contents=new_contents,
                     tags=self.tags,
-                    latest_regarding_post_created_at=self.latest_regarding_post_created_at,
-                    regarding_posts_count=self.regarding_posts_count,
+                    latest_reply_created_at=self.latest_reply_created_at,
+                    replies_count=self.replies_count,
                     url=self.url
                 ),
             )
@@ -94,7 +91,6 @@ class Post:
                 id=salt.encode(self.id),
                 thread_id=salt.encode(self.thread_id),
                 board_id=salt.encode(self.board_id),
-                site_id=salt.encode(self.site_id),
                 single_image_post = pb2.SingleImagePost(
                     author_id=salt.encode(self.author_id),
                     author_name=self.author_name,
@@ -105,8 +101,8 @@ class Post:
                     contents=new_contents,
                     image=self.image,
                     tags=self.tags,
-                    latest_regarding_post_created_at=self.latest_regarding_post_created_at,
-                    regarding_posts_count=self.regarding_posts_count,
+                    latest_reply_created_at=self.latest_reply_created_at,
+                    replies_count=self.replies_count,
                     url=self.url
                 ),
             )

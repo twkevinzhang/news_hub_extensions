@@ -29,17 +29,6 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
     def __init__(self):
         pass
 
-    def GetSite(self, req: pb2.Empty, context) -> pb2.GetSiteRes:
-        return pb2.GetSiteRes(
-            site=pb2.Site(
-                id=salt.encode("komica"),
-                icon="https://komica1.org/favicon.ico",
-                name="komica1.org",
-                description="A description of komica1.org",
-                url="https://komica1.org",
-            )
-        )
-
     def GetBoards(self, req: pb2.GetBoardsReq, context) -> pb2.GetBoardsRes:
         boards, page = parse_boards.list(), None
         if req.page is not None:
@@ -49,7 +38,6 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             boards=[
                 pb2.Board(
                     id=salt.encode(x.id),
-                    site_id=salt.encode(x.site_id),
                     name=x.name,
                     icon=x.icon,
                     large_welcome_image=x.large_welcome_image,
@@ -61,28 +49,10 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             page=page,
         )
 
-    def GetThreadInfos(self, req: pb2.GetThreadInfosReq, context) -> pb2.GetThreadInfosRes:
-        """
-        取得貼文資訊。
-
-        Args:
-            req (pb2.GetThreadInfosReq): 討論串請求物件，包含：
-                page (PageReq): 分頁相關資訊：
-                    page_size (int): **無效**，由解析器決定實際大小。
-                    page (int): 要請求的頁碼。
-            context (grpc.ServicerContext): gRPC 服務端的請求上下文。
-
-        Returns:
-            pb2.GetThreadInfosRes: 討論串資訊回應物件，包含：
-                thread_infos (list[ThreadInfo]): 討論串資訊列表。
-                page (PageRes): 分頁資訊：
-                    current_page (int): 當前頁碼。
-                    total_page (int): 總頁數。
-        """
-        site_id = salt.decode(req.site_id)
+    def GetThreads(self, req: pb2.GetThreadsReq, context) -> pb2.GetThreadsRes:
         urls = {}
-        boards_sorting = req.boards_sorting
-        if is_zero(req.boards_sorting):
+        boards_sorting = req.board_sorts
+        if is_zero(req.board_sorts):
             boards_sorting = {
                 salt.encode("gita/00b"): "latest_replied",
             }
@@ -99,7 +69,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
         total_page = 0
         requester = Requester()
         results = asyncio.run(requester.crawl(urls))
-        thread_infos = []
+        threads = []
         for result in results:
             if result.is_failed():
                 logging.error(f"Failed to fetch {result.url}")
@@ -107,8 +77,8 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             else:
                 try:
                     board_id = result.key
-                    items, _, total = parse_thread_infos_html(result.html, site_id, board_id)
-                    thread_infos += items
+                    items, _, total = parse_threads_html(result.html, board_id)
+                    threads += items
                     total_page = max(total_page, total)
                 except OverPageError:
                     logging.warning(f"{result.url} is over page")
@@ -120,16 +90,15 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
         if req.page is not None:
             if not is_zero(req.page.page):
                 current_page = req.page.page
-        return pb2.GetThreadInfosRes(
-            thread_infos=[thread.toSaltPb2('single_image_post') for thread in thread_infos],
+        return pb2.GetThreadsRes(
+            threads=[thread.toSaltPb2('single_image_post') for thread in threads],
             page=pb2.PaginationRes(
                 current_page=current_page,
                 total_page=total_page,
             ),
         )
 
-    def GetThreadPost(self, req: pb2.GetThreadPostReq, context) -> pb2.GetThreadPostRes:
-        site_id = salt.decode(req.site_id)
+    def GetOriginalPost(self, req: pb2.GetOriginalPostReq, context) -> pb2.GetOriginalPostRes:
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         post_id = salt.decode(req.post_id)
@@ -142,41 +111,23 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             raise result.error
         thread = None
         try:
-            thread = parse_thread_html(result.html, site_id, board_id, thread_id, post_id)
+            thread = parse_original_post_html(result.html, board_id, thread_id, post_id)
         except Exception as e:
             logging.error(f"{result.url} has parse error")
             raise e
-        return pb2.GetThreadPostRes(
-            thread_post=thread.toSaltPb2('article_post'),
+        return pb2.GetOriginalPostRes(
+            original_post=thread.toSaltPb2('article_post'),
         )
 
-    def GetRegardingPosts(self, req: pb2.GetRegardingPostsReq, context) -> pb2.GetRegardingPostsRes:
-        """
-        取得貼文討論串。
-
-        Args:
-            req (pb2.GetRegardingPostsReq): 討論串請求物件，包含：
-                page (PageReq): 分頁相關資訊：
-                    page_size (int): **無效**，由解析器決定實際大小。
-                    page (int): **無效**，如果輸入大於 1 將回傳空結果，因為永遠只有一頁。
-            context (grpc.ServicerContext): gRPC 服務端的請求上下文。
-
-        Returns:
-            pb2.GetRegardingPostsRes: 討論串資訊回應物件，包含：
-                thread_infos (list[ThreadInfo]): 討論串資訊列表。
-                page (PageRes): 分頁資訊：
-                    current_page (int): 永遠只有第一頁。
-                    total_page (int): 永遠只有一頁。
-        """
+    def GetReplies(self, req: pb2.GetRepliesReq, context) -> pb2.GetRepliesRes:
         if req.page and req.page.page > 1:
-            return pb2.GetRegardingPostsRes(
-                regarding_posts=[],
+            return pb2.GetRepliesRes(
+                replies=[],
                 page=pb2.PaginationRes(
                     current_page=1,
                     total_page=1,
                 ),
             )
-        site_id = salt.decode(req.site_id)
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         reply_to_id = salt.decode(req.reply_to_id)
@@ -189,17 +140,17 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             raise result.error
         posts = []
         try:
-            posts = parse_regarding_posts_html(result.html, site_id, board_id, thread_id, reply_to_id)
+            posts = parse_replies_html(result.html, board_id, thread_id, reply_to_id)
         except Exception as e:
             logging.error(f"{result.url} has parse error")
             raise e
-        return pb2.GetRegardingPostsRes(
-            regarding_posts=[post.toSaltPb2('article_post') for post in posts],
+        return pb2.GetRepliesRes(
+            replies=[post.toSaltPb2('article_post') for post in posts],
             page=pb2.PaginationRes(
                 current_page=1,
                 total_page=1,
             ),
         )
 
-    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadInfosRes:
-        pass
+    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadsRes:
+        return pb2.GetThreadsRes()
