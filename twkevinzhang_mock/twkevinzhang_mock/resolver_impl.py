@@ -1,8 +1,8 @@
 import logging
 import time
 
-from . import extension_api_pb2 as pb2
-from . import extension_api_pb2_grpc as pb2_grpc
+from . import sidecar_api_pb2 as pb2
+from . import sidecar_api_pb2_grpc as pb2_grpc
 from . import salt
 from .domain import Post
 

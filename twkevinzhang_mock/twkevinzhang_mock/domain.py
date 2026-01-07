@@ -1,4 +1,4 @@
-from . import extension_api_pb2 as pb2
+from . import sidecar_api_pb2 as pb2
 from . import salt
 
 

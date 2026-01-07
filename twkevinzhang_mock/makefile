@@ -20,3 +20,9 @@ test:
 .PHONY: run
 run:
 	python test_resolver_impl.py
+
+.PHONY: proto
+proto:
+	rm -rf news_hub_protos
+	npx -y degit twkevinzhang/news_hub/news_hub_protos#dev news_hub_protos --force
+	python -m grpc_tools.protoc -Inews_hub_protos --python_out=twkevinzhang_mock --pyi_out=twkevinzhang_mock --grpc_python_out=twkevinzhang_mock news_hub_protos/*.proto
