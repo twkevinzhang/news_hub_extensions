@@ -1,7 +1,6 @@
 {
   "extensions": [
     {
-      "repo_base_url": "twkevinzhang/news_hub_extensions",
       "pkg_name": "twkevinzhang_komica",
       "display_name": "Komica Ex",
       "version": 1,
@@ -10,7 +9,6 @@
       "is_nsfw": false
     },
     {
-      "repo_base_url": "twkevinzhang/news_hub_extensions",
       "pkg_name": "twkevinzhang_mock",
       "display_name": "Mock Extension",
       "version": 1,
