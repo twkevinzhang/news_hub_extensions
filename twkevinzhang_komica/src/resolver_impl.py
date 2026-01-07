@@ -1,14 +1,14 @@
 import asyncio
 import logging
 
-import extension_api_pb2 as pb2
-import extension_api_pb2_grpc as pb2_grpc
-import parse_boards
-import salt
-from domain import board_id_to_url_prefix, OverPageError
-from parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
-from requester import Requester
-from utilities import is_zero
+from . import extension_api_pb2 as pb2
+from . import extension_api_pb2_grpc as pb2_grpc
+from . import parse_boards
+from . import salt
+from .domain import board_id_to_url_prefix, OverPageError
+from .parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
+from .requester import Requester
+from .utilities import is_zero
 
 
 def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):

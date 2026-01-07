@@ -1,5 +1,5 @@
-import extension_api_pb2 as pb2
-import salt
+from . import extension_api_pb2 as pb2
+from . import salt
 
 
 pkg_name = "twkevinzhang_komica"

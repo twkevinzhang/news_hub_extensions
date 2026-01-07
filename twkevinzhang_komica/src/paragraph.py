@@ -1,4 +1,4 @@
-import extension_api_pb2 as pb2
+from . import extension_api_pb2 as pb2
 
 def text(s: str) -> pb2.Paragraph:
     return pb2.Paragraph(

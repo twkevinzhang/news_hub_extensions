@@ -2,12 +2,12 @@ from collections.abc import Callable
 from datetime import datetime
 
 from bs4 import BeautifulSoup, Tag
-import extension_api_pb2 as pb2
-import paragraph
-import domain
-from domain import OverPageError
-from paragraph import youtube_video, image
-from utilities import is_youtube, is_image, is_video, is_zero
+from . import extension_api_pb2 as pb2
+from . import paragraph
+from . import domain
+from .domain import OverPageError
+from .paragraph import youtube_video, image
+from .utilities import is_youtube, is_image, is_video, is_zero
 
 
 def to_soup(html_content) -> BeautifulSoup:

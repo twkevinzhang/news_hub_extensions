@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-import extension_api_pb2 as extension__api__pb2
+from . import extension_api_pb2 as extension__api__pb2
 
 GRPC_GENERATED_VERSION = '1.67.1'
 GRPC_VERSION = grpc.__version__
