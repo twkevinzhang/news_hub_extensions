@@ -41,7 +41,7 @@ logging.debug(f'third-party lib imported')
 # When called by serious_python, __name__ is "main"
 if __name__ == "__main__" or __name__ == "main":
     try:
-        from src.resolver_impl import ResolverImpl
+        from twkevinzhang_komica.resolver_impl import ResolverImpl
         import extension_api_pb2_grpc as pb2_grpc
 
         logging.debug(f'grpc modules imported')

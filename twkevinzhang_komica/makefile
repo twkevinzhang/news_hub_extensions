@@ -2,7 +2,7 @@
 export PYTHONUNBUFFERED := 1
 
 # for unittest
-export PYTHONPATH := src
+export PYTHONPATH := .
 
 .PHONY: install
 install:

@@ -55,6 +55,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                     large_welcome_image=x.large_welcome_image,
                     url=x.url,
                     supported_threads_sorting=x.supported_threads_sorting,
+                    pkg_name=x.pkg_name,
                 ) for x in boards
             ],
             page=page,
