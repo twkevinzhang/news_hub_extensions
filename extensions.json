@@ -10,6 +10,17 @@
       "python_version": 38,
       "lang": "zh_tw",
       "is_nsfw": false
+    },
+    {
+      "repo_base_url": "twkevinzhang/news_hub_extensions",
+      "pkg_name": "twkevinzhang_mock",
+      "display_name": "Mock Extension",
+      "zip_name": "twkevinzhang_mock.zip",
+      "address": "https://127.0.0.1:55002",
+      "version": 1,
+      "python_version": 38,
+      "lang": "zh_tw",
+      "is_nsfw": false
     }
   ]
 }
