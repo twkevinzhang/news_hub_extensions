@@ -3,7 +3,7 @@
 import grpc
 import warnings
 
-from . import extension_api_pb2 as extension__api__pb2
+import komica_api_pb2 as komica__api__pb2
 
 GRPC_GENERATED_VERSION = '1.67.1'
 GRPC_VERSION = grpc.__version__
@@ -18,14 +18,14 @@ except ImportError:
 if _version_not_supported:
     raise RuntimeError(
         f'The grpc package installed is at version {GRPC_VERSION},'
-        + f' but the generated code in extension_api_pb2_grpc.py depends on'
+        + f' but the generated code in komica_api_pb2_grpc.py depends on'
         + f' grpcio>={GRPC_GENERATED_VERSION}.'
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
 
 
-class ExtensionApiStub(object):
+class SidecarApiStub(object):
     """Missing associated documentation comment in .proto file."""
 
     def __init__(self, channel):
@@ -34,46 +34,35 @@ class ExtensionApiStub(object):
         Args:
             channel: A grpc.Channel.
         """
-        self.GetSite = channel.unary_unary(
-                '/pb.ExtensionApi/GetSite',
-                request_serializer=extension__api__pb2.GetSiteReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetSiteRes.FromString,
-                _registered_method=True)
         self.GetBoards = channel.unary_unary(
-                '/pb.ExtensionApi/GetBoards',
-                request_serializer=extension__api__pb2.GetBoardsReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetBoardsRes.FromString,
+                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetBoards',
+                request_serializer=komica__api__pb2.GetBoardsReq.SerializeToString,
+                response_deserializer=komica__api__pb2.GetBoardsRes.FromString,
                 _registered_method=True)
-        self.GetThreadInfos = channel.unary_unary(
-                '/pb.ExtensionApi/GetThreadInfos',
-                request_serializer=extension__api__pb2.GetThreadInfosReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetThreadInfosRes.FromString,
+        self.GetThreads = channel.unary_unary(
+                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetThreads',
+                request_serializer=komica__api__pb2.GetThreadsReq.SerializeToString,
+                response_deserializer=komica__api__pb2.GetThreadsRes.FromString,
                 _registered_method=True)
-        self.GetThreadPost = channel.unary_unary(
-                '/pb.ExtensionApi/GetThreadPost',
-                request_serializer=extension__api__pb2.GetThreadPostReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetThreadPostRes.FromString,
+        self.GetOriginalPost = channel.unary_unary(
+                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetOriginalPost',
+                request_serializer=komica__api__pb2.GetOriginalPostReq.SerializeToString,
+                response_deserializer=komica__api__pb2.GetOriginalPostRes.FromString,
                 _registered_method=True)
-        self.GetRegardingPosts = channel.unary_unary(
-                '/pb.ExtensionApi/GetRegardingPosts',
-                request_serializer=extension__api__pb2.GetRegardingPostsReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetRegardingPostsRes.FromString,
+        self.GetReplies = channel.unary_unary(
+                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetReplies',
+                request_serializer=komica__api__pb2.GetRepliesReq.SerializeToString,
+                response_deserializer=komica__api__pb2.GetRepliesRes.FromString,
                 _registered_method=True)
         self.GetComments = channel.unary_unary(
-                '/pb.ExtensionApi/GetComments',
-                request_serializer=extension__api__pb2.GetCommentsReq.SerializeToString,
-                response_deserializer=extension__api__pb2.GetCommentsRes.FromString,
+                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetComments',
+                request_serializer=komica__api__pb2.GetCommentsReq.SerializeToString,
+                response_deserializer=komica__api__pb2.GetCommentsRes.FromString,
                 _registered_method=True)
 
 
-class ExtensionApiServicer(object):
+class SidecarApiServicer(object):
     """Missing associated documentation comment in .proto file."""
-
-    def GetSite(self, request, context):
-        """Missing associated documentation comment in .proto file."""
-        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
-        context.set_details('Method not implemented!')
-        raise NotImplementedError('Method not implemented!')
 
     def GetBoards(self, request, context):
         """Missing associated documentation comment in .proto file."""
@@ -81,19 +70,19 @@ class ExtensionApiServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetThreadInfos(self, request, context):
+    def GetThreads(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetThreadPost(self, request, context):
+    def GetOriginalPost(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetRegardingPosts(self, request, context):
+    def GetReplies(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -106,75 +95,43 @@ class ExtensionApiServicer(object):
         raise NotImplementedError('Method not implemented!')
 
 
-def add_ExtensionApiServicer_to_server(servicer, server):
+def add_SidecarApiServicer_to_server(servicer, server):
     rpc_method_handlers = {
-            'GetSite': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetSite,
-                    request_deserializer=extension__api__pb2.GetSiteReq.FromString,
-                    response_serializer=extension__api__pb2.GetSiteRes.SerializeToString,
-            ),
             'GetBoards': grpc.unary_unary_rpc_method_handler(
                     servicer.GetBoards,
-                    request_deserializer=extension__api__pb2.GetBoardsReq.FromString,
-                    response_serializer=extension__api__pb2.GetBoardsRes.SerializeToString,
+                    request_deserializer=komica__api__pb2.GetBoardsReq.FromString,
+                    response_serializer=komica__api__pb2.GetBoardsRes.SerializeToString,
             ),
-            'GetThreadInfos': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetThreadInfos,
-                    request_deserializer=extension__api__pb2.GetThreadInfosReq.FromString,
-                    response_serializer=extension__api__pb2.GetThreadInfosRes.SerializeToString,
+            'GetThreads': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetThreads,
+                    request_deserializer=komica__api__pb2.GetThreadsReq.FromString,
+                    response_serializer=komica__api__pb2.GetThreadsRes.SerializeToString,
             ),
-            'GetThreadPost': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetThreadPost,
-                    request_deserializer=extension__api__pb2.GetThreadPostReq.FromString,
-                    response_serializer=extension__api__pb2.GetThreadPostRes.SerializeToString,
+            'GetOriginalPost': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOriginalPost,
+                    request_deserializer=komica__api__pb2.GetOriginalPostReq.FromString,
+                    response_serializer=komica__api__pb2.GetOriginalPostRes.SerializeToString,
             ),
-            'GetRegardingPosts': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetRegardingPosts,
-                    request_deserializer=extension__api__pb2.GetRegardingPostsReq.FromString,
-                    response_serializer=extension__api__pb2.GetRegardingPostsRes.SerializeToString,
+            'GetReplies': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetReplies,
+                    request_deserializer=komica__api__pb2.GetRepliesReq.FromString,
+                    response_serializer=komica__api__pb2.GetRepliesRes.SerializeToString,
             ),
             'GetComments': grpc.unary_unary_rpc_method_handler(
                     servicer.GetComments,
-                    request_deserializer=extension__api__pb2.GetCommentsReq.FromString,
-                    response_serializer=extension__api__pb2.GetCommentsRes.SerializeToString,
+                    request_deserializer=komica__api__pb2.GetCommentsReq.FromString,
+                    response_serializer=komica__api__pb2.GetCommentsRes.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
-            'pb.ExtensionApi', rpc_method_handlers)
+            'news_hub.extension.twkevinzhang.komica.SidecarApi', rpc_method_handlers)
     server.add_generic_rpc_handlers((generic_handler,))
-    server.add_registered_method_handlers('pb.ExtensionApi', rpc_method_handlers)
+    server.add_registered_method_handlers('news_hub.extension.twkevinzhang.komica.SidecarApi', rpc_method_handlers)
 
 
  # This class is part of an EXPERIMENTAL API.
-class ExtensionApi(object):
+class SidecarApi(object):
     """Missing associated documentation comment in .proto file."""
-
-    @staticmethod
-    def GetSite(request,
-            target,
-            options=(),
-            channel_credentials=None,
-            call_credentials=None,
-            insecure=False,
-            compression=None,
-            wait_for_ready=None,
-            timeout=None,
-            metadata=None):
-        return grpc.experimental.unary_unary(
-            request,
-            target,
-            '/pb.ExtensionApi/GetSite',
-            extension__api__pb2.GetSiteReq.SerializeToString,
-            extension__api__pb2.GetSiteRes.FromString,
-            options,
-            channel_credentials,
-            insecure,
-            call_credentials,
-            compression,
-            wait_for_ready,
-            timeout,
-            metadata,
-            _registered_method=True)
 
     @staticmethod
     def GetBoards(request,
@@ -190,9 +147,9 @@ class ExtensionApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pb.ExtensionApi/GetBoards',
-            extension__api__pb2.GetBoardsReq.SerializeToString,
-            extension__api__pb2.GetBoardsRes.FromString,
+            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetBoards',
+            komica__api__pb2.GetBoardsReq.SerializeToString,
+            komica__api__pb2.GetBoardsRes.FromString,
             options,
             channel_credentials,
             insecure,
@@ -204,7 +161,7 @@ class ExtensionApi(object):
             _registered_method=True)
 
     @staticmethod
-    def GetThreadInfos(request,
+    def GetThreads(request,
             target,
             options=(),
             channel_credentials=None,
@@ -217,9 +174,9 @@ class ExtensionApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pb.ExtensionApi/GetThreadInfos',
-            extension__api__pb2.GetThreadInfosReq.SerializeToString,
-            extension__api__pb2.GetThreadInfosRes.FromString,
+            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetThreads',
+            komica__api__pb2.GetThreadsReq.SerializeToString,
+            komica__api__pb2.GetThreadsRes.FromString,
             options,
             channel_credentials,
             insecure,
@@ -231,7 +188,7 @@ class ExtensionApi(object):
             _registered_method=True)
 
     @staticmethod
-    def GetThreadPost(request,
+    def GetOriginalPost(request,
             target,
             options=(),
             channel_credentials=None,
@@ -244,9 +201,9 @@ class ExtensionApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pb.ExtensionApi/GetThreadPost',
-            extension__api__pb2.GetThreadPostReq.SerializeToString,
-            extension__api__pb2.GetThreadPostRes.FromString,
+            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetOriginalPost',
+            komica__api__pb2.GetOriginalPostReq.SerializeToString,
+            komica__api__pb2.GetOriginalPostRes.FromString,
             options,
             channel_credentials,
             insecure,
@@ -258,7 +215,7 @@ class ExtensionApi(object):
             _registered_method=True)
 
     @staticmethod
-    def GetRegardingPosts(request,
+    def GetReplies(request,
             target,
             options=(),
             channel_credentials=None,
@@ -271,9 +228,9 @@ class ExtensionApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pb.ExtensionApi/GetRegardingPosts',
-            extension__api__pb2.GetRegardingPostsReq.SerializeToString,
-            extension__api__pb2.GetRegardingPostsRes.FromString,
+            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetReplies',
+            komica__api__pb2.GetRepliesReq.SerializeToString,
+            komica__api__pb2.GetRepliesRes.FromString,
             options,
             channel_credentials,
             insecure,
@@ -298,9 +255,9 @@ class ExtensionApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/pb.ExtensionApi/GetComments',
-            extension__api__pb2.GetCommentsReq.SerializeToString,
-            extension__api__pb2.GetCommentsRes.FromString,
+            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetComments',
+            komica__api__pb2.GetCommentsReq.SerializeToString,
+            komica__api__pb2.GetCommentsRes.FromString,
             options,
             channel_credentials,
             insecure,

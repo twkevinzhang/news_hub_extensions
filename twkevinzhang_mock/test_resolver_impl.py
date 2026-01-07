@@ -40,7 +40,7 @@ dictConfig({
 if __name__ == "__main__" or __name__ == "main":
     try:
         from twkevinzhang_mock.resolver_impl import ResolverImpl
-        from twkevinzhang_mock import extension_api_pb2_grpc as pb2_grpc
+        from twkevinzhang_mock import sidecar_api_pb2_grpc as pb2_grpc
 
         server = grpc.server(
             futures.ThreadPoolExecutor(max_workers=1),
@@ -48,7 +48,7 @@ if __name__ == "__main__" or __name__ == "main":
                 ('grpc.logging_verbosity', 'DEBUG'),
             ]
         )
-        pb2_grpc.add_ExtensionApiServicer_to_server(ResolverImpl(), server)
+        pb2_grpc.add_SidecarApiServicer_to_server(ResolverImpl(), server)
         server.add_insecure_port(f'[::]:{port}')
         server.start()
         logging.info(f"gRPC Mock server running on port {port}...")

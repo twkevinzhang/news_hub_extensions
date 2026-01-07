@@ -1,13 +1,13 @@
 import logging
 import time
 
-from . import sidecar_api_pb2 as pb2
-from . import sidecar_api_pb2_grpc as pb2_grpc
+from . import mock_api_pb2 as pb2
+from . import mock_domain_models_pb2 as domain_pb2
 from . import salt
 from .domain import Post
 
 
-def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
+def pagination(req: domain_pb2.PaginationReq, items) -> (list, domain_pb2.PaginationRes):
     page_size = req.page_size if req.page_size is not None and req.page_size > 0 else 20
     page = req.page if req.page is not None and req.page > 0 else 1
     start_index = (page - 1) * page_size
@@ -15,33 +15,33 @@ def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
     total_page = (len(items) + page_size - 1) // page_size
     return (
         items[start_index:end_index],
-        pb2.PaginationRes(
+        domain_pb2.PaginationRes(
             current_page=page,
             total_page=total_page,
         ))
 
 
-class ResolverImpl(pb2_grpc.ExtensionApiServicer):
+class ResolverImpl:
     def __init__(self):
         self.pkg_name = "twkevinzhang_mock"
 
     def GetBoards(self, req: pb2.GetBoardsReq, context) -> pb2.GetBoardsRes:
         boards = [
-            pb2.Board(
+            domain_pb2.Board(
                 id=salt.encode("board_1"),
                 name="General Discussion",
                 icon="https://img.icons8.com/color/48/chat--v1.png",
                 url="https://example.com/mock/board1",
                 pkg_name=self.pkg_name,
             ),
-            pb2.Board(
+            domain_pb2.Board(
                 id=salt.encode("board_2"),
                 name="Tech News",
                 icon="https://img.icons8.com/color/48/electronics.png",
                 url="https://example.com/mock/board2",
                 pkg_name=self.pkg_name,
             ),
-            pb2.Board(
+            domain_pb2.Board(
                 id=salt.encode("board_3"),
                 name="Anime & Manga",
                 icon="https://img.icons8.com/color/48/anime.png",
@@ -61,45 +61,41 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
 
     def GetThreads(self, req: pb2.GetThreadsReq, context) -> pb2.GetThreadsRes:
         # Determine which boards to generate data for
-        boards_to_process = []
-        if req.board_sorts:
-            for encoded_id in req.board_sorts.keys():
-                boards_to_process.append(salt.decode(encoded_id))
-        else:
-            boards_to_process = ["board_1"]
+        board_id = salt.decode(req.board_id) if req.board_id else "board_1"
+        sorting = req.sort or "latest"
 
         threads = []
         now = int(time.time())
         
-        for board_id in boards_to_process:
-            for i in range(1, 11):
-                tid = f"thread_{board_id}_{i}"
-                threads.append(Post(
-                    id=tid,
-                    thread_id=tid,
-                    board_id=board_id,
-                    author_id="user_123",
-                    author_name=f"Mock Author {i}",
-                    created_at=now - (i * 3600),
-                    title=f"Mock Thread Title {i} in {board_id}",
-                    liked=i * 10,
-                    disliked=i,
-                    comments=i * 5,
-                    image=pb2.ImageParagraph(
-                        raw=f"https://picsum.photos/seed/{tid}/400/300",
-                        thumb=f"https://picsum.photos/seed/{tid}/200/150"
-                    ),
-                    contents=[
-                        pb2.Paragraph(
-                            type=pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                            text=pb2.TextParagraph(content=f"This is the preview text for mock thread {i}. ")
-                        )
-                    ],
-                    tags=["Mock", board_id],
-                    latest_reply_created_at=now - (i * 1800),
-                    replies_count=i * 5,
-                    url=f"https://example.com/mock/{board_id}/{tid}"
-                ))
+        # In mock, we just generate 10 threads for the single board
+        for i in range(1, 11):
+            tid = f"thread_{board_id}_{i}"
+            threads.append(Post(
+                id=tid,
+                thread_id=tid,
+                board_id=board_id,
+                author_id="user_123",
+                author_name=f"Mock Author {i}",
+                created_at=now - (i * 3600),
+                title=f"Mock Thread Title {i} in {board_id} ({sorting})",
+                liked=i * 10,
+                disliked=i,
+                comments=i * 5,
+                image=domain_pb2.ImageParagraph(
+                    raw=f"https://picsum.photos/seed/{tid}/400/300",
+                    thumb=f"https://picsum.photos/seed/{tid}/200/150"
+                ),
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content=f"This is the preview text for mock thread {i}. ")
+                    )
+                ],
+                tags=["Mock", board_id],
+                latest_reply_created_at=now - (i * 1800),
+                replies_count=i * 5,
+                url=f"https://example.com/mock/{board_id}/{tid}"
+            ))
 
         current_page = 1
         total_page = 1
@@ -110,7 +106,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
 
         return pb2.GetThreadsRes(
             threads=[thread.toSaltPb2('single_image_post') for thread in threads],
-            page=pb2.PaginationRes(
+            page=domain_pb2.PaginationRes(
                 current_page=current_page,
                 total_page=total_page,
             ),
@@ -136,19 +132,19 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             comments=50,
             image=None,
             contents=[
-                pb2.Paragraph(
-                    type=pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                    text=pb2.TextParagraph(content="This is the full content of the mock thread.")
+                domain_pb2.Paragraph(
+                    type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                    text=domain_pb2.TextParagraph(content="This is the full content of the mock thread.")
                 ),
-                pb2.Paragraph(
-                    type=pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE,
-                    image=pb2.ImageParagraph(
+                domain_pb2.Paragraph(
+                    type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE,
+                    image=domain_pb2.ImageParagraph(
                         raw=f"https://picsum.photos/seed/{thread_id}/800/600",
                     )
                 ),
-                pb2.Paragraph(
-                    type=pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                    text=pb2.TextParagraph(content="More text after the image to simulate a real post structure.")
+                domain_pb2.Paragraph(
+                    type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                    text=domain_pb2.TextParagraph(content="More text after the image to simulate a real post structure.")
                 )
             ],
             tags=["Mock", "Detail"],
@@ -184,17 +180,17 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                 comments=0,
                 image=None,
                 contents=[
-                    pb2.Paragraph(
-                        type=pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
-                        reply_to=pb2.ReplyToParagraph(
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                        reply_to=domain_pb2.ReplyToParagraph(
                             id=reply_to_id,
                             author_name="Original Author",
                             preview="Previous content..."
                         )
                     ),
-                    pb2.Paragraph(
-                        type=pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                        text=pb2.TextParagraph(content=f"This is mock reply {i}.")
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content=f"This is mock reply {i}.")
                     )
                 ],
                 tags=[],
@@ -205,7 +201,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
 
         return pb2.GetRepliesRes(
             replies=[post.toSaltPb2('article_post') for post in posts],
-            page=pb2.PaginationRes(
+            page=domain_pb2.PaginationRes(
                 current_page=1,
                 total_page=1,
             ),

@@ -1,4 +1,4 @@
-from . import extension_api_pb2 as pb2
+from . import komica_api_pb2 as pb2
 from .domain import pkg_name
 
 

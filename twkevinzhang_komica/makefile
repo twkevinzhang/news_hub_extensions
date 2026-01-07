@@ -2,7 +2,7 @@
 export PYTHONUNBUFFERED := 1
 
 # for unittest
-export PYTHONPATH := .
+export PYTHONPATH := .:twkevinzhang_komica
 
 .PHONY: install
 install:
@@ -20,3 +20,7 @@ test:
 .PHONY: run
 run:
 	python test_resolver_impl.py
+
+.PHONY: proto
+proto:
+	python -m grpc_tools.protoc -Itwkevinzhang_komica --python_out=twkevinzhang_komica --pyi_out=twkevinzhang_komica --grpc_python_out=twkevinzhang_komica twkevinzhang_komica/*.proto

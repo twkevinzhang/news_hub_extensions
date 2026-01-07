@@ -1,4 +1,5 @@
-from . import extension_api_pb2 as pb2
+from . import komica_api_pb2 as pb2
+from . import komica_domain_models_pb2 as domain_pb2
 from . import salt
 
 
@@ -17,8 +18,8 @@ class Post:
                  liked: int,
                  disliked: int,
                  comments: int,
-                 image: pb2.ImageParagraph | None,
-                 contents: list[pb2.Paragraph],
+                 image: domain_pb2.ImageParagraph | None,
+                 contents: list[domain_pb2.Paragraph],
                  tags: list[str],
                  latest_reply_created_at: int,
                  replies_count: int,
@@ -51,13 +52,13 @@ class Post:
     def toSaltPb2(
             self,
             ui_layout: 'article_post' or 'single_image_post',
-    ) -> pb2.Post:
+    ) -> domain_pb2.Post:
         new_contents = []
         for content in self.contents:
-            if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO:
-                new_contents.append(pb2.Paragraph(
-                    type=pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
-                    reply_to=pb2.ReplyToParagraph(
+            if content.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO:
+                new_contents.append(domain_pb2.Paragraph(
+                    type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                    reply_to=domain_pb2.ReplyToParagraph(
                         id=salt.encode(content.reply_to.id),
                         author_name=content.reply_to.author_name,
                         preview=content.reply_to.preview
@@ -66,12 +67,12 @@ class Post:
             else:
                 new_contents.append(content)
         if ui_layout == 'article_post':
-            return pb2.Post(
+            return domain_pb2.Post(
                 pkg_name=self.pkg_name,
                 id=salt.encode(self.id),
                 thread_id=salt.encode(self.thread_id),
                 board_id=salt.encode(self.board_id),
-                article_post = pb2.ArticlePost(
+                article_post = domain_pb2.ArticlePost(
                     author_id=salt.encode(self.author_id),
                     author_name=self.author_name,
                     created_at=self.created_at,
@@ -86,12 +87,12 @@ class Post:
                 ),
             )
         elif ui_layout == 'single_image_post':
-            return pb2.Post(
+            return domain_pb2.Post(
                 pkg_name=self.pkg_name,
                 id=salt.encode(self.id),
                 thread_id=salt.encode(self.thread_id),
                 board_id=salt.encode(self.board_id),
-                single_image_post = pb2.SingleImagePost(
+                single_image_post = domain_pb2.SingleImagePost(
                     author_id=salt.encode(self.author_id),
                     author_name=self.author_name,
                     created_at=self.created_at,

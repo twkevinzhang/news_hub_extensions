@@ -1,17 +1,17 @@
 import asyncio
 import logging
 
-from . import extension_api_pb2 as pb2
-from . import extension_api_pb2_grpc as pb2_grpc
+from . import komica_api_pb2 as pb2
+from . import komica_domain_models_pb2 as domain_pb2
 from . import parse_boards
 from . import salt
 from .domain import board_id_to_url_prefix, OverPageError
-from .parse_threads import parse_thread_infos_html, parse_regarding_posts_html, parse_thread_html
+from .parse_threads import parse_threads_html, parse_replies_html, parse_original_post_html
 from .requester import Requester
 from .utilities import is_zero
 
 
-def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
+def pagination(req: domain_pb2.PaginationReq, items) -> (list, domain_pb2.PaginationRes):
     page_size = req.page_size if req.page_size is not None and req.page_size > 0 else 20  # default page size is 20
     page = req.page if req.page is not None and req.page > 0 else 1  # default page is 1
     start_index = (page - 1) * page_size
@@ -19,13 +19,13 @@ def pagination(req: pb2.PaginationReq, items) -> (list, pb2.PaginationRes):
     total_page = (len(items) + page_size - 1) // page_size
     return (
         items[start_index:end_index],
-        pb2.PaginationRes(
-            current_page=req.page,
+        domain_pb2.PaginationRes(
+            current_page=page,
             total_page=total_page,
         ))
 
 
-class ResolverImpl(pb2_grpc.ExtensionApiServicer):
+class ResolverImpl:
     def __init__(self):
         pass
 
@@ -36,7 +36,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
 
         return pb2.GetBoardsRes(
             boards=[
-                pb2.Board(
+                domain_pb2.Board(
                     id=salt.encode(x.id),
                     name=x.name,
                     icon=x.icon,
@@ -51,20 +51,15 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
 
     def GetThreads(self, req: pb2.GetThreadsReq, context) -> pb2.GetThreadsRes:
         urls = {}
-        boards_sorting = req.board_sorts
-        if is_zero(req.board_sorts):
-            boards_sorting = {
-                salt.encode("gita/00b"): "latest_replied",
-            }
-        for encoded_id, sorting in boards_sorting.items():
-            board_id = salt.decode(encoded_id)
-            if req.page is not None and not is_zero(req.page.page):
-                if req.page.page < 10:
-                    urls[board_id] = board_id_to_url_prefix(board_id) + f'/{req.page.page + 1}.htm'
-                else:
-                    urls[board_id] = board_id_to_url_prefix(board_id) + f'/pixmicat.php?page_num={req.page.page + 1}'
+        board_id = salt.decode(req.board_id) if req.board_id else "gita/00b"
+        
+        if req.page is not None and not is_zero(req.page.page):
+            if req.page.page < 10:
+                urls[board_id] = board_id_to_url_prefix(board_id) + f'/{req.page.page + 1}.htm'
             else:
-                urls[board_id] = board_id_to_url_prefix(board_id) + '/index.htm'
+                urls[board_id] = board_id_to_url_prefix(board_id) + f'/pixmicat.php?page_num={req.page.page + 1}'
+        else:
+            urls[board_id] = board_id_to_url_prefix(board_id) + '/index.htm'
 
         total_page = 0
         requester = Requester()
@@ -92,7 +87,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
                 current_page = req.page.page
         return pb2.GetThreadsRes(
             threads=[thread.toSaltPb2('single_image_post') for thread in threads],
-            page=pb2.PaginationRes(
+            page=domain_pb2.PaginationRes(
                 current_page=current_page,
                 total_page=total_page,
             ),
@@ -123,7 +118,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
         if req.page and req.page.page > 1:
             return pb2.GetRepliesRes(
                 replies=[],
-                page=pb2.PaginationRes(
+                page=domain_pb2.PaginationRes(
                     current_page=1,
                     total_page=1,
                 ),
@@ -146,7 +141,7 @@ class ResolverImpl(pb2_grpc.ExtensionApiServicer):
             raise e
         return pb2.GetRepliesRes(
             replies=[post.toSaltPb2('article_post') for post in posts],
-            page=pb2.PaginationRes(
+            page=domain_pb2.PaginationRes(
                 current_page=1,
                 total_page=1,
             ),

@@ -2,7 +2,7 @@
 export PYTHONUNBUFFERED := 1
 
 # for unittest
-export PYTHONPATH := .
+export PYTHONPATH := .:twkevinzhang_mock
 
 .PHONY: install
 install:
@@ -23,6 +23,4 @@ run:
 
 .PHONY: proto
 proto:
-	rm -rf news_hub_protos
-	npx -y degit twkevinzhang/news_hub/news_hub_protos#dev news_hub_protos --force
-	python -m grpc_tools.protoc -Inews_hub_protos --python_out=twkevinzhang_mock --pyi_out=twkevinzhang_mock --grpc_python_out=twkevinzhang_mock news_hub_protos/*.proto
+	python -m grpc_tools.protoc -Itwkevinzhang_mock --python_out=twkevinzhang_mock --pyi_out=twkevinzhang_mock --grpc_python_out=twkevinzhang_mock twkevinzhang_mock/*.proto

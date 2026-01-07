@@ -1,0 +1,182 @@
+syntax = "proto3";
+package news_hub.extension.twkevinzhang.komica;
+
+message PaginationReq {
+  optional int32 page = 1;
+  optional int32 page_size = 3;
+  optional int32 limit = 2;
+  optional string prev_cursor = 4;
+  optional string next_cursor = 5;
+}
+
+message PaginationRes {
+  optional int32 total_page = 1;
+  optional int32 current_page = 2;
+  optional int32 page_size = 3;
+  optional string prev_cursor = 4;
+  optional string next_cursor = 5;
+}
+
+message Empty {}
+
+message Board {
+  string id = 1;
+  reserved 2; 
+  string name = 3;
+  string icon = 4;
+  string large_welcome_image = 5;
+  string url = 6;
+  repeated string supported_threads_sorting = 7;
+  string pkg_name = 8;
+}
+
+enum ParagraphType {
+  PARAGRAPH_TYPE_UNSPECIFIED = 0;
+  PARAGRAPH_TYPE_QUOTE = 1;
+  PARAGRAPH_TYPE_REPLY_TO = 2;
+  PARAGRAPH_TYPE_TEXT = 3;
+  PARAGRAPH_TYPE_NEW_LINE = 7;
+  PARAGRAPH_TYPE_IMAGE = 4;
+  PARAGRAPH_TYPE_LINK = 5;
+  PARAGRAPH_TYPE_VIDEO = 6;
+}
+
+message Paragraph {
+  ParagraphType type = 1;
+  oneof content {
+    ImageParagraph image = 2;
+    VideoParagraph video = 3;
+    TextParagraph text = 4;
+    NewLineParagraph new_line = 8;
+    QuoteParagraph quote = 5;
+    ReplyToParagraph reply_to = 6;
+    LinkParagraph link = 7;
+  }
+}
+
+message ImageParagraph {
+  optional string thumb = 1;
+  string raw = 2;
+}
+
+message VideoParagraph {
+  optional string thumb = 1;
+  string url = 2;
+}
+
+message TextParagraph {
+  string content = 1;
+}
+
+message NewLineParagraph {
+  string symbol = 1;
+}
+
+message QuoteParagraph {
+  string content = 1;
+}
+
+message ReplyToParagraph {
+  string id = 1;
+  string author_name = 3;
+  string preview = 2;
+}
+
+message LinkParagraph {
+  string content = 1;
+}
+
+message Post {
+  string id = 1;
+  string thread_id = 2;
+  string board_id = 3;
+  reserved 4; 
+  reserved 5;
+  string pkg_name = 6;
+  oneof content {
+    ArticlePost article_post = 7;
+    SingleImagePost single_image_post = 8;
+  }
+}
+
+message ArticlePost {
+  string author_id = 11;
+  string author_name = 5;
+  int64 created_at = 7;
+  string title = 9;
+  int32 liked = 12;
+  int32 disliked = 13;
+  repeated Paragraph contents = 17;
+  repeated string tags = 18;
+  int64 latest_reply_created_at = 15;
+  int32 replies_count = 19;
+  string url = 20;
+}
+
+message SingleImagePost {
+  string author_id = 11;
+  string author_name = 5;
+  int64 created_at = 7;
+  string title = 9;
+  int32 liked = 12;
+  int32 disliked = 13;
+  ImageParagraph image = 21;
+  repeated Paragraph contents = 17;
+  repeated string tags = 18;
+  int64 latest_reply_created_at = 15;
+  int32 replies_count = 19;
+  string url = 20;
+}
+
+message Comment {
+  string id = 1;
+  string post_id = 2;
+  string thread_id = 3;
+  string board_id = 4;
+  string author_id = 6;
+  string author_name = 10;
+  repeated Paragraph contents = 11;
+  string pkg_name = 12;
+  int64 created_at = 8;
+  reserved 5, 7, 9;
+}
+
+message Extension {
+  string pkg_name = 2;
+  string display_name = 3;
+  int32 version = 5;
+  int32 python_version = 6;
+  optional string lang = 7;
+  bool is_nsfw = 8;
+}
+
+message RemoteExtension {
+  Extension base = 1;
+  string icon_url = 2;
+  string repo_url = 3;
+}
+
+message ExtensionRepo {
+  string url = 1;
+  int64 added_at = 2;
+  string display_name = 3;
+  string website = 4;
+  string signing_key_fingerprint = 5;
+  optional string icon = 6;
+}
+
+enum LogLevel {
+  DEBUG = 0;
+  INFO = 1;
+  WARNING = 2;
+  ERROR = 3;
+  CRITICAL = 4;
+}
+
+message LogEntry {
+  int64 timestamp = 1;
+  LogLevel level = 2;
+  string logger_name = 3;
+  string message = 4;
+  optional string exception = 5;
+}

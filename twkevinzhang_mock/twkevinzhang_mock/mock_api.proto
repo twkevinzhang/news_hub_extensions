@@ -1,0 +1,64 @@
+syntax = "proto3";
+package news_hub.extension.twkevinzhang.mock;
+
+import "mock_domain_models.proto";
+
+message GetBoardsReq {
+  string pkg_name = 3;
+  optional PaginationReq page = 2;
+}
+
+message GetBoardsRes {
+  repeated Board boards = 1;
+  PaginationRes page = 2;
+}
+
+message GetThreadsReq {
+  string pkg_name = 6;
+  string board_id = 8;
+  optional string sort = 7;
+  optional PaginationReq page = 3;
+  optional string keywords = 5;
+}
+
+message GetThreadsRes {
+  repeated Post threads = 1;
+  PaginationRes page = 2;
+}
+
+message GetOriginalPostReq {
+  string pkg_name = 5;
+  string board_id = 3;
+  string thread_id = 1;
+  string post_id = 4;
+}
+
+message GetOriginalPostRes {
+  Post original_post = 1;
+}
+
+message GetRepliesReq {
+  string pkg_name = 6;
+  string board_id = 2;
+  string thread_id = 3;
+  optional string reply_to_id = 5;
+  optional PaginationReq page = 4;
+}
+
+message GetRepliesRes {
+  repeated Post replies = 1;
+  PaginationRes page = 2;
+}
+
+message GetCommentsReq {
+  string pkg_name = 6;
+  string board_id = 2;
+  string thread_id = 3;
+  string post_id = 4;
+  optional PaginationReq page = 5;
+}
+
+message GetCommentsRes {
+  repeated Comment comments = 1;
+  PaginationRes page = 2;
+}

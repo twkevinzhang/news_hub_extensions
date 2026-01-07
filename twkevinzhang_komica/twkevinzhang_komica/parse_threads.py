@@ -2,7 +2,8 @@ from collections.abc import Callable
 from datetime import datetime
 
 from bs4 import BeautifulSoup, Tag
-from . import extension_api_pb2 as pb2
+from . import komica_api_pb2 as pb2
+from . import komica_domain_models_pb2 as domain_pb2
 from . import paragraph
 from . import domain
 from .domain import OverPageError
@@ -106,7 +107,7 @@ def parse_replies_html(html_content: str, board_id: str, thread_id: str,
     for post_div in soup.find_all('div', class_='post reply'):
         post = _parse_post(post_div, lambda x: "")
         for c in post.contents:
-            if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO:
+            if c.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO:
                 no = c.reply_to.id
                 replies_count_map[no] = replies_count_map.get(no, 0) + 1
                 latest_reply_created_at_map[no] = max(latest_reply_created_at_map.get(no, 0),
@@ -121,13 +122,13 @@ def parse_replies_html(html_content: str, board_id: str, thread_id: str,
             return ""
         preview = ""
         for c in contents:
-            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_TEXT:
+            if c.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT:
                 preview += c.text.content
-            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE:
+            if c.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE:
                 preview += "[圖片]"
-            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_LINK:
+            if c.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_LINK:
                 preview += "[連結]"
-            if c.type == pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO:
+            if c.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO:
                 preview += f"[影片]"
         return preview
 
@@ -145,7 +146,7 @@ def parse_replies_html(html_content: str, board_id: str, thread_id: str,
         filtered_posts = []
         for post in replies:
             for c in post.contents:
-                if c.type == pb2.PARAGRAPH_TYPE_REPLY_TO and c.reply_to.id == reply_to_id:
+                if c.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO and c.reply_to.id == reply_to_id:
                     filtered_posts.append(post)
         return filtered_posts
 
@@ -196,9 +197,9 @@ def _parse_post(post_div: Tag, get_preview: Callable[[str], str]) -> domain.Post
     contents = _parse_post_content(post_div, get_preview)
 
     # 解析第一張圖片
-    first_image = next((content.image for content in contents if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE), None)
+    first_image = next((content.image for content in contents if content.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE), None)
     if not first_image:
-        if youtube_video_link := next((content.video for content in contents if content.type == pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO and is_youtube(content.video.url)), None):
+        if youtube_video_link := next((content.video for content in contents if content.type == domain_pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO and is_youtube(content.video.url)), None):
             clip = youtube_video_link.url.split('?v=')[-1]
             link = f"https://img.youtube.com/vi/{clip}/0.jpg"
             first_image = image(s=link, thumb=link).image
@@ -261,7 +262,7 @@ def _parse_thread(container) -> domain.Post:
     return post
 
 
-def _parse_post_content(post_div: Tag, get_preview: Callable[[str], str]) -> list[pb2.Paragraph]:
+def _parse_post_content(post_div: Tag, get_preview: Callable[[str], str]) -> list[domain_pb2.Paragraph]:
     """
     使用 BeautifulSoup 解析貼文內容
     :param post_div: 貼文 div

@@ -42,7 +42,7 @@ logging.debug(f'third-party lib imported')
 if __name__ == "__main__" or __name__ == "main":
     try:
         from twkevinzhang_komica.resolver_impl import ResolverImpl
-        import extension_api_pb2_grpc as pb2_grpc
+        from twkevinzhang_komica import sidecar_api_pb2_grpc as pb2_grpc
 
         logging.debug(f'grpc modules imported')
 
@@ -52,7 +52,7 @@ if __name__ == "__main__" or __name__ == "main":
                 ('grpc.logging_verbosity', 'DEBUG'),
             ]
         )
-        pb2_grpc.add_ExtensionApiServicer_to_server(ResolverImpl(), server)
+        pb2_grpc.add_SidecarApiServicer_to_server(ResolverImpl(), server)
         server.add_insecure_port(f'[::]:{port}')
         server.start()
         logging.info("gRPC server running...")
