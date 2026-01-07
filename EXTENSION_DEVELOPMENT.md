@@ -8,9 +8,12 @@ This guide outlines the standards and procedures for developing extensions for N
 - **Runtime Loading**: The sidecar downloads your extension (source code) to the device's storage and uses Python's `importlib` to load it.
 - **No Pip Install**: The end-user's device cannot run `pip install`. You cannot rely on downloading dependencies at runtime.
 
-## 2. Project Structure
+Each extension must follow a strictly isolating directory structure and use a unique Protobuf package name to prevent namespace/symbol collisions.
 
-Each extension must follow a strictly isolating directory structure to prevent namespace collisions with other extensions.
+### Namespace Convention
+
+- **Directory**: `your_extension_name/` (should match your author and name)
+- **Protobuf Package**: `news_hub.extension.{author}.{name}`
 
 ```
 your_extension_name/
@@ -61,19 +64,71 @@ If you need a library NOT in the list above (e.g., `faker`, `python-dateutil`):
 
 ## 4. Implementation Details (`resolver_impl.py`)
 
-Your extension must implement the gRPC servicer interface defined in `extension_api.proto`.
+News Hub uses a **Shared Domain** architecture with an **Adapter Pattern**. This allows extensions to bundle their own generated Protobuf code while remaining isolated from other extensions.
 
-```python
-# src/resolver_impl.py
-import extension_api_pb2_grpc as pb2_grpc
-from . import domain  # Note the relative import!
+### Workflow:
 
-class ResolverImpl(pb2_grpc.ExtensionApiServicer):
-    def __init__(self):
-        pass
+1.  **Define a Unique Namespace**:
+    Every extension **MUST** use a unique, hierarchical package name in its `.proto` file to prevent symbol collisions at the Protobuf descriptor level.
 
-    # Implement methods: GetSite, GetBoards, GetThreadInfos, etc.
-```
+    - Format: `news_hub.extension.{author}.{name}`
+
+2.  **Import Shared Domain Models**:
+    Download the shared `domain_models.proto` from the [Main Repository](https://github.com/twkevinzhang/news_hub/tree/master/news_hub_protos) and import it into your extension's `.proto`.
+
+    ```protobuf
+    syntax = "proto3";
+    // Unique namespace prevents collisions with other extensions
+    package news_hub.extension.komica;
+
+    // Import the Shared Domain definitions
+    import "domain_models.proto";
+
+    // Define your service using Shared Domain types
+    service KomicaResolver {
+      // You can use types from news_hub.domain directly
+      rpc GetSite (news_hub.domain.Empty) returns (GetSiteRes);
+    }
+
+    message GetSiteRes {
+      news_hub.domain.Site site = 1;
+    }
+    ```
+
+3.  **Generate Python Code**:
+    Generate your `_pb2.py` and `_pb2_grpc.py` files using the `grpc_tools.protoc` compiler. You are encouraged to bundle these generated files within your extension.
+
+4.  **Implement `ResolverImpl`**:
+    Your implementation must return your own namespaced Protobuf messages. The Sidecar's adapter layer will automatically handle the conversion to its internal domain models using binary serialization.
+
+    ```python
+    # src/resolver_impl.py
+    from . import extension_api_pb2 as pb2
+    from . import extension_api_pb2_grpc as pb2_grpc
+    from . import salt
+
+    class ResolverImpl(pb2_grpc.ExtensionApiServicer):
+        def __init__(self):
+            self.site_id = "komica"
+            self.pkg_name = "twkevinzhang_komica"
+
+        def GetSite(self, req: pb2.GetSiteReq, context) -> pb2.GetSiteRes:
+            # Note: We are returning our OWN namespaced GetSiteRes
+            return pb2.GetSiteRes(
+                site=pb2.Site(
+                    id=salt.encode(self.site_id),
+                    pkg_name=self.pkg_name,
+                    icon="https://komica1.org/favicon.ico",
+                    name="Komica",
+                    description="A popular imageboard",
+                    url="https://komica1.org",
+                )
+            )
+    ```
+
+### Why this works:
+
+Despite different Python class types (e.g., `news_hub.extension.komica.GetSiteRes` vs `news_hub.sidecar.GetSiteRes`), the **binary representation** of identical schemas is the same. The Sidecar serializes your response to bytes and parses it using its own internal Protobuf classes, ensuring type isolation without losing data.
 
 ## 5. Testing & Verification
 
