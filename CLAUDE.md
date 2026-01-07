@@ -50,16 +50,15 @@ extension_name/
 
 Extensions implement these key RPC methods in `resolver_impl.py`:
 
-- `GetSite()`: Returns site metadata (id, name, icon, url)
 - `GetBoards()`: Returns list of boards/sections
-- `GetThreadInfos()`: Fetches thread listings with pagination
-- `GetThreadPost()`: Retrieves full thread content
-- `GetRegardingPosts()`: Gets related/reply posts
+- `GetThreads()`: Fetches thread listings with pagination
+- `GetOriginalPost()`: Retrieves full thread content
+- `GetReplies()`: Gets related/reply posts
 - `GetComments()`: Comment handling (may be unimplemented)
 
 ### Data Flow
 
-1. **Encoding**: All IDs (site_id, board_id, thread_id, post_id) are encoded using `salt.encode()` before returning to gRPC
+1. **Encoding**: All IDs (board_id, thread_id, post_id) are encoded using `salt.encode()` before returning to gRPC
 2. **Decoding**: Request IDs are decoded using `salt.decode()` at the start of each RPC method
 3. **HTML Parsing**: BeautifulSoup (lxml) extracts structured data from fetched HTML
 4. **Async Requests**: `Requester` class handles concurrent HTTP fetches with aiohttp
