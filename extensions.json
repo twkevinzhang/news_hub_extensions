@@ -1,14 +1,6 @@
 {
   "extensions": [
     {
-      "pkg_name": "twkevinzhang_komica",
-      "display_name": "Komica Ex",
-      "version": 1,
-      "python_version": 38,
-      "lang": "zh_tw",
-      "is_nsfw": false
-    },
-    {
       "pkg_name": "twkevinzhang_mock",
       "display_name": "Mock Extension",
       "version": 1,
