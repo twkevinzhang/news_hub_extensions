@@ -149,3 +149,18 @@ class ResolverImpl:
 
     def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadsRes:
         return pb2.GetThreadsRes()
+
+    def GetBoardSortOptions(self, req: pb2.GetBoardSortOptionsReq, context) -> pb2.GetBoardSortOptionsRes:
+        results = []
+        for encoded_bid in req.board_ids:
+            try:
+                board_id = salt.decode(encoded_bid)
+                board = parse_boards.get(board_id)
+                if board:
+                    results.append(pb2.BoardSortOption(
+                        board_id=encoded_bid,
+                        options=list(board.supported_threads_sorting)
+                    ))
+            except Exception:
+                continue
+        return pb2.GetBoardSortOptionsRes(options=results)

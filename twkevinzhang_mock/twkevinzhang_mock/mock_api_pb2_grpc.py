@@ -3,6 +3,8 @@
 import grpc
 import warnings
 
+from . import mock_api_pb2 as mock__api__pb2
+from . import mock_domain_models_pb2 as mock__domain__models__pb2
 
 GRPC_GENERATED_VERSION = '1.67.1'
 GRPC_VERSION = grpc.__version__
@@ -22,3 +24,896 @@ if _version_not_supported:
         + f' Please upgrade your grpc module to grpcio>={GRPC_GENERATED_VERSION}'
         + f' or downgrade your generated code using grpcio-tools<={GRPC_VERSION}.'
     )
+
+
+class SidecarApiStub(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def __init__(self, channel):
+        """Constructor.
+
+        Args:
+            channel: A grpc.Channel.
+        """
+        self.GetBoards = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetBoards',
+                request_serializer=mock__api__pb2.GetBoardsReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetBoardsRes.FromString,
+                _registered_method=True)
+        self.GetThreads = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetThreads',
+                request_serializer=mock__api__pb2.GetThreadsReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetThreadsRes.FromString,
+                _registered_method=True)
+        self.GetOriginalPost = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetOriginalPost',
+                request_serializer=mock__api__pb2.GetOriginalPostReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetOriginalPostRes.FromString,
+                _registered_method=True)
+        self.GetReplies = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetReplies',
+                request_serializer=mock__api__pb2.GetRepliesReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetRepliesRes.FromString,
+                _registered_method=True)
+        self.GetComments = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetComments',
+                request_serializer=mock__api__pb2.GetCommentsReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetCommentsRes.FromString,
+                _registered_method=True)
+        self.GetBoardSortOptions = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetBoardSortOptions',
+                request_serializer=mock__api__pb2.GetBoardSortOptionsReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetBoardSortOptionsRes.FromString,
+                _registered_method=True)
+        self.ListInstalledExtensions = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/ListInstalledExtensions',
+                request_serializer=mock__domain__models__pb2.Empty.SerializeToString,
+                response_deserializer=mock__api__pb2.ListInstalledExtensionsRes.FromString,
+                _registered_method=True)
+        self.GetInstalledExtension = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetInstalledExtension',
+                request_serializer=mock__api__pb2.GetInstalledExtensionReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetInstalledExtensionRes.FromString,
+                _registered_method=True)
+        self.InstallExtension = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/InstallExtension',
+                request_serializer=mock__api__pb2.InstallExtensionReq.SerializeToString,
+                response_deserializer=mock__domain__models__pb2.Empty.FromString,
+                _registered_method=True)
+        self.UninstallExtension = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/UninstallExtension',
+                request_serializer=mock__api__pb2.UninstallExtensionReq.SerializeToString,
+                response_deserializer=mock__domain__models__pb2.Empty.FromString,
+                _registered_method=True)
+        self.GetInstallProgress = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetInstallProgress',
+                request_serializer=mock__api__pb2.GetInstallProgressReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetInstallProgressRes.FromString,
+                _registered_method=True)
+        self.ListRemoteExtensions = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/ListRemoteExtensions',
+                request_serializer=mock__api__pb2.ListRemoteExtensionsReq.SerializeToString,
+                response_deserializer=mock__api__pb2.ListRemoteExtensionsRes.FromString,
+                _registered_method=True)
+        self.ListExtensionRepos = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/ListExtensionRepos',
+                request_serializer=mock__domain__models__pb2.Empty.SerializeToString,
+                response_deserializer=mock__api__pb2.ListExtensionReposRes.FromString,
+                _registered_method=True)
+        self.AddExtensionRepo = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/AddExtensionRepo',
+                request_serializer=mock__api__pb2.AddExtensionRepoReq.SerializeToString,
+                response_deserializer=mock__api__pb2.AddExtensionRepoRes.FromString,
+                _registered_method=True)
+        self.RemoveExtensionRepo = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/RemoveExtensionRepo',
+                request_serializer=mock__api__pb2.RemoveExtensionRepoReq.SerializeToString,
+                response_deserializer=mock__domain__models__pb2.Empty.FromString,
+                _registered_method=True)
+        self.HealthCheck = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/HealthCheck',
+                request_serializer=mock__api__pb2.HealthCheckReq.SerializeToString,
+                response_deserializer=mock__api__pb2.HealthCheckRes.FromString,
+                _registered_method=True)
+        self.WatchHealth = channel.unary_stream(
+                '/twkevinzhang_mock.sidecar.SidecarApi/WatchHealth',
+                request_serializer=mock__api__pb2.HealthCheckReq.SerializeToString,
+                response_deserializer=mock__api__pb2.HealthCheckRes.FromString,
+                _registered_method=True)
+        self.WatchLogs = channel.unary_stream(
+                '/twkevinzhang_mock.sidecar.SidecarApi/WatchLogs',
+                request_serializer=mock__api__pb2.WatchLogsReq.SerializeToString,
+                response_deserializer=mock__domain__models__pb2.LogEntry.FromString,
+                _registered_method=True)
+        self.GetLogs = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/GetLogs',
+                request_serializer=mock__api__pb2.GetLogsReq.SerializeToString,
+                response_deserializer=mock__api__pb2.GetLogsRes.FromString,
+                _registered_method=True)
+        self.SetLogLevel = channel.unary_unary(
+                '/twkevinzhang_mock.sidecar.SidecarApi/SetLogLevel',
+                request_serializer=mock__api__pb2.SetLogLevelReq.SerializeToString,
+                response_deserializer=mock__domain__models__pb2.Empty.FromString,
+                _registered_method=True)
+
+
+class SidecarApiServicer(object):
+    """Missing associated documentation comment in .proto file."""
+
+    def GetBoards(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetThreads(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetOriginalPost(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetReplies(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetComments(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetBoardSortOptions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListInstalledExtensions(self, request, context):
+        """Extension operations
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetInstalledExtension(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def InstallExtension(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def UninstallExtension(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetInstallProgress(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListRemoteExtensions(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def ListExtensionRepos(self, request, context):
+        """Extension Repository operations
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def AddExtensionRepo(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def RemoveExtensionRepo(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def HealthCheck(self, request, context):
+        """Health check
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def WatchHealth(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def WatchLogs(self, request, context):
+        """Logs
+        """
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def GetLogs(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+    def SetLogLevel(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
+
+def add_SidecarApiServicer_to_server(servicer, server):
+    rpc_method_handlers = {
+            'GetBoards': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBoards,
+                    request_deserializer=mock__api__pb2.GetBoardsReq.FromString,
+                    response_serializer=mock__api__pb2.GetBoardsRes.SerializeToString,
+            ),
+            'GetThreads': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetThreads,
+                    request_deserializer=mock__api__pb2.GetThreadsReq.FromString,
+                    response_serializer=mock__api__pb2.GetThreadsRes.SerializeToString,
+            ),
+            'GetOriginalPost': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetOriginalPost,
+                    request_deserializer=mock__api__pb2.GetOriginalPostReq.FromString,
+                    response_serializer=mock__api__pb2.GetOriginalPostRes.SerializeToString,
+            ),
+            'GetReplies': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetReplies,
+                    request_deserializer=mock__api__pb2.GetRepliesReq.FromString,
+                    response_serializer=mock__api__pb2.GetRepliesRes.SerializeToString,
+            ),
+            'GetComments': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetComments,
+                    request_deserializer=mock__api__pb2.GetCommentsReq.FromString,
+                    response_serializer=mock__api__pb2.GetCommentsRes.SerializeToString,
+            ),
+            'GetBoardSortOptions': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBoardSortOptions,
+                    request_deserializer=mock__api__pb2.GetBoardSortOptionsReq.FromString,
+                    response_serializer=mock__api__pb2.GetBoardSortOptionsRes.SerializeToString,
+            ),
+            'ListInstalledExtensions': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListInstalledExtensions,
+                    request_deserializer=mock__domain__models__pb2.Empty.FromString,
+                    response_serializer=mock__api__pb2.ListInstalledExtensionsRes.SerializeToString,
+            ),
+            'GetInstalledExtension': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetInstalledExtension,
+                    request_deserializer=mock__api__pb2.GetInstalledExtensionReq.FromString,
+                    response_serializer=mock__api__pb2.GetInstalledExtensionRes.SerializeToString,
+            ),
+            'InstallExtension': grpc.unary_unary_rpc_method_handler(
+                    servicer.InstallExtension,
+                    request_deserializer=mock__api__pb2.InstallExtensionReq.FromString,
+                    response_serializer=mock__domain__models__pb2.Empty.SerializeToString,
+            ),
+            'UninstallExtension': grpc.unary_unary_rpc_method_handler(
+                    servicer.UninstallExtension,
+                    request_deserializer=mock__api__pb2.UninstallExtensionReq.FromString,
+                    response_serializer=mock__domain__models__pb2.Empty.SerializeToString,
+            ),
+            'GetInstallProgress': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetInstallProgress,
+                    request_deserializer=mock__api__pb2.GetInstallProgressReq.FromString,
+                    response_serializer=mock__api__pb2.GetInstallProgressRes.SerializeToString,
+            ),
+            'ListRemoteExtensions': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListRemoteExtensions,
+                    request_deserializer=mock__api__pb2.ListRemoteExtensionsReq.FromString,
+                    response_serializer=mock__api__pb2.ListRemoteExtensionsRes.SerializeToString,
+            ),
+            'ListExtensionRepos': grpc.unary_unary_rpc_method_handler(
+                    servicer.ListExtensionRepos,
+                    request_deserializer=mock__domain__models__pb2.Empty.FromString,
+                    response_serializer=mock__api__pb2.ListExtensionReposRes.SerializeToString,
+            ),
+            'AddExtensionRepo': grpc.unary_unary_rpc_method_handler(
+                    servicer.AddExtensionRepo,
+                    request_deserializer=mock__api__pb2.AddExtensionRepoReq.FromString,
+                    response_serializer=mock__api__pb2.AddExtensionRepoRes.SerializeToString,
+            ),
+            'RemoveExtensionRepo': grpc.unary_unary_rpc_method_handler(
+                    servicer.RemoveExtensionRepo,
+                    request_deserializer=mock__api__pb2.RemoveExtensionRepoReq.FromString,
+                    response_serializer=mock__domain__models__pb2.Empty.SerializeToString,
+            ),
+            'HealthCheck': grpc.unary_unary_rpc_method_handler(
+                    servicer.HealthCheck,
+                    request_deserializer=mock__api__pb2.HealthCheckReq.FromString,
+                    response_serializer=mock__api__pb2.HealthCheckRes.SerializeToString,
+            ),
+            'WatchHealth': grpc.unary_stream_rpc_method_handler(
+                    servicer.WatchHealth,
+                    request_deserializer=mock__api__pb2.HealthCheckReq.FromString,
+                    response_serializer=mock__api__pb2.HealthCheckRes.SerializeToString,
+            ),
+            'WatchLogs': grpc.unary_stream_rpc_method_handler(
+                    servicer.WatchLogs,
+                    request_deserializer=mock__api__pb2.WatchLogsReq.FromString,
+                    response_serializer=mock__domain__models__pb2.LogEntry.SerializeToString,
+            ),
+            'GetLogs': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetLogs,
+                    request_deserializer=mock__api__pb2.GetLogsReq.FromString,
+                    response_serializer=mock__api__pb2.GetLogsRes.SerializeToString,
+            ),
+            'SetLogLevel': grpc.unary_unary_rpc_method_handler(
+                    servicer.SetLogLevel,
+                    request_deserializer=mock__api__pb2.SetLogLevelReq.FromString,
+                    response_serializer=mock__domain__models__pb2.Empty.SerializeToString,
+            ),
+    }
+    generic_handler = grpc.method_handlers_generic_handler(
+            'twkevinzhang_mock.sidecar.SidecarApi', rpc_method_handlers)
+    server.add_generic_rpc_handlers((generic_handler,))
+    server.add_registered_method_handlers('twkevinzhang_mock.sidecar.SidecarApi', rpc_method_handlers)
+
+
+ # This class is part of an EXPERIMENTAL API.
+class SidecarApi(object):
+    """Missing associated documentation comment in .proto file."""
+
+    @staticmethod
+    def GetBoards(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetBoards',
+            mock__api__pb2.GetBoardsReq.SerializeToString,
+            mock__api__pb2.GetBoardsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetThreads(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetThreads',
+            mock__api__pb2.GetThreadsReq.SerializeToString,
+            mock__api__pb2.GetThreadsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetOriginalPost(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetOriginalPost',
+            mock__api__pb2.GetOriginalPostReq.SerializeToString,
+            mock__api__pb2.GetOriginalPostRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetReplies(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetReplies',
+            mock__api__pb2.GetRepliesReq.SerializeToString,
+            mock__api__pb2.GetRepliesRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetComments(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetComments',
+            mock__api__pb2.GetCommentsReq.SerializeToString,
+            mock__api__pb2.GetCommentsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetBoardSortOptions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetBoardSortOptions',
+            mock__api__pb2.GetBoardSortOptionsReq.SerializeToString,
+            mock__api__pb2.GetBoardSortOptionsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListInstalledExtensions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/ListInstalledExtensions',
+            mock__domain__models__pb2.Empty.SerializeToString,
+            mock__api__pb2.ListInstalledExtensionsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetInstalledExtension(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetInstalledExtension',
+            mock__api__pb2.GetInstalledExtensionReq.SerializeToString,
+            mock__api__pb2.GetInstalledExtensionRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def InstallExtension(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/InstallExtension',
+            mock__api__pb2.InstallExtensionReq.SerializeToString,
+            mock__domain__models__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def UninstallExtension(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/UninstallExtension',
+            mock__api__pb2.UninstallExtensionReq.SerializeToString,
+            mock__domain__models__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetInstallProgress(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetInstallProgress',
+            mock__api__pb2.GetInstallProgressReq.SerializeToString,
+            mock__api__pb2.GetInstallProgressRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListRemoteExtensions(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/ListRemoteExtensions',
+            mock__api__pb2.ListRemoteExtensionsReq.SerializeToString,
+            mock__api__pb2.ListRemoteExtensionsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def ListExtensionRepos(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/ListExtensionRepos',
+            mock__domain__models__pb2.Empty.SerializeToString,
+            mock__api__pb2.ListExtensionReposRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def AddExtensionRepo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/AddExtensionRepo',
+            mock__api__pb2.AddExtensionRepoReq.SerializeToString,
+            mock__api__pb2.AddExtensionRepoRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def RemoveExtensionRepo(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/RemoveExtensionRepo',
+            mock__api__pb2.RemoveExtensionRepoReq.SerializeToString,
+            mock__domain__models__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def HealthCheck(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/HealthCheck',
+            mock__api__pb2.HealthCheckReq.SerializeToString,
+            mock__api__pb2.HealthCheckRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def WatchHealth(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/WatchHealth',
+            mock__api__pb2.HealthCheckReq.SerializeToString,
+            mock__api__pb2.HealthCheckRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def WatchLogs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_stream(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/WatchLogs',
+            mock__api__pb2.WatchLogsReq.SerializeToString,
+            mock__domain__models__pb2.LogEntry.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def GetLogs(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/GetLogs',
+            mock__api__pb2.GetLogsReq.SerializeToString,
+            mock__api__pb2.GetLogsRes.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)
+
+    @staticmethod
+    def SetLogLevel(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(
+            request,
+            target,
+            '/twkevinzhang_mock.sidecar.SidecarApi/SetLogLevel',
+            mock__api__pb2.SetLogLevelReq.SerializeToString,
+            mock__domain__models__pb2.Empty.FromString,
+            options,
+            channel_credentials,
+            insecure,
+            call_credentials,
+            compression,
+            wait_for_ready,
+            timeout,
+            metadata,
+            _registered_method=True)

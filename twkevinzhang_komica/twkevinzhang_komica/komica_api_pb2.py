@@ -22,39 +22,42 @@ _runtime_version.ValidateProtobufRuntimeVersion(
 _sym_db = _symbol_database.Default()
 
 
-try:
-    from . import komica_domain_models_pb2 as komica__domain__models__pb2
-except ImportError:
-    import komica_domain_models_pb2 as komica__domain__models__pb2
+import komica_domain_models_pb2 as komica__domain__models__pb2
 
 
-DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10komica_api.proto\x12&news_hub.extension.twkevinzhang.komica\x1a\x1akomica_domain_models.proto\"s\n\x0cGetBoardsReq\x12\x10\n\x08pkg_name\x18\x03 \x01(\t\x12H\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x00\x88\x01\x01\x42\x07\n\x05_page\"\x92\x01\n\x0cGetBoardsRes\x12=\n\x06\x62oards\x18\x01 \x03(\x0b\x32-.news_hub.extension.twkevinzhang.komica.Board\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes\"\xc6\x01\n\rGetThreadsReq\x12\x10\n\x08pkg_name\x18\x06 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x08 \x01(\t\x12\x11\n\x04sort\x18\x07 \x01(\tH\x00\x88\x01\x01\x12H\n\x04page\x18\x03 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x01\x88\x01\x01\x12\x15\n\x08keywords\x18\x05 \x01(\tH\x02\x88\x01\x01\x42\x07\n\x05_sortB\x07\n\x05_pageB\x0b\n\t_keywords\"\x93\x01\n\rGetThreadsRes\x12=\n\x07threads\x18\x01 \x03(\x0b\x32,.news_hub.extension.twkevinzhang.komica.Post\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes\"\\\n\x12GetOriginalPostReq\x12\x10\n\x08pkg_name\x18\x05 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x03 \x01(\t\x12\x11\n\tthread_id\x18\x01 \x01(\t\x12\x0f\n\x07post_id\x18\x04 \x01(\t\"Y\n\x12GetOriginalPostRes\x12\x43\n\roriginal_post\x18\x01 \x01(\x0b\x32,.news_hub.extension.twkevinzhang.komica.Post\"\xc3\x01\n\rGetRepliesReq\x12\x10\n\x08pkg_name\x18\x06 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x02 \x01(\t\x12\x11\n\tthread_id\x18\x03 \x01(\t\x12\x18\n\x0breply_to_id\x18\x05 \x01(\tH\x00\x88\x01\x01\x12H\n\x04page\x18\x04 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x01\x88\x01\x01\x42\x0e\n\x0c_reply_to_idB\x07\n\x05_page\"\x93\x01\n\rGetRepliesRes\x12=\n\x07replies\x18\x01 \x03(\x0b\x32,.news_hub.extension.twkevinzhang.komica.Post\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes\"\xab\x01\n\x0eGetCommentsReq\x12\x10\n\x08pkg_name\x18\x06 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x02 \x01(\t\x12\x11\n\tthread_id\x18\x03 \x01(\t\x12\x0f\n\x07post_id\x18\x04 \x01(\t\x12H\n\x04page\x18\x05 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x00\x88\x01\x01\x42\x07\n\x05_page\"\x98\x01\n\x0eGetCommentsRes\x12\x41\n\x08\x63omments\x18\x01 \x03(\x0b\x32/.news_hub.extension.twkevinzhang.komica.Comment\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes2\x92\x05\n\nSidecarApi\x12y\n\tGetBoards\x12\x34.news_hub.extension.twkevinzhang.komica.GetBoardsReq\x1a\x34.news_hub.extension.twkevinzhang.komica.GetBoardsRes\"\x00\x12|\n\nGetThreads\x12\x35.news_hub.extension.twkevinzhang.komica.GetThreadsReq\x1a\x35.news_hub.extension.twkevinzhang.komica.GetThreadsRes\"\x00\x12\x8b\x01\n\x0fGetOriginalPost\x12:.news_hub.extension.twkevinzhang.komica.GetOriginalPostReq\x1a:.news_hub.extension.twkevinzhang.komica.GetOriginalPostRes\"\x00\x12|\n\nGetReplies\x12\x35.news_hub.extension.twkevinzhang.komica.GetRepliesReq\x1a\x35.news_hub.extension.twkevinzhang.komica.GetRepliesRes\"\x00\x12\x7f\n\x0bGetComments\x12\x36.news_hub.extension.twkevinzhang.komica.GetCommentsReq\x1a\x36.news_hub.extension.twkevinzhang.komica.GetCommentsRes\"\x00\x62\x06proto3')
+DESCRIPTOR = _descriptor_pool.Default().AddSerializedFile(b'\n\x10komica_api.proto\x12&news_hub.extension.twkevinzhang.komica\x1a\x1akomica_domain_models.proto\"=\n\x16GetBoardSortOptionsReq\x12\x10\n\x08pkg_name\x18\x01 \x01(\t\x12\x11\n\tboard_ids\x18\x02 \x03(\t\"4\n\x0f\x42oardSortOption\x12\x10\n\x08\x62oard_id\x18\x01 \x01(\t\x12\x0f\n\x07options\x18\x02 \x03(\t\"b\n\x16GetBoardSortOptionsRes\x12H\n\x07options\x18\x01 \x03(\x0b\x32\x37.news_hub.extension.twkevinzhang.komica.BoardSortOption\"s\n\x0cGetBoardsReq\x12\x10\n\x08pkg_name\x18\x03 \x01(\t\x12H\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x00\x88\x01\x01\x42\x07\n\x05_page\"\x92\x01\n\x0cGetBoardsRes\x12=\n\x06\x62oards\x18\x01 \x03(\x0b\x32-.news_hub.extension.twkevinzhang.komica.Board\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes\"\xc6\x01\n\rGetThreadsReq\x12\x10\n\x08pkg_name\x18\x06 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x08 \x01(\t\x12\x11\n\x04sort\x18\x07 \x01(\tH\x00\x88\x01\x01\x12H\n\x04page\x18\x03 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x01\x88\x01\x01\x12\x15\n\x08keywords\x18\x05 \x01(\tH\x02\x88\x01\x01\x42\x07\n\x05_sortB\x07\n\x05_pageB\x0b\n\t_keywords\"\x93\x01\n\rGetThreadsRes\x12=\n\x07threads\x18\x01 \x03(\x0b\x32,.news_hub.extension.twkevinzhang.komica.Post\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes\"\\\n\x12GetOriginalPostReq\x12\x10\n\x08pkg_name\x18\x05 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x03 \x01(\t\x12\x11\n\tthread_id\x18\x01 \x01(\t\x12\x0f\n\x07post_id\x18\x04 \x01(\t\"Y\n\x12GetOriginalPostRes\x12\x43\n\roriginal_post\x18\x01 \x01(\x0b\x32,.news_hub.extension.twkevinzhang.komica.Post\"\xc3\x01\n\rGetRepliesReq\x12\x10\n\x08pkg_name\x18\x06 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x02 \x01(\t\x12\x11\n\tthread_id\x18\x03 \x01(\t\x12\x18\n\x0breply_to_id\x18\x05 \x01(\tH\x00\x88\x01\x01\x12H\n\x04page\x18\x04 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x01\x88\x01\x01\x42\x0e\n\x0c_reply_to_idB\x07\n\x05_page\"\x93\x01\n\rGetRepliesRes\x12=\n\x07replies\x18\x01 \x03(\x0b\x32,.news_hub.extension.twkevinzhang.komica.Post\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes\"\xab\x01\n\x0eGetCommentsReq\x12\x10\n\x08pkg_name\x18\x06 \x01(\t\x12\x10\n\x08\x62oard_id\x18\x02 \x01(\t\x12\x11\n\tthread_id\x18\x03 \x01(\t\x12\x0f\n\x07post_id\x18\x04 \x01(\t\x12H\n\x04page\x18\x05 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationReqH\x00\x88\x01\x01\x42\x07\n\x05_page\"\x98\x01\n\x0eGetCommentsRes\x12\x41\n\x08\x63omments\x18\x01 \x03(\x0b\x32/.news_hub.extension.twkevinzhang.komica.Comment\x12\x43\n\x04page\x18\x02 \x01(\x0b\x32\x35.news_hub.extension.twkevinzhang.komica.PaginationRes2\xab\x05\n\nSidecarApi\x12y\n\tGetBoards\x12\x34.news_hub.extension.twkevinzhang.komica.GetBoardsReq\x1a\x34.news_hub.extension.twkevinzhang.komica.GetBoardsRes\"\x00\x12|\n\nGetThreads\x12\x35.news_hub.extension.twkevinzhang.komica.GetThreadsReq\x1a\x35.news_hub.extension.twkevinzhang.komica.GetThreadsRes\"\x00\x12\x8b\x01\n\x0fGetOriginalPost\x12:.news_hub.extension.twkevinzhang.komica.GetOriginalPostReq\x1a:.news_hub.extension.twkevinzhang.komica.GetOriginalPostRes\"\x00\x12|\n\nGetReplies\x12\x35.news_hub.extension.twkevinzhang.komica.GetRepliesReq\x1a\x35.news_hub.extension.twkevinzhang.komica.GetRepliesRes\"\x00\x12\x97\x01\n\x13GetBoardSortOptions\x12>.news_hub.extension.twkevinzhang.komica.GetBoardSortOptionsReq\x1a>.news_hub.extension.twkevinzhang.komica.GetBoardSortOptionsRes\"\x00\x62\x06proto3')
 
 _globals = globals()
 _builder.BuildMessageAndEnumDescriptors(DESCRIPTOR, _globals)
 _builder.BuildTopDescriptorsAndMessages(DESCRIPTOR, 'komica_api_pb2', _globals)
 if not _descriptor._USE_C_DESCRIPTORS:
   DESCRIPTOR._loaded_options = None
-  _globals['_GETBOARDSREQ']._serialized_start=88
-  _globals['_GETBOARDSREQ']._serialized_end=203
-  _globals['_GETBOARDSRES']._serialized_start=206
-  _globals['_GETBOARDSRES']._serialized_end=352
-  _globals['_GETTHREADSREQ']._serialized_start=355
-  _globals['_GETTHREADSREQ']._serialized_end=553
-  _globals['_GETTHREADSRES']._serialized_start=556
-  _globals['_GETTHREADSRES']._serialized_end=703
-  _globals['_GETORIGINALPOSTREQ']._serialized_start=705
-  _globals['_GETORIGINALPOSTREQ']._serialized_end=797
-  _globals['_GETORIGINALPOSTRES']._serialized_start=799
-  _globals['_GETORIGINALPOSTRES']._serialized_end=888
-  _globals['_GETREPLIESREQ']._serialized_start=891
-  _globals['_GETREPLIESREQ']._serialized_end=1086
-  _globals['_GETREPLIESRES']._serialized_start=1089
-  _globals['_GETREPLIESRES']._serialized_end=1236
-  _globals['_GETCOMMENTSREQ']._serialized_start=1239
-  _globals['_GETCOMMENTSREQ']._serialized_end=1410
-  _globals['_GETCOMMENTSRES']._serialized_start=1413
-  _globals['_GETCOMMENTSRES']._serialized_end=1565
-  _globals['_SIDECARAPI']._serialized_start=1568
-  _globals['_SIDECARAPI']._serialized_end=2226
+  _globals['_GETBOARDSORTOPTIONSREQ']._serialized_start=88
+  _globals['_GETBOARDSORTOPTIONSREQ']._serialized_end=149
+  _globals['_BOARDSORTOPTION']._serialized_start=151
+  _globals['_BOARDSORTOPTION']._serialized_end=203
+  _globals['_GETBOARDSORTOPTIONSRES']._serialized_start=205
+  _globals['_GETBOARDSORTOPTIONSRES']._serialized_end=303
+  _globals['_GETBOARDSREQ']._serialized_start=305
+  _globals['_GETBOARDSREQ']._serialized_end=420
+  _globals['_GETBOARDSRES']._serialized_start=423
+  _globals['_GETBOARDSRES']._serialized_end=569
+  _globals['_GETTHREADSREQ']._serialized_start=572
+  _globals['_GETTHREADSREQ']._serialized_end=770
+  _globals['_GETTHREADSRES']._serialized_start=773
+  _globals['_GETTHREADSRES']._serialized_end=920
+  _globals['_GETORIGINALPOSTREQ']._serialized_start=922
+  _globals['_GETORIGINALPOSTREQ']._serialized_end=1014
+  _globals['_GETORIGINALPOSTRES']._serialized_start=1016
+  _globals['_GETORIGINALPOSTRES']._serialized_end=1105
+  _globals['_GETREPLIESREQ']._serialized_start=1108
+  _globals['_GETREPLIESREQ']._serialized_end=1303
+  _globals['_GETREPLIESRES']._serialized_start=1306
+  _globals['_GETREPLIESRES']._serialized_end=1453
+  _globals['_GETCOMMENTSREQ']._serialized_start=1456
+  _globals['_GETCOMMENTSREQ']._serialized_end=1627
+  _globals['_GETCOMMENTSRES']._serialized_start=1630
+  _globals['_GETCOMMENTSRES']._serialized_end=1782
+  _globals['_SIDECARAPI']._serialized_start=1785
+  _globals['_SIDECARAPI']._serialized_end=2468
 # @@protoc_insertion_point(module_scope)

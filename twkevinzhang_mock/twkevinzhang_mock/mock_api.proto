@@ -1,29 +1,60 @@
 syntax = "proto3";
-package news_hub.extension.twkevinzhang.mock;
+package twkevinzhang_mock.sidecar;
 
 import "mock_domain_models.proto";
 
+service SidecarApi {
+  rpc GetBoards (GetBoardsReq) returns (GetBoardsRes) {}
+  rpc GetThreads (GetThreadsReq) returns (GetThreadsRes) {}
+  rpc GetOriginalPost (GetOriginalPostReq) returns (GetOriginalPostRes) {}
+  rpc GetReplies (GetRepliesReq) returns (GetRepliesRes) {}
+  rpc GetComments (GetCommentsReq) returns (GetCommentsRes) {}
+  rpc GetBoardSortOptions (GetBoardSortOptionsReq) returns (GetBoardSortOptionsRes) {}
+
+   // Extension operations
+  rpc ListInstalledExtensions (twkevinzhang_mock.domain.Empty) returns (ListInstalledExtensionsRes);
+  rpc GetInstalledExtension (GetInstalledExtensionReq) returns (GetInstalledExtensionRes);
+  rpc InstallExtension (InstallExtensionReq) returns (twkevinzhang_mock.domain.Empty);
+  rpc UninstallExtension (UninstallExtensionReq) returns (twkevinzhang_mock.domain.Empty);
+  rpc GetInstallProgress (GetInstallProgressReq) returns (GetInstallProgressRes);
+  rpc ListRemoteExtensions (ListRemoteExtensionsReq) returns (ListRemoteExtensionsRes);
+
+  // Extension Repository operations
+  rpc ListExtensionRepos (twkevinzhang_mock.domain.Empty) returns (ListExtensionReposRes);
+  rpc AddExtensionRepo (AddExtensionRepoReq) returns (AddExtensionRepoRes);
+  rpc RemoveExtensionRepo (RemoveExtensionRepoReq) returns (twkevinzhang_mock.domain.Empty);
+
+  // Health check
+  rpc HealthCheck (HealthCheckReq) returns (HealthCheckRes);
+  rpc WatchHealth (HealthCheckReq) returns (stream HealthCheckRes);
+
+  // Logs
+  rpc WatchLogs (WatchLogsReq) returns (stream twkevinzhang_mock.domain.LogEntry);
+  rpc GetLogs (GetLogsReq) returns (GetLogsRes);
+  rpc SetLogLevel (SetLogLevelReq) returns (twkevinzhang_mock.domain.Empty);
+}
+
 message GetBoardsReq {
   string pkg_name = 3;
-  optional PaginationReq page = 2;
+  optional twkevinzhang_mock.domain.PaginationReq page = 2;
 }
 
 message GetBoardsRes {
-  repeated Board boards = 1;
-  PaginationRes page = 2;
+  repeated twkevinzhang_mock.domain.Board boards = 1;
+  twkevinzhang_mock.domain.PaginationRes page = 2;
 }
 
 message GetThreadsReq {
   string pkg_name = 6;
   string board_id = 8;
   optional string sort = 7;
-  optional PaginationReq page = 3;
+  optional twkevinzhang_mock.domain.PaginationReq page = 3;
   optional string keywords = 5;
 }
 
 message GetThreadsRes {
-  repeated Post threads = 1;
-  PaginationRes page = 2;
+  repeated twkevinzhang_mock.domain.Post threads = 1;
+  twkevinzhang_mock.domain.PaginationRes page = 2;
 }
 
 message GetOriginalPostReq {
@@ -34,7 +65,7 @@ message GetOriginalPostReq {
 }
 
 message GetOriginalPostRes {
-  Post original_post = 1;
+  twkevinzhang_mock.domain.Post original_post = 1;
 }
 
 message GetRepliesReq {
@@ -42,12 +73,12 @@ message GetRepliesReq {
   string board_id = 2;
   string thread_id = 3;
   optional string reply_to_id = 5;
-  optional PaginationReq page = 4;
+  optional twkevinzhang_mock.domain.PaginationReq page = 4;
 }
 
 message GetRepliesRes {
-  repeated Post replies = 1;
-  PaginationRes page = 2;
+  repeated twkevinzhang_mock.domain.Post replies = 1;
+  twkevinzhang_mock.domain.PaginationRes page = 2;
 }
 
 message GetCommentsReq {
@@ -55,10 +86,118 @@ message GetCommentsReq {
   string board_id = 2;
   string thread_id = 3;
   string post_id = 4;
-  optional PaginationReq page = 5;
+  optional twkevinzhang_mock.domain.PaginationReq page = 5;
 }
 
 message GetCommentsRes {
-  repeated Comment comments = 1;
-  PaginationRes page = 2;
+  repeated twkevinzhang_mock.domain.Comment comments = 1;
+  twkevinzhang_mock.domain.PaginationRes page = 2;
+}
+
+message ListInstalledExtensionsRes {
+  repeated twkevinzhang_mock.domain.Extension extensions = 1;
+}
+
+message GetInstalledExtensionReq {
+  string pkg_name = 1;
+}
+
+message GetInstalledExtensionRes {
+  twkevinzhang_mock.domain.Extension extension = 1;
+}
+
+message InstallExtensionReq {
+  string pkg_name = 1;
+  optional string repo_url = 4;
+}
+
+message UninstallExtensionReq {
+  string pkg_name = 1;
+}
+
+message GetInstallProgressReq {
+  string pkg_name = 1;
+}
+
+message GetInstallProgressRes {
+  int64 progress = 2;
+}
+
+message ListRemoteExtensionsReq {
+  optional string keyword = 1;
+}
+
+message ListRemoteExtensionsRes {
+  repeated twkevinzhang_mock.domain.RemoteExtension extensions = 1;
+}
+
+message ListExtensionReposRes {
+  repeated twkevinzhang_mock.domain.ExtensionRepo repos = 1;
+}
+
+message AddExtensionRepoReq {
+  string url = 1;
+}
+
+message AddExtensionRepoRes {
+  string url = 1;
+  int64 added_at = 2;  // milliseconds since epoch
+  string display_name = 3;
+  string website = 4;
+  string signing_key_fingerprint = 5;
+  optional string icon = 6;
+}
+
+message RemoveExtensionRepoReq {
+  string url = 1;
+}
+
+message HealthCheckReq {
+  string service = 1;
+}
+
+message HealthCheckRes {
+  enum ServingStatus {
+    UNKNOWN = 0;
+    SERVING = 1;
+    NOT_SERVING = 2;
+    SERVICE_UNKNOWN = 3;
+  }
+  ServingStatus status = 1;
+  optional string message = 2;
+}
+
+message WatchLogsReq {
+  twkevinzhang_mock.domain.LogLevel min_level = 1;
+  optional string logger_filter = 2;
+}
+
+message GetLogsReq {
+  int64 start_time = 1;
+  int64 end_time = 2;
+  twkevinzhang_mock.domain.LogLevel min_level = 3;
+  optional string logger_filter = 4;
+  optional int32 limit = 5;
+}
+
+message GetLogsRes {
+  repeated twkevinzhang_mock.domain.LogEntry entries = 1;
+}
+
+message SetLogLevelReq {
+  twkevinzhang_mock.domain.LogLevel level = 1;
+}
+
+message BoardSortOption {
+  string board_id = 1;
+  repeated string options = 2;
+}
+
+message GetBoardSortOptionsReq {
+  string pkg_name = 1;
+  repeated string board_ids = 2;
+}
+
+message GetBoardSortOptionsRes {
+  repeated BoardSortOption options = 1;
 }

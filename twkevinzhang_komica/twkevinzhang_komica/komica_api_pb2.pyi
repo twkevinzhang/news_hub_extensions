@@ -6,6 +6,28 @@ from typing import ClassVar as _ClassVar, Iterable as _Iterable, Mapping as _Map
 
 DESCRIPTOR: _descriptor.FileDescriptor
 
+class GetBoardSortOptionsReq(_message.Message):
+    __slots__ = ("pkg_name", "board_ids")
+    PKG_NAME_FIELD_NUMBER: _ClassVar[int]
+    BOARD_IDS_FIELD_NUMBER: _ClassVar[int]
+    pkg_name: str
+    board_ids: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, pkg_name: _Optional[str] = ..., board_ids: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class BoardSortOption(_message.Message):
+    __slots__ = ("board_id", "options")
+    BOARD_ID_FIELD_NUMBER: _ClassVar[int]
+    OPTIONS_FIELD_NUMBER: _ClassVar[int]
+    board_id: str
+    options: _containers.RepeatedScalarFieldContainer[str]
+    def __init__(self, board_id: _Optional[str] = ..., options: _Optional[_Iterable[str]] = ...) -> None: ...
+
+class GetBoardSortOptionsRes(_message.Message):
+    __slots__ = ("options",)
+    OPTIONS_FIELD_NUMBER: _ClassVar[int]
+    options: _containers.RepeatedCompositeFieldContainer[BoardSortOption]
+    def __init__(self, options: _Optional[_Iterable[_Union[BoardSortOption, _Mapping]]] = ...) -> None: ...
+
 class GetBoardsReq(_message.Message):
     __slots__ = ("pkg_name", "page")
     PKG_NAME_FIELD_NUMBER: _ClassVar[int]

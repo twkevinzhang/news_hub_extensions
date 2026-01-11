@@ -54,10 +54,10 @@ class SidecarApiStub(object):
                 request_serializer=komica__api__pb2.GetRepliesReq.SerializeToString,
                 response_deserializer=komica__api__pb2.GetRepliesRes.FromString,
                 _registered_method=True)
-        self.GetComments = channel.unary_unary(
-                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetComments',
-                request_serializer=komica__api__pb2.GetCommentsReq.SerializeToString,
-                response_deserializer=komica__api__pb2.GetCommentsRes.FromString,
+        self.GetBoardSortOptions = channel.unary_unary(
+                '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetBoardSortOptions',
+                request_serializer=komica__api__pb2.GetBoardSortOptionsReq.SerializeToString,
+                response_deserializer=komica__api__pb2.GetBoardSortOptionsRes.FromString,
                 _registered_method=True)
 
 
@@ -88,7 +88,7 @@ class SidecarApiServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
-    def GetComments(self, request, context):
+    def GetBoardSortOptions(self, request, context):
         """Missing associated documentation comment in .proto file."""
         context.set_code(grpc.StatusCode.UNIMPLEMENTED)
         context.set_details('Method not implemented!')
@@ -117,10 +117,10 @@ def add_SidecarApiServicer_to_server(servicer, server):
                     request_deserializer=komica__api__pb2.GetRepliesReq.FromString,
                     response_serializer=komica__api__pb2.GetRepliesRes.SerializeToString,
             ),
-            'GetComments': grpc.unary_unary_rpc_method_handler(
-                    servicer.GetComments,
-                    request_deserializer=komica__api__pb2.GetCommentsReq.FromString,
-                    response_serializer=komica__api__pb2.GetCommentsRes.SerializeToString,
+            'GetBoardSortOptions': grpc.unary_unary_rpc_method_handler(
+                    servicer.GetBoardSortOptions,
+                    request_deserializer=komica__api__pb2.GetBoardSortOptionsReq.FromString,
+                    response_serializer=komica__api__pb2.GetBoardSortOptionsRes.SerializeToString,
             ),
     }
     generic_handler = grpc.method_handlers_generic_handler(
@@ -242,7 +242,7 @@ class SidecarApi(object):
             _registered_method=True)
 
     @staticmethod
-    def GetComments(request,
+    def GetBoardSortOptions(request,
             target,
             options=(),
             channel_credentials=None,
@@ -255,9 +255,9 @@ class SidecarApi(object):
         return grpc.experimental.unary_unary(
             request,
             target,
-            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetComments',
-            komica__api__pb2.GetCommentsReq.SerializeToString,
-            komica__api__pb2.GetCommentsRes.FromString,
+            '/news_hub.extension.twkevinzhang.komica.SidecarApi/GetBoardSortOptions',
+            komica__api__pb2.GetBoardSortOptionsReq.SerializeToString,
+            komica__api__pb2.GetBoardSortOptionsRes.FromString,
             options,
             channel_credentials,
             insecure,

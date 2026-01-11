@@ -1,5 +1,5 @@
 syntax = "proto3";
-package news_hub.extension.twkevinzhang.mock;
+package twkevinzhang_mock.domain;
 
 message PaginationReq {
   optional int32 page = 1;

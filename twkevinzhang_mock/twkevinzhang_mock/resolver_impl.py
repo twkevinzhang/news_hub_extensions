@@ -209,3 +209,26 @@ class ResolverImpl:
 
     def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadsRes:
         return pb2.GetThreadsRes()
+
+    def GetBoardSortOptions(self, req: pb2.GetBoardSortOptionsReq, context) -> pb2.GetBoardSortOptionsRes:
+        # Mock board sort options mapping
+        mock_sort_options = {
+            "board_1": ["latest", "hot"],
+            "board_2": ["newest", "recommend"],
+            "board_3": ["latest", "commented"],
+        }
+        
+        results = []
+        for encoded_bid in req.board_ids:
+            try:
+                board_id = salt.decode(encoded_bid)
+                if board_id in mock_sort_options:
+                    results.append(pb2.BoardSortOption(
+                        board_id=encoded_bid,
+                        options=mock_sort_options[board_id]
+                    ))
+            except Exception:
+                continue
+                
+        return pb2.GetBoardSortOptionsRes(options=results)
+        
