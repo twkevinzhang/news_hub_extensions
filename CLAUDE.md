@@ -4,13 +4,13 @@
 
 ## 專案概覽
 
-本倉庫是 **News Hub AI 的擴充市場** (主專案位於 `../news_hub_ai`)。包含多個基於 Python 的 gRPC 擴充功能，提供從各種來源（論壇、新聞網站等）聚合內容的能力。
+本倉庫是 **News Hub 的擴充市場** (主專案位於 `../news_hub`)。包含多個基於 Python 的 gRPC 擴充功能，提供從各種來源（論壇、新聞網站等）聚合內容的能力。
 
 ### 與主專案的關係
 
-- **主專案**: `../news_hub_ai` - Flutter 應用程式搭配 Python sidecar 服務
+- **主專案**: `../news_hub` - Flutter 應用程式搭配 Python sidecar 服務
 - **本倉庫**: 擴充市場，包含可安裝的內容提供者
-- **整合方式**: Sidecar 服務 (`news_hub_ai/sidecar/src/application/services/extension_loader.py`) 動態載入本倉庫的擴充
+- **整合方式**: Sidecar 服務 (`news_hub/sidecar/src/application/services/extension_loader.py`) 動態載入本倉庫的擴充
 - **載入機制**: 擴充通過匯入其 `resolver_impl.py` 載入，該文件必須包含 `ResolverImpl` 類
 - **技術架構**: 使用 [flet-dev/serious-python](https://github.com/flet-dev/serious-python) 將 Python 代碼打包進 Flutter app
 
@@ -384,4 +384,4 @@ To add a new extension to the marketplace:
 - All timestamps use Unix epoch integers
 - Extensions are dynamically loaded by the main app's sidecar service using Python's `importlib`
 - The main app is built using [flet-dev/serious-python](https://github.com/flet-dev/serious-python) to package Python code into Flutter app
-- Main project repository: `../news_hub_ai`
+- Main project repository: `../news_hub`
