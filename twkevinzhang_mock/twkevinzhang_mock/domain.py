@@ -6,6 +6,40 @@ from . import salt
 pkg_name = "twkevinzhang_mock"
 
 
+class Comment:
+    def __init__(self,
+                 id: str,
+                 post_id: str,
+                 thread_id: str,
+                 board_id: str,
+                 author_id: str,
+                 author_name: str,
+                 contents: list[domain_pb2.Paragraph],
+                 created_at: int):
+        self.pkg_name = pkg_name
+        self.id = id
+        self.post_id = post_id
+        self.thread_id = thread_id
+        self.board_id = board_id
+        self.author_id = author_id
+        self.author_name = author_name
+        self.contents = contents
+        self.created_at = created_at
+
+    def toSaltPb2(self) -> domain_pb2.Comment:
+        return domain_pb2.Comment(
+            id=salt.encode(self.id),
+            post_id=salt.encode(self.post_id),
+            thread_id=salt.encode(self.thread_id),
+            board_id=salt.encode(self.board_id),
+            author_id=salt.encode(self.author_id),
+            author_name=self.author_name,
+            contents=self.contents,
+            pkg_name=self.pkg_name,
+            created_at=self.created_at,
+        )
+
+
 class Post:
     def __init__(self,
                  id: str,
@@ -24,6 +58,7 @@ class Post:
                  latest_reply_created_at: int,
                  replies_count: int,
                  url: str | None,
+                 top_5_comments: list[Comment] = None,
                  ):
         self.pkg_name = pkg_name
         self.board_id = board_id
@@ -42,6 +77,7 @@ class Post:
         self.latest_reply_created_at = latest_reply_created_at
         self.replies_count = replies_count
         self.url = url
+        self.top_5_comments = top_5_comments or []
 
     def __eq__(self, other):
         return self.__dict__ == other.__dict__
@@ -66,13 +102,16 @@ class Post:
                 ))
             else:
                 new_contents.append(content)
+
+        top_5_pb2 = [comment.toSaltPb2() for comment in self.top_5_comments]
+
         if ui_layout == 'article_post':
             return domain_pb2.Post(
                 pkg_name=self.pkg_name,
                 id=salt.encode(self.id),
                 thread_id=salt.encode(self.thread_id),
                 board_id=salt.encode(self.board_id),
-                article_post = domain_pb2.ArticlePost(
+                article_post=domain_pb2.ArticlePost(
                     author_id=salt.encode(self.author_id),
                     author_name=self.author_name,
                     created_at=self.created_at,
@@ -83,7 +122,8 @@ class Post:
                     tags=self.tags,
                     latest_reply_created_at=self.latest_reply_created_at,
                     replies_count=self.replies_count,
-                    url=self.url
+                    url=self.url,
+                    top_5_comments=top_5_pb2
                 ),
             )
         elif ui_layout == 'single_image_post':
@@ -92,7 +132,7 @@ class Post:
                 id=salt.encode(self.id),
                 thread_id=salt.encode(self.thread_id),
                 board_id=salt.encode(self.board_id),
-                single_image_post = domain_pb2.SingleImagePost(
+                single_image_post=domain_pb2.SingleImagePost(
                     author_id=salt.encode(self.author_id),
                     author_name=self.author_name,
                     created_at=self.created_at,
@@ -104,6 +144,7 @@ class Post:
                     tags=self.tags,
                     latest_reply_created_at=self.latest_reply_created_at,
                     replies_count=self.replies_count,
-                    url=self.url
+                    url=self.url,
+                    top_5_comments=top_5_pb2
                 ),
             )

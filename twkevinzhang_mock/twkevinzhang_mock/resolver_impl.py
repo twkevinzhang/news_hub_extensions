@@ -4,7 +4,7 @@ import time
 from . import mock_api_pb2 as pb2
 from . import mock_domain_models_pb2 as domain_pb2
 from . import salt
-from .domain import Post
+from .domain import Post, Comment
 
 
 def pagination(req: domain_pb2.PaginationReq, items) -> (list, domain_pb2.PaginationRes):
@@ -118,6 +118,24 @@ class ResolverImpl:
         post_id = salt.decode(req.post_id)
         
         now = int(time.time())
+
+        comments = [
+            Comment(
+                id=f"comment_{post_id}_{i}",
+                post_id=post_id,
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id=f"cm_user_{i}",
+                author_name=f"Commenter {i}",
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content=f"這是一則 Mock 留言 {i}")
+                    )
+                ],
+                created_at=now - (i * 300)
+            ) for i in range(1, 4)
+        ]
         
         thread = Post(
             id=post_id,
@@ -150,7 +168,8 @@ class ResolverImpl:
             tags=["Mock", "Detail"],
             latest_reply_created_at=now - 3600,
             replies_count=50,
-            url=f"https://example.com/mock/{board_id}/{thread_id}"
+            url=f"https://example.com/mock/{board_id}/{thread_id}",
+            top_5_comments=comments
         )
         
         return pb2.GetOriginalPostRes(
@@ -160,13 +179,17 @@ class ResolverImpl:
     def GetReplies(self, req: pb2.GetRepliesReq, context) -> pb2.GetRepliesRes:
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
-        reply_to_id = salt.decode(req.reply_to_id)
+        parent_id = salt.decode(req.parent_id) if req.HasField('parent_id') else None
         
         now = int(time.time())
         posts = []
         
-        for i in range(1, 6):
-            pid = f"reply_{thread_id}_{i}"
+        # If parent_id is set, generate child replies (subtree)
+        prefix = f"subreply_{parent_id}" if parent_id else f"reply_{thread_id}"
+        count = 3 if parent_id else 5
+        
+        for i in range(1, count + 1):
+            pid = f"{prefix}_{i}"
             posts.append(Post(
                 id=pid,
                 thread_id=thread_id,
@@ -181,21 +204,13 @@ class ResolverImpl:
                 image=None,
                 contents=[
                     domain_pb2.Paragraph(
-                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
-                        reply_to=domain_pb2.ReplyToParagraph(
-                            id=reply_to_id,
-                            author_name="Original Author",
-                            preview="Previous content..."
-                        )
-                    ),
-                    domain_pb2.Paragraph(
                         type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                        text=domain_pb2.TextParagraph(content=f"This is mock reply {i}.")
+                        text=domain_pb2.TextParagraph(content=f"這是一則 {'子' if parent_id else ''}回覆內容 {i}。")
                     )
                 ],
                 tags=[],
                 latest_reply_created_at=0,
-                replies_count=0,
+                replies_count=0 if parent_id else 2, # Sub-replies exist for top-level replies
                 url=None
             ))
 
@@ -207,8 +222,37 @@ class ResolverImpl:
             ),
         )
 
-    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetThreadsRes:
-        return pb2.GetThreadsRes()
+    def GetComments(self, req: pb2.GetCommentsReq, context) -> pb2.GetCommentsRes:
+        board_id = salt.decode(req.board_id)
+        thread_id = salt.decode(req.thread_id)
+        post_id = salt.decode(req.post_id)
+        
+        now = int(time.time())
+        comments = [
+            Comment(
+                id=f"full_comment_{post_id}_{i}",
+                post_id=post_id,
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id=f"cm_user_{i}",
+                author_name=f"Commenter {i}",
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content=f"這是一則完整加載的留言 {i}")
+                    )
+                ],
+                created_at=now - (i * 300)
+            ) for i in range(1, 11)
+        ]
+        
+        return pb2.GetCommentsRes(
+            comments=[c.toSaltPb2() for c in comments],
+            page=domain_pb2.PaginationRes(
+                current_page=1,
+                total_page=1,
+            ),
+        )
 
     def GetBoardSortOptions(self, req: pb2.GetBoardSortOptionsReq, context) -> pb2.GetBoardSortOptionsRes:
         # Mock board sort options mapping

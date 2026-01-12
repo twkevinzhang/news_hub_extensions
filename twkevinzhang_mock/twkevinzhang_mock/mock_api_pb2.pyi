@@ -64,18 +64,18 @@ class GetOriginalPostRes(_message.Message):
     def __init__(self, original_post: _Optional[_Union[_mock_domain_models_pb2.Post, _Mapping]] = ...) -> None: ...
 
 class GetRepliesReq(_message.Message):
-    __slots__ = ("pkg_name", "board_id", "thread_id", "reply_to_id", "page")
+    __slots__ = ("pkg_name", "board_id", "thread_id", "parent_id", "page")
     PKG_NAME_FIELD_NUMBER: _ClassVar[int]
     BOARD_ID_FIELD_NUMBER: _ClassVar[int]
     THREAD_ID_FIELD_NUMBER: _ClassVar[int]
-    REPLY_TO_ID_FIELD_NUMBER: _ClassVar[int]
+    PARENT_ID_FIELD_NUMBER: _ClassVar[int]
     PAGE_FIELD_NUMBER: _ClassVar[int]
     pkg_name: str
     board_id: str
     thread_id: str
-    reply_to_id: str
+    parent_id: str
     page: _mock_domain_models_pb2.PaginationReq
-    def __init__(self, pkg_name: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., reply_to_id: _Optional[str] = ..., page: _Optional[_Union[_mock_domain_models_pb2.PaginationReq, _Mapping]] = ...) -> None: ...
+    def __init__(self, pkg_name: _Optional[str] = ..., board_id: _Optional[str] = ..., thread_id: _Optional[str] = ..., parent_id: _Optional[str] = ..., page: _Optional[_Union[_mock_domain_models_pb2.PaginationReq, _Mapping]] = ...) -> None: ...
 
 class GetRepliesRes(_message.Message):
     __slots__ = ("replies", "page")

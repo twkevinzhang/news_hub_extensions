@@ -72,7 +72,7 @@ message GetRepliesReq {
   string pkg_name = 6;
   string board_id = 2;
   string thread_id = 3;
-  optional string reply_to_id = 5;
+  optional string parent_id = 5;
   optional twkevinzhang_mock.domain.PaginationReq page = 4;
 }
 

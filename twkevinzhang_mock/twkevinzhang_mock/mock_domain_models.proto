@@ -111,6 +111,7 @@ message ArticlePost {
   int64 latest_reply_created_at = 15;
   int32 replies_count = 19;
   string url = 20;
+  repeated Comment top_5_comments = 21;
 }
 
 message SingleImagePost {
@@ -126,6 +127,7 @@ message SingleImagePost {
   int64 latest_reply_created_at = 15;
   int32 replies_count = 19;
   string url = 20;
+  repeated Comment top_5_comments = 22;
 }
 
 message Comment {

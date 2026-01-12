@@ -175,7 +175,7 @@ class Post(_message.Message):
     def __init__(self, id: _Optional[str] = ..., thread_id: _Optional[str] = ..., board_id: _Optional[str] = ..., pkg_name: _Optional[str] = ..., article_post: _Optional[_Union[ArticlePost, _Mapping]] = ..., single_image_post: _Optional[_Union[SingleImagePost, _Mapping]] = ...) -> None: ...
 
 class ArticlePost(_message.Message):
-    __slots__ = ("author_id", "author_name", "created_at", "title", "liked", "disliked", "contents", "tags", "latest_reply_created_at", "replies_count", "url")
+    __slots__ = ("author_id", "author_name", "created_at", "title", "liked", "disliked", "contents", "tags", "latest_reply_created_at", "replies_count", "url", "top_5_comments")
     AUTHOR_ID_FIELD_NUMBER: _ClassVar[int]
     AUTHOR_NAME_FIELD_NUMBER: _ClassVar[int]
     CREATED_AT_FIELD_NUMBER: _ClassVar[int]
@@ -187,6 +187,7 @@ class ArticlePost(_message.Message):
     LATEST_REPLY_CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     REPLIES_COUNT_FIELD_NUMBER: _ClassVar[int]
     URL_FIELD_NUMBER: _ClassVar[int]
+    TOP_5_COMMENTS_FIELD_NUMBER: _ClassVar[int]
     author_id: str
     author_name: str
     created_at: int
@@ -198,10 +199,11 @@ class ArticlePost(_message.Message):
     latest_reply_created_at: int
     replies_count: int
     url: str
-    def __init__(self, author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_reply_created_at: _Optional[int] = ..., replies_count: _Optional[int] = ..., url: _Optional[str] = ...) -> None: ...
+    top_5_comments: _containers.RepeatedCompositeFieldContainer[Comment]
+    def __init__(self, author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_reply_created_at: _Optional[int] = ..., replies_count: _Optional[int] = ..., url: _Optional[str] = ..., top_5_comments: _Optional[_Iterable[_Union[Comment, _Mapping]]] = ...) -> None: ...
 
 class SingleImagePost(_message.Message):
-    __slots__ = ("author_id", "author_name", "created_at", "title", "liked", "disliked", "image", "contents", "tags", "latest_reply_created_at", "replies_count", "url")
+    __slots__ = ("author_id", "author_name", "created_at", "title", "liked", "disliked", "image", "contents", "tags", "latest_reply_created_at", "replies_count", "url", "top_5_comments")
     AUTHOR_ID_FIELD_NUMBER: _ClassVar[int]
     AUTHOR_NAME_FIELD_NUMBER: _ClassVar[int]
     CREATED_AT_FIELD_NUMBER: _ClassVar[int]
@@ -214,6 +216,7 @@ class SingleImagePost(_message.Message):
     LATEST_REPLY_CREATED_AT_FIELD_NUMBER: _ClassVar[int]
     REPLIES_COUNT_FIELD_NUMBER: _ClassVar[int]
     URL_FIELD_NUMBER: _ClassVar[int]
+    TOP_5_COMMENTS_FIELD_NUMBER: _ClassVar[int]
     author_id: str
     author_name: str
     created_at: int
@@ -226,7 +229,8 @@ class SingleImagePost(_message.Message):
     latest_reply_created_at: int
     replies_count: int
     url: str
-    def __init__(self, author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., image: _Optional[_Union[ImageParagraph, _Mapping]] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_reply_created_at: _Optional[int] = ..., replies_count: _Optional[int] = ..., url: _Optional[str] = ...) -> None: ...
+    top_5_comments: _containers.RepeatedCompositeFieldContainer[Comment]
+    def __init__(self, author_id: _Optional[str] = ..., author_name: _Optional[str] = ..., created_at: _Optional[int] = ..., title: _Optional[str] = ..., liked: _Optional[int] = ..., disliked: _Optional[int] = ..., image: _Optional[_Union[ImageParagraph, _Mapping]] = ..., contents: _Optional[_Iterable[_Union[Paragraph, _Mapping]]] = ..., tags: _Optional[_Iterable[str]] = ..., latest_reply_created_at: _Optional[int] = ..., replies_count: _Optional[int] = ..., url: _Optional[str] = ..., top_5_comments: _Optional[_Iterable[_Union[Comment, _Mapping]]] = ...) -> None: ...
 
 class Comment(_message.Message):
     __slots__ = ("id", "post_id", "thread_id", "board_id", "author_id", "author_name", "contents", "pkg_name", "created_at")
