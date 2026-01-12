@@ -177,48 +177,434 @@ class ResolverImpl:
         )
 
     def GetReplies(self, req: pb2.GetRepliesReq, context) -> pb2.GetRepliesRes:
+        """
+        產生窮舉的回覆樹測試資料，涵蓋以下場景:
+        - 多層級回覆樹 (最深 3 層)
+        - 不同的 replies_count (0, 1, 多個)
+        - 有/無圖片的回覆
+        - 有/無引用 (REPLY_TO) 的回覆
+        - 分頁測試
+        """
         board_id = salt.decode(req.board_id)
         thread_id = salt.decode(req.thread_id)
         parent_id = salt.decode(req.parent_id) if req.HasField('parent_id') else None
         
+        # Debug logging
+        logging.info(f"GetReplies called: board_id={board_id}, thread_id={thread_id}, parent_id={parent_id}")
+        
         now = int(time.time())
         posts = []
         
-        # If parent_id is set, generate child replies (subtree)
-        prefix = f"subreply_{parent_id}" if parent_id else f"reply_{thread_id}"
-        count = 3 if parent_id else 5
-        
-        for i in range(1, count + 1):
-            pid = f"{prefix}_{i}"
+        # === 第一層回覆 (直接回覆 OriginalPost) ===
+        if parent_id is None:
+            # Reply 1: 有 3 個子回覆 (replies_count=3)，帶圖片
             posts.append(Post(
-                id=pid,
+                id=f"reply_{thread_id}_1",
                 thread_id=thread_id,
                 board_id=board_id,
-                author_id=f"user_{i}",
-                author_name=f"Replier {i}",
-                created_at=now - (6-i) * 600,
+                author_id="user_reply_1",
+                author_name="第一層回覆者 A",
+                created_at=now - 5000,
                 title="",
-                liked=i * 2,
+                liked=10,
+                disliked=1,
+                comments=0,
+                image=domain_pb2.ImageParagraph(
+                    raw=f"https://picsum.photos/seed/reply1/600/400",
+                    thumb=f"https://picsum.photos/seed/reply1/200/133"
+                ),
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是第一層回覆 #1，有圖片，且有 3 個子回覆。")
+                    )
+                ],
+                tags=["測試", "有子回覆"],
+                latest_reply_created_at=now - 2000,
+                replies_count=3,  # 有 3 個子回覆
+                url=f"https://example.com/mock/{board_id}/{thread_id}/reply1"
+            ))
+            
+            # Reply 2: 有 1 個子回覆 (replies_count=1)，帶引用
+            posts.append(Post(
+                id=f"reply_{thread_id}_2",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_reply_2",
+                author_name="第一層回覆者 B",
+                created_at=now - 4500,
+                title="",
+                liked=5,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                        reply_to=domain_pb2.ReplyToParagraph(
+                            id=salt.encode(f"reply_{thread_id}_1"),
+                            author_name="第一層回覆者 A",
+                            preview="這是第一層回覆 #1，有圖片..."
+                        )
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="我引用了 Reply #1，且我有 1 個子回覆。")
+                    )
+                ],
+                tags=["引用測試"],
+                latest_reply_created_at=now - 3000,
+                replies_count=1,  # 有 1 個子回覆
+                url=f"https://example.com/mock/{board_id}/{thread_id}/reply2"
+            ))
+            
+            # Reply 3: 沒有子回覆 (replies_count=0)，純文字葉節點
+            posts.append(Post(
+                id=f"reply_{thread_id}_3",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_reply_3",
+                author_name="第一層回覆者 C",
+                created_at=now - 4000,
+                title="",
+                liked=2,
                 disliked=0,
                 comments=0,
                 image=None,
                 contents=[
                     domain_pb2.Paragraph(
                         type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                        text=domain_pb2.TextParagraph(content=f"這是一則 {'子' if parent_id else ''}回覆內容 {i}。")
+                        text=domain_pb2.TextParagraph(content="這是第一層回覆 #3，沒有子回覆 (葉節點)。")
                     )
                 ],
-                tags=[],
+                tags=["葉節點"],
                 latest_reply_created_at=0,
-                replies_count=0 if parent_id else 2, # Sub-replies exist for top-level replies
+                replies_count=0,  # 葉節點
+                url=f"https://example.com/mock/{board_id}/{thread_id}/reply3"
+            ))
+            
+            # Reply 4: 有 2 個子回覆，帶多段內容 (文字 + 圖片 + 文字)
+            posts.append(Post(
+                id=f"reply_{thread_id}_4",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_reply_4",
+                author_name="第一層回覆者 D",
+                created_at=now - 3500,
+                title="",
+                liked=8,
+                disliked=1,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是第一層回覆 #4，內容較豐富。")
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_IMAGE,
+                        image=domain_pb2.ImageParagraph(
+                            raw=f"https://picsum.photos/seed/reply4/800/600",
+                        )
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="圖片後的文字，有 2 個子回覆。")
+                    )
+                ],
+                tags=["多段內容"],
+                latest_reply_created_at=now - 1500,
+                replies_count=2,  # 有 2 個子回覆
+                url=f"https://example.com/mock/{board_id}/{thread_id}/reply4"
+            ))
+            
+            # Reply 5: 沒有子回覆，帶影片
+            posts.append(Post(
+                id=f"reply_{thread_id}_5",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_reply_5",
+                author_name="第一層回覆者 E",
+                created_at=now - 3000,
+                title="",
+                liked=15,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是第一層回覆 #5，帶影片，無子回覆。")
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_VIDEO,
+                        video=domain_pb2.VideoParagraph(
+                            url="https://www.w3schools.com/html/mov_bbb.mp4",
+                            thumb="https://picsum.photos/seed/video5/400/300"
+                        )
+                    )
+                ],
+                tags=["影片測試", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=f"https://example.com/mock/{board_id}/{thread_id}/reply5"
+            ))
+        
+        # === 第二層回覆 (回覆第一層的回覆) ===
+        elif parent_id and parent_id.startswith("reply_") and parent_id.endswith("_1") and not parent_id.startswith("subreply_"):
+            # Reply 1 的 3 個子回覆
+            # SubReply 1.1: 有 2 個子回覆 (第三層)
+            posts.append(Post(
+                id=f"subreply_{parent_id}_1",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_1_1",
+                author_name="第二層回覆者 1.1",
+                created_at=now - 2500,
+                title="",
+                liked=3,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                        reply_to=domain_pb2.ReplyToParagraph(
+                            id=salt.encode(parent_id),
+                            author_name="第一層回覆者 A",
+                            preview="這是第一層回覆 #1..."
+                        )
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是 Reply #1 的第 1 個子回覆，我還有 2 個子回覆 (第三層)。")
+                    )
+                ],
+                tags=["第二層", "有第三層"],
+                latest_reply_created_at=now - 1000,
+                replies_count=2,  # 有第三層
                 url=None
             ))
+            
+            # SubReply 1.2: 沒有子回覆 (葉節點)
+            posts.append(Post(
+                id=f"subreply_{parent_id}_2",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_1_2",
+                author_name="第二層回覆者 1.2",
+                created_at=now - 2300,
+                title="",
+                liked=1,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是 Reply #1 的第 2 個子回覆 (葉節點)。")
+                    )
+                ],
+                tags=["第二層", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+            
+            # SubReply 1.3: 帶圖片，沒有子回覆
+            posts.append(Post(
+                id=f"subreply_{parent_id}_3",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_1_3",
+                author_name="第二層回覆者 1.3",
+                created_at=now - 2000,
+                title="",
+                liked=5,
+                disliked=0,
+                comments=0,
+                image=domain_pb2.ImageParagraph(
+                    raw=f"https://picsum.photos/seed/subreply13/500/300",
+                    thumb=f"https://picsum.photos/seed/subreply13/200/120"
+                ),
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是 Reply #1 的第 3 個子回覆，帶圖片 (葉節點)。")
+                    )
+                ],
+                tags=["第二層", "圖片", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+        
+        elif parent_id and parent_id.startswith("reply_") and parent_id.endswith("_2") and not parent_id.startswith("subreply_"):
+            # Reply 2 的 1 個子回覆 (葉節點)
+            posts.append(Post(
+                id=f"subreply_{parent_id}_1",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_2_1",
+                author_name="第二層回覆者 2.1",
+                created_at=now - 2800,
+                title="",
+                liked=2,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                        reply_to=domain_pb2.ReplyToParagraph(
+                            id=salt.encode(parent_id),
+                            author_name="第一層回覆者 B",
+                            preview="我引用了 Reply #1..."
+                        )
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是 Reply #2 的唯一子回覆 (葉節點)。")
+                    )
+                ],
+                tags=["第二層", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+        
+        elif parent_id and parent_id.startswith("reply_") and parent_id.endswith("_4") and not parent_id.startswith("subreply_"):
+            # Reply 4 的 2 個子回覆
+            # SubReply 4.1: 葉節點
+            posts.append(Post(
+                id=f"subreply_{parent_id}_1",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_4_1",
+                author_name="第二層回覆者 4.1",
+                created_at=now - 1800,
+                title="",
+                liked=1,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是 Reply #4 的第 1 個子回覆 (葉節點)。")
+                    )
+                ],
+                tags=["第二層", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+            
+            # SubReply 4.2: 葉節點，帶引用
+            posts.append(Post(
+                id=f"subreply_{parent_id}_2",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_4_2",
+                author_name="第二層回覆者 4.2",
+                created_at=now - 1500,
+                title="",
+                liked=3,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                        reply_to=domain_pb2.ReplyToParagraph(
+                            id=salt.encode(f"subreply_{parent_id}_1"),
+                            author_name="第二層回覆者 4.1",
+                            preview="這是 Reply #4 的第 1 個子回覆..."
+                        )
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是 Reply #4 的第 2 個子回覆，引用了 SubReply 4.1 (葉節點)。")
+                    )
+                ],
+                tags=["第二層", "引用", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+        
+        # === 第三層回覆 (最深層) ===
+        elif parent_id and parent_id.startswith("subreply_reply_") and parent_id.endswith("_1_1"):
+            # SubReply 1.1 的 2 個子回覆 (都是葉節點)
+            posts.append(Post(
+                id=f"subreply_{parent_id}_1",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_1_1_1",
+                author_name="第三層回覆者 1.1.1",
+                created_at=now - 900,
+                title="",
+                liked=1,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是第三層回覆 1.1.1 (最深層葉節點)。")
+                    )
+                ],
+                tags=["第三層", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+            
+            posts.append(Post(
+                id=f"subreply_{parent_id}_2",
+                thread_id=thread_id,
+                board_id=board_id,
+                author_id="user_subreply_1_1_2",
+                author_name="第三層回覆者 1.1.2",
+                created_at=now - 800,
+                title="",
+                liked=0,
+                disliked=0,
+                comments=0,
+                image=None,
+                contents=[
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_REPLY_TO,
+                        reply_to=domain_pb2.ReplyToParagraph(
+                            id=salt.encode(f"subreply_{parent_id}_1"),
+                            author_name="第三層回覆者 1.1.1",
+                            preview="這是第三層回覆 1.1.1..."
+                        )
+                    ),
+                    domain_pb2.Paragraph(
+                        type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
+                        text=domain_pb2.TextParagraph(content="這是第三層回覆 1.1.2，引用了 1.1.1 (最深層葉節點)。")
+                    )
+                ],
+                tags=["第三層", "引用", "葉節點"],
+                latest_reply_created_at=0,
+                replies_count=0,  # 葉節點
+                url=None
+            ))
+
+        # 處理分頁
+        current_page = 1
+        total_page = 1
+        if req.page:
+            posts, page_res = pagination(req.page, posts)
+            current_page = page_res.current_page
+            total_page = page_res.total_page
 
         return pb2.GetRepliesRes(
             replies=[post.toSaltPb2('article_post') for post in posts],
             page=domain_pb2.PaginationRes(
-                current_page=1,
-                total_page=1,
+                current_page=current_page,
+                total_page=total_page,
             ),
         )
 
