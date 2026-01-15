@@ -63,24 +63,41 @@ class ResolverImpl:
         # Determine which boards to generate data for
         board_id = salt.decode(req.board_id) if req.board_id else "board_1"
         sorting = req.sort or "latest"
+        keywords = req.keywords or ""
 
-        threads = []
+        # 特殊情境：如果關鍵字是 "empty"，回傳空列表
+        if keywords.lower() == "empty":
+            return pb2.GetThreadsRes(
+                threads=[],
+                page=domain_pb2.PaginationRes(current_page=1, total_page=0),
+            )
+
+        all_threads = []
         now = int(time.time())
         
-        # In mock, we just generate 10 threads for the single board
-        for i in range(1, 11):
+        # 產生較多資料以利測試分頁與排序 (產生 100 條)
+        for i in range(1, 101):
             tid = f"thread_{board_id}_{i}"
-            threads.append(Post(
+            # 模擬關鍵字搜尋：如果有關鍵字，則標題包含它
+            display_title = f"Mock Thread {i} in {board_id}"
+            if keywords:
+                display_title = f"[{keywords}] {display_title}"
+            
+            # 建立不同數值以利排序測試
+            # latest: created_at (降序)
+            # hot: liked (降序)
+            # commented: comments (降序)
+            all_threads.append(Post(
                 id=tid,
                 thread_id=tid,
                 board_id=board_id,
-                author_id="user_123",
+                author_id=f"user_{i}",
                 author_name=f"Mock Author {i}",
-                created_at=now - (i * 3600),
-                title=f"Mock Thread Title {i} in {board_id} ({sorting})",
-                liked=i * 10,
-                disliked=i,
-                comments=i * 5,
+                created_at=now - (i * 3600), # 每隔一小時
+                title=display_title,
+                liked=i * 7 % 100, # 隨機性數值
+                disliked=i % 10,
+                comments=i * 3 % 50,
                 image=domain_pb2.ImageParagraph(
                     raw=f"https://picsum.photos/seed/{tid}/400/300",
                     thumb=f"https://picsum.photos/seed/{tid}/200/150"
@@ -88,24 +105,34 @@ class ResolverImpl:
                 contents=[
                     domain_pb2.Paragraph(
                         type=domain_pb2.ParagraphType.PARAGRAPH_TYPE_TEXT,
-                        text=domain_pb2.TextParagraph(content=f"This is the preview text for mock thread {i}. ")
+                        text=domain_pb2.TextParagraph(content=f"Simulation content for {keywords} in thread {i}. ")
                     )
                 ],
                 tags=["Mock", board_id],
                 latest_reply_created_at=now - (i * 1800),
-                replies_count=i * 5,
+                replies_count=i * 3 % 50,
                 url=f"https://example.com/mock/{board_id}/{tid}"
             ))
 
+        # 執行 Mock 排序
+        if sorting == "hot":
+            all_threads.sort(key=lambda x: x.liked, reverse=True)
+        elif sorting == "commented":
+            all_threads.sort(key=lambda x: x.comments, reverse=True)
+        else: # latest
+            all_threads.sort(key=lambda x: x.created_at, reverse=True)
+
         current_page = 1
         total_page = 1
+        threads_to_return = all_threads
+        
         if req.page:
-            threads, page_res = pagination(req.page, threads)
+            threads_to_return, page_res = pagination(req.page, all_threads)
             current_page = page_res.current_page
             total_page = page_res.total_page
 
         return pb2.GetThreadsRes(
-            threads=[thread.toSaltPb2('single_image_post') for thread in threads],
+            threads=[thread.toSaltPb2('single_image_post') for thread in threads_to_return],
             page=domain_pb2.PaginationRes(
                 current_page=current_page,
                 total_page=total_page,
